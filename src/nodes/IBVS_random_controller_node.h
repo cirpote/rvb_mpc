@@ -31,7 +31,7 @@ bool randomSpawnDynObj = false;
 class IBVSRandomNode: public MavGUI
 {
  public:
-      IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& yaml_long_file, const std::string& gui_file);
+      IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& gui_file);
       ~IBVSRandomNode();
 
 

@@ -30,7 +30,7 @@
 class IBVSNode: public MavGUI
 {
  public:
-      IBVSNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& yaml_long_file, const std::string& gui_file);
+      IBVSNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& gui_file);
       ~IBVSNode();
 
       //Controllers

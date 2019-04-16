@@ -11,21 +11,6 @@ using namespace std;
 #include <iostream>
 #include <fstream>
 
-/*struct UV_Bounds{
-
-    Eigen::Vector2f u_bounds;
-    Eigen::Vector2f v_bounds;
-
-    UV_Bounds() : u_bounds(Eigen::Vector2f(0.f,0.f)), 
-                  v_bounds(Eigen::Vector2f(0.f,0.f)) {}
-
-    UV_Bounds( float* u_bnds, float* v_bnds ) {
-        u_bounds = Eigen::Vector2f(u_bnds[0], u_bnds[1]);
-        v_bounds = Eigen::Vector2f(v_bnds[0], v_bnds[1]);
-    }
-    ~UV_Bounds(){}
-};*/
-
 namespace mav_utils{
 
     inline Eigen::Vector3d vector3FromMsg(const geometry_msgs::Vector3& msg) {

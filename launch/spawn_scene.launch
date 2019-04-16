@@ -21,7 +21,7 @@
   </node-->
 
   <node name="spawn_$(arg marker)" pkg="gazebo_ros" type="spawn_model"
-   args="-file $(find ovs_controller)/models/apriltag/apriltag.urdf
+   args="-file $(find rvb_mpc)/models/apriltag/apriltag.urdf
          -urdf
          -model $(arg marker)"
    respawn="false" output="screen">
@@ -29,35 +29,35 @@
 
 
   <node name="spawn_$(arg dynamic_obst_1)" pkg="gazebo_ros" type="spawn_model"
-   args="-file $(find ovs_controller)/models/tnt_crate/dynamic_obst_1.urdf
+   args="-file $(find rvb_mpc)/models/tnt_crate/dynamic_obst_1.urdf
          -urdf
          -model $(arg dynamic_obst_1)"
    respawn="false" output="screen">
   </node>
 
   <node name="spawn_$(arg vertical_obst_1)" pkg="gazebo_ros" type="spawn_model"
-   args="-file $(find ovs_controller)/models/vertical_obst_1.urdf
+   args="-file $(find rvb_mpc)/models/vertical_obst_1.urdf
          -urdf
          -model $(arg vertical_obst_1)"
    respawn="false" output="screen">
   </node>
 
   <node name="spawn_$(arg vertical_obst_2)" pkg="gazebo_ros" type="spawn_model"
-   args="-file $(find ovs_controller)/models/vertical_obst_2.urdf
+   args="-file $(find rvb_mpc)/models/vertical_obst_2.urdf
          -urdf
          -model $(arg vertical_obst_2)"
    respawn="false" output="screen">
   </node>  
 
   <node name="spawn_$(arg horizontal_obst_1)" pkg="gazebo_ros" type="spawn_model"
-   args="-file $(find ovs_controller)/models/horizontal_obst_1.urdf
+   args="-file $(find rvb_mpc)/models/horizontal_obst_1.urdf
          -urdf
          -model $(arg horizontal_obst_1)"
    respawn="false" output="screen">
   </node>  
 
   <node name="spawn_$(arg horizontal_obst_2)" pkg="gazebo_ros" type="spawn_model"
-   args="-file $(find ovs_controller)/models/horizontal_obst_2.urdf
+   args="-file $(find rvb_mpc)/models/horizontal_obst_2.urdf
          -urdf
          -model $(arg horizontal_obst_2)"
    respawn="false" output="screen">

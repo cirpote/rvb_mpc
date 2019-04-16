@@ -17,14 +17,6 @@ using namespace std;
 
   stivsController::~stivsController(){}
 
-  void stivsController::sendToLog(real_t& t){
-
-    log_file_ << t << " " << odometry.position_W.transpose() << " " 
-                   << mav_utils::rollFromQuaternion( odometry.orientation_W_B ) << " " 
-                   << mav_utils::pitchFromQuaternion( odometry.orientation_W_B ) << " " 
-                   << mav_utils::yawFromQuaternion( odometry.orientation_W_B ) << "\n";
-  }
-
   bool stivsController::setCommandPose(const nav_msgs::Odometry odom_msg){
 
     if( ( mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position).head(2) - pObst_vert1 ).norm() < .5 ||

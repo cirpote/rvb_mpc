@@ -72,10 +72,6 @@ class BaseibvsController
       float attraction_ball_, anti_windup_ball_;
       float delta_time_, prev_time_;
       bool is_first_odometry_set_ = true;
-
-      // output log file
-      std::string output_log_file_;
-      std::ofstream log_file_;
       
  private:
 

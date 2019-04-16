@@ -7,6 +7,8 @@ BaseibvsController::BaseibvsController(const std::string& yaml_file) {
   
 void BaseibvsController::initializeControllerfromYAML(const std::string& yaml_file){
 
+  std::cerr << "ZIOCANE " << yaml_file << "\n";
+
   YAML::Node configuration = YAML::LoadFile(yaml_file);
   std::vector<double> q_position, q_velocity, q_attitude, q_command, q_target,
                       qf_position, qf_velocity, qf_attitude, qf_target, 
@@ -86,9 +88,6 @@ void BaseibvsController::initializeControllerfromYAML(const std::string& yaml_fi
   p_horiz_weights =  configuration["obstacle"]["p_horiz_WMat"].as<std::vector<double>>();
   p_horiz2_weights =  configuration["obstacle"]["p_horiz2_WMat"].as<std::vector<double>>();
   p_dyn_obst_weights = configuration["obstacle"]["p_dyn_WMat"].as<std::vector<double>>();
-
-  output_log_file_ = configuration["log_params"]["output_log_file"].as<std::string>();
-  log_file_.open (ros::package::getPath("ovs_controller") + "/log_output_folder/" + output_log_file_);
 
   pObst_vert1 << p_vert1.at(0), p_vert1.at(1);
   pObst_vert2 << p_vert2.at(0), p_vert2.at(1);

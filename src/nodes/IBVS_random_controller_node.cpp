@@ -2,9 +2,9 @@
 
 using namespace std;
 
-IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& yaml_long_file, const std::string& gui_file) 
+IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& gui_file)
   : MavGUI(nh, gui_file), nh_(nh), first_trajectory_cmd_(false), command_roll_pitch_yaw_thrust_st_(0,0,0,0), 
-    command_roll_pitch_yaw_thrust_lt_(0,0,0,0), stnl_controller(yaml_short_file)//, ltnl_controller(yaml_long_file) 
+    command_roll_pitch_yaw_thrust_lt_(0,0,0,0), stnl_controller(yaml_short_file)
 {
 
   odom_sub_ = nh_.subscribe( "/firefly/ground_truth/odometry", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
@@ -13,13 +13,14 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   stnl_controller.InitializeController();
+  this->init3DObjRendering( ros::package::getPath("rvb_mpc") );
 
   int iter = 0;
   while(true){
-    if (utils::exists( ros::package::getPath("ovs_controller") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
+    if (utils::exists( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
         iter++;
     } else {
-      logFileStream.open( ros::package::getPath("ovs_controller") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
+      logFileStream.open( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
       break;
     }
   }
@@ -181,16 +182,15 @@ static void error_callback(int error, const char* description)
 int main(int argc, char** argv)
 {
 
-  if(argc < 6) {
-        std::cerr << FRED("Other Params Expected!") << " node_name <params_short_term_file> <params_long_term_file> <gui_params> <waypoint_generation> <dyn_obst_spawn>" << "\n";
+  if(argc < 5) {
+        std::cerr << FRED("Other Params Expected!") << " node_name <params_short_term_file> <gui_params> <waypoint_generation> <dyn_obst_spawn>" << "\n";
         std::exit(1);
   }
 
   std::string yaml_short_filename = argv[1];
-  std::string yaml_long_filename = argv[2];
-  std::string gui_filename = argv[3];
-  std::string waypoint_generation = argv[4];
-  std::string dynamic_obstacle_spawning = argv[5];
+  std::string gui_filename = argv[2];
+  std::string waypoint_generation = argv[3];
+  std::string dynamic_obstacle_spawning = argv[4];
 
   if(!strcmp(waypoint_generation.c_str(), "true") ){
     randomWaypointGeneration = true;
@@ -241,10 +241,8 @@ int main(int argc, char** argv)
 
   ros::init(argc, argv, "mav_gnomic_gui_node");
   ros::NodeHandle nh("~");
-  //ros::NodeHandle nh("~");
 
-  IBVSRandomNode IBVS_node(nh, yaml_short_filename, gui_filename, gui_filename);
-  //MavGUI gnomic_gui(nh, gui_filename);
+  IBVSRandomNode IBVS_node(nh, yaml_short_filename, gui_filename);
   bool show_gnomic_GUI = true;
 
   // Main loop

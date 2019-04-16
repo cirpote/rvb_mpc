@@ -19,7 +19,6 @@
             bool InitializeController();
             void calculateRollPitchYawRateThrustCommands(Eigen::Vector4d&);
             bool setCommandPose(const nav_msgs::Odometry);
-            void sendToLog(real_t& t);
             void restartSolver();
 
             EIGEN_MAKE_ALIGNED_OPERATOR_NEW

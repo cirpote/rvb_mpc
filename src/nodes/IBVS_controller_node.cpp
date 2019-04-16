@@ -2,9 +2,9 @@
 
 using namespace std;
 
-IBVSNode::IBVSNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& yaml_long_file, const std::string& gui_file) 
+IBVSNode::IBVSNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& gui_file)
   : MavGUI(nh, gui_file), nh_(nh), first_trajectory_cmd_(false), command_roll_pitch_yaw_thrust_st_(0,0,0,0), 
-    command_roll_pitch_yaw_thrust_lt_(0,0,0,0), stnl_controller(yaml_short_file)//, ltnl_controller(yaml_long_file) 
+    command_roll_pitch_yaw_thrust_lt_(0,0,0,0), stnl_controller(yaml_short_file)
 {
 
   odom_sub_ = nh_.subscribe( "/firefly/ground_truth/odometry", 1, &IBVSNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
@@ -107,14 +107,13 @@ static void error_callback(int error, const char* description)
 int main(int argc, char** argv)
 {
 
-  if(argc < 4) {
-        std::cerr << FRED("Other Params Expected!") << " node_name <params_short_term_file> <params_long_term_file> <gui_params>" << "\n";
+  if(argc < 3) {
+        std::cerr << FRED("Other Params Expected!") << " node_name <params_short_term_file> <gui_params>" << "\n";
         std::exit(1);
   }
 
   std::string yaml_short_filename = argv[1];
-  std::string yaml_long_filename = argv[2];
-  std::string gui_filename = argv[3];
+  std::string gui_filename = argv[2];
 
   // Setup window
   glfwSetErrorCallback(error_callback);
@@ -151,8 +150,7 @@ int main(int argc, char** argv)
   ros::NodeHandle nh("~");
   //ros::NodeHandle nh("~");
 
-  IBVSNode IBVS_node(nh, yaml_short_filename, gui_filename, gui_filename);
-  //MavGUI gnomic_gui(nh, gui_filename);
+  IBVSNode IBVS_node(nh, yaml_short_filename, gui_filename);
   bool show_gnomic_GUI = true;
 
   // Main loop

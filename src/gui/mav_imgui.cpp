@@ -54,13 +54,29 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
 
   camera = std::make_shared<Camera>( glm::vec3(15.f, 20.f, -65.0f), glm::vec3(0.0f, 1.0f, 0.0f), 100.f );
   std::cout << FGRN("Camera Correctly Initialized\n\n");
-  shader =  std::make_shared<Shader>("/home/ciro/uav_ws/src/ovs_controller/src/assimp_loader/assets/shaders/modelTextured.vs",
-                   "/home/ciro/uav_ws/src/ovs_controller/src/assimp_loader/assets/shaders/modelTextured.fs");
-  std::cout << FGRN("Shader Correctly Initialized\n\n");
-  model = std::make_shared<Model>("/home/ciro/uav_ws/src/ovs_controller/src/assimp_loader/assets/zeppelin/ZEPLIN_OBJ.obj");
-  std::cout << FGRN("Model Correctly Initialized\n\n");
 
   avatarImg = cv::Mat(cv::Size(640,480), CV_8UC3);
+
+}
+
+void MavGUI::init3DObjRendering(std::string&& package_path_str){
+
+  char vs_path[100], fs_path[100], model_path[100];
+
+  strcpy(vs_path, package_path_str.c_str());
+  strcat(vs_path, "/src/assimp_loader/assets/shaders/modelTextured.vs");
+
+  strcpy(fs_path, package_path_str.c_str());
+  strcat(fs_path, "/src/assimp_loader/assets/shaders/modelTextured.fs");
+
+  strcpy(model_path, package_path_str.c_str());
+  strcat(model_path, "/src/assimp_loader/assets/zeppelin/ZEPLIN_OBJ.obj");
+
+  shader =  std::make_shared<Shader>( vs_path, fs_path );
+  std::cout << FGRN("Shader Correctly Initialized\n\n");
+
+  model = std::make_shared<Model>(model_path);
+  std::cout << FGRN("Model Correctly Initialized\n\n");
 
 }
 

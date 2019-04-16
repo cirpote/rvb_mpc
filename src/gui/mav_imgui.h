@@ -48,6 +48,7 @@ public:
 
     void showGUI(bool* p_open);
     void processAvatar();
+    void init3DObjRendering(std::string&& package_path_str);
 
 protected:
 
