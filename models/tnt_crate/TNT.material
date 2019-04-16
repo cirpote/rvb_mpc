@@ -1,0 +1,13 @@
+material TNT{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture tnt_crate_text.png
+                scale 1 1
+            }
+        }   
+    }
+}

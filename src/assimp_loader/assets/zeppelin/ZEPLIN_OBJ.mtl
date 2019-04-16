@@ -1,0 +1,158 @@
+newmtl wire_000000000
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_METAL01.png
+
+newmtl wire_000000002
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_BALLOON03.png
+	
+newmtl wire_000000003
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_ENGINE.png
+	
+newmtl wire_000000004
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_HULL.png
+	
+newmtl wire_000000006
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_BALLOON02.png
+	
+newmtl wire_000000007
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_BALLOON01.png
+	
+newmtl wire_000000008
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_BOTTOM.png
+	
+newmtl wire_000000010
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_WALL01.png
+	
+newmtl wire_000000009
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_BBAY_PLANK.png
+
+newmtl wire_000000012
+	Ns 32
+	Ni 1.5
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.8000 0.8000 0.8000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_CLOTH.png
+	
+newmtl wire_000000005
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_ROCKET.png
+
+newmtl wire_000000013
+	Ns 32
+	d 1
+	Tr 0.2
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_ROPE.png
+	
+newmtl wire_000000001
+	Ns 32
+	d 1
+	Tr 0.2
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_GOBLINZEP_TRIM01.png
+	
+newmtl wire_000000011
+	Ns 32
+	d 1
+	Tr 0
+	Tf 1 1 1
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.0000 0.0000 0.0000
+	Ks 0.3500 0.3500 0.3500
+	map_Kd Texture/zeplin_JLO_BBAY_PLANK.png
+
+	
+
+

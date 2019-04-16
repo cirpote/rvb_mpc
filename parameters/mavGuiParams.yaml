@@ -1,0 +1,7 @@
+camera_parameters:
+
+  target_size:            0.81
+  camera_intrinsics:      [448.1, 448.1, 376.5, 240.5] # fx, fy, px, py
+  distortion_params:      [0, 0, 0, 0] # k1, k2, p1, p2
+  pCam_B:                 [0.1, 0.055, -0.05]
+  qCam_B__Cam:            [0, 0.21, 0]

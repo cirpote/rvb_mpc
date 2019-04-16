@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="horizontal_obst_1" default="horizontal_obst_1"/>
+  <arg name="horizontal_obst_2" default="horizontal_obst_2"/>
+  <arg name="vertical_obst_1" default="vertical_obst_1"/>
+  <arg name="vertical_obst_2" default="vertical_obst_2"/>
+  <arg name="dynamic_obst_1" default="dynamic_obst_1"/>
+  <arg name="dynamic_obst_2" default="dynamic_obst_2"/>
+  <arg name="marker" default="apriltag_marker"/>
+
+  <!--node name="spawn_$(arg marker)" pkg="gazebo_ros" type="spawn_model"
+   args="-param apriltag
+         -sdf
+         -x 10
+         -y 0
+         -z 1
+         -Y 1.57
+         -model apriltag_marker"
+   respawn="false" output="screen">
+  </node-->
+
+  <node name="spawn_$(arg marker)" pkg="gazebo_ros" type="spawn_model"
+   args="-file $(find ovs_controller)/models/apriltag/apriltag.urdf
+         -urdf
+         -model $(arg marker)"
+   respawn="false" output="screen">
+  </node>
+
+
+  <node name="spawn_$(arg dynamic_obst_1)" pkg="gazebo_ros" type="spawn_model"
+   args="-file $(find ovs_controller)/models/tnt_crate/dynamic_obst_1.urdf
+         -urdf
+         -model $(arg dynamic_obst_1)"
+   respawn="false" output="screen">
+  </node>
+
+  <node name="spawn_$(arg vertical_obst_1)" pkg="gazebo_ros" type="spawn_model"
+   args="-file $(find ovs_controller)/models/vertical_obst_1.urdf
+         -urdf
+         -model $(arg vertical_obst_1)"
+   respawn="false" output="screen">
+  </node>
+
+  <node name="spawn_$(arg vertical_obst_2)" pkg="gazebo_ros" type="spawn_model"
+   args="-file $(find ovs_controller)/models/vertical_obst_2.urdf
+         -urdf
+         -model $(arg vertical_obst_2)"
+   respawn="false" output="screen">
+  </node>  
+
+  <node name="spawn_$(arg horizontal_obst_1)" pkg="gazebo_ros" type="spawn_model"
+   args="-file $(find ovs_controller)/models/horizontal_obst_1.urdf
+         -urdf
+         -model $(arg horizontal_obst_1)"
+   respawn="false" output="screen">
+  </node>  
+
+  <node name="spawn_$(arg horizontal_obst_2)" pkg="gazebo_ros" type="spawn_model"
+   args="-file $(find ovs_controller)/models/horizontal_obst_2.urdf
+         -urdf
+         -model $(arg horizontal_obst_2)"
+   respawn="false" output="screen">
+  </node>  
+
+</launch>

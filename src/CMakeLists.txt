@@ -1,0 +1,6 @@
+add_subdirectory(short_term_solver)
+add_subdirectory(nodes)
+add_subdirectory(base_ibvs_controller)
+add_subdirectory(gui)
+add_subdirectory(AprilTags)
+add_subdirectory(assimp_loader)

@@ -1,0 +1,60 @@
+<launch>
+
+    <arg name="mav_name" default="firefly"/>
+    <arg name="world_name" default="basic"/>
+    <arg name="enable_logging" default="false"/>
+    <arg name="enable_ground_truth" default="true"/>
+    <arg name="log_file" default="$(arg mav_name)"/>
+    <arg name="debug" default="false"/>
+    <arg name="gui" default="false"/>
+    <arg name="paused" default="false"/>
+    <arg name="verbose" default="false"/>
+
+    <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find rotors_gazebo)/models"/>
+    <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find rotors_gazebo)/models:$(find ovs_controller)/models/apriltag:$(find ovs_controller)/models/tnt_crate"/>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find rotors_gazebo)/worlds/$(arg world_name).world"/>
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="paused" value="$(arg paused)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="verbose" value="$(arg verbose)"/>
+    </include>
+
+    <group ns="$(arg mav_name)">
+        <include file="$(find ovs_controller)/launch/spawn_uav.launch">
+        <arg name="mav_name" value="$(arg mav_name)" />
+        <arg name="model" value="$(find rotors_description)/urdf/mav_with_vi_sensor.gazebo" />
+        <arg name="enable_logging" value="$(arg enable_logging)" />
+        <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+        <arg name="log_file" value="$(arg log_file)"/>
+        </include>
+    </group>
+
+    <include file="$(find ovs_controller)/launch/spawn_scene.launch">
+    <arg name="horizontal_obst_1" value="horizontal_obst_1"/>
+    <arg name="horizontal_obst_2" value="horizontal_obst_2"/>
+    <arg name="vertical_obst_1" value="vertical_obst_1"/>
+    <arg name="vertical_obst_2" value="vertical_obst_2"/>
+    <arg name="dynamic_obst_1" value="dynamic_obst_1"/>
+    <arg name="dynamic_obst_2" value="dynamic_obst_2"/>
+    <arg name="marker" value="apriltag_marker"/>
+    </include>
+
+     <!--node name="low_level_controller" pkg="rotors_control" type="roll_pitch_yawrate_thrust_controller_node" respawn="true" clear_params="true" output="screen">
+      <remap from="odometry" to="firefly/ground_truth/odometry" />
+      <remap from="command/motor_speed" to="firefly/command/motor_speed" />
+    </node-->
+
+    <node name="PID_attitude_controller" pkg="mav_lowlevel_attitude_controller" type="mav_pid_attitude_controller_node" respawn="true" clear_params="true" output="screen">
+      <remap from="odometry" to="firefly/ground_truth/odometry" />
+      <remap from="command/motor_speed" to="firefly/command/motor_speed" />
+      <rosparam file="$(find mav_lowlevel_attitude_controller)/resources/PID_attitude_$(arg mav_name).yaml" />
+    </node>
+
+    <node name="ibvs_controller_node" pkg="ovs_controller" type="IBVS_controller_node" clear_params="true" output="screen" 
+          args="$(find ovs_controller)/parameters/params_short_term.yaml $(find ovs_controller)/parameters/params_long_term.yaml 
+                $(find ovs_controller)/parameters/mavGuiParams.yaml">
+    </node>
+
+</launch>
+

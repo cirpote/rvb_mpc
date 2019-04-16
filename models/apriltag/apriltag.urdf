@@ -1,0 +1,38 @@
+<robot name="simple_box">
+  <link name="apriltag">
+    <inertial>
+      <origin
+        xyz="10 0 1"
+        rpy="0 0 1.57" />
+      <mass value="1.0" />
+      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="1.0"  iyz="0.0"  izz="1.0" />
+      <gravity>false</gravity>
+      <static>true</static>
+    </inertial>
+    <visual>
+      <origin
+        xyz="10 0 1"
+        rpy="0 0 1.57" />
+      <geometry>
+        <box size="1 0.05 1" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="10 0 1"
+        rpy="0 0 1.57" />
+      <geometry>
+        <box size="1 0.05 1" />
+      </geometry>
+    </collision>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+  </link>
+  <gazebo reference="apriltag">
+    <material>marker</material>
+    <static>true</static>
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+
+</robot>

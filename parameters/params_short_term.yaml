@@ -1,0 +1,72 @@
+vehicle_parameters:
+
+  mass:                   1.5435
+  roll_gain:              1.1
+  roll_tau:               0.15
+  pitch_gain:             1.1
+  pitch_tau:	  	  0.15 
+
+path_constraints:
+
+  q_p:                    [100, 100, 100]
+  q_v:                    [100, 100, 100]
+  q_attitude:             [100, 100, 100]
+  q_control:              [100, 100, 100, 100]
+  q_target:               [2000, 2000]
+
+terminal_constraints:
+
+  qf_p:                   [100, 100, 100]
+  qf_v:                   [100, 100, 100]
+  qf_attitude:            [100, 100, 100]
+  qf_target:              [100, 100] 
+
+boundary_constraints:
+
+  roll_bounds:            [-0.45, 0.45]   
+  pitch_bounds:           [-0.45, 0.45] 
+  yaw_rate_bounds:        [-1, 1] 
+  thrust_bounds:          [5, 20] 
+  uv_bounds:              [-130, 130, -130, 130] # u_lb, u_ub, v_lb, v_ub 
+
+ros_parameters:
+
+  command_topic:          /command/pose      
+  odometry_topic:         /firefly/ground_truth/odometry 
+  image_topic:            /firefly/vi_sensor/left/image_raw
+  rpyrt_topic:            /command/roll_pitch_yawrate_thrust
+
+integral_action:
+
+  attraction_ball:        0.1
+  anti_windup_ball:       0.1
+  integral_weights:       [0.05, 0.05, 0.1, 0.01]
+  yaw_rate_damping_factor: 1
+
+target:
+
+  pT_W:                   [10, 0, 1]
+  pCam_B:                 [0.1, 0.055, -0.05]
+  qCam_B__Cam:            [0, 0.21, 0]
+  camera_instrinsics:     [448.1, 448.1]
+
+obstacle:
+
+  p_vert1_W:              [1, 0.45]
+  p_vert1_WMat:           [1, 1]
+  p_vert2_W:              [2, -0.45]
+  p_vert2_WMat:           [1, 1]
+  p_horiz_W:              [1.5, 2.6]
+  p_horiz_WMat:           [1, 1]
+  p_horiz2_W:              [1.5, 3.7]
+  p_horiz2_WMat:           [1, 1]
+  p_dyn_W:                [-4, -4, -4]
+  p_dyn_WMat:	          [1, 1, 1]
+
+general_params:
+
+  verbosity:              0  # Verbosity_Level : 0,1,2
+
+log_params:
+
+  output_log_file:        log_file.txt
