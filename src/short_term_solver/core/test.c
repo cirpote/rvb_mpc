@@ -51,8 +51,8 @@ www.acadotoolkit.org
 #define VERBOSE     1         /* Show iterations: 1, silent: 0.  */
 
 /* Global variables used by the solver. */
-ACADOvariables shortTermAcadoVariables;
-ACADOworkspace shortTermAcadoWorkspace;
+ACADOvariables acadoVariables;
+ACADOworkspace acadoWorkspace;
 
 /* A template for testing of the solver. */
 int main( )
@@ -65,16 +65,16 @@ int main( )
 	acado_initializeSolver();
 
 	/* Initialize the states and controls. */
-	for (i = 0; i < NX * (N + 1); ++i)  shortTermAcadoVariables.x[ i ] = 0.0;
-	for (i = 0; i < NU * N; ++i)  shortTermAcadoVariables.u[ i ] = 0.0;
+	for (i = 0; i < NX * (N + 1); ++i)  acadoVariables.x[ i ] = 0.0;
+	for (i = 0; i < NU * N; ++i)  acadoVariables.u[ i ] = 0.0;
 
 	/* Initialize the measurements/reference. */
-	for (i = 0; i < NY * N; ++i)  shortTermAcadoVariables.y[ i ] = 0.0;
-	for (i = 0; i < NYN; ++i)  shortTermAcadoVariables.yN[ i ] = 0.0;
+	for (i = 0; i < NY * N; ++i)  acadoVariables.y[ i ] = 0.0;
+	for (i = 0; i < NYN; ++i)  acadoVariables.yN[ i ] = 0.0;
 
 	/* MPC: initialize the current state feedback. */
 #if ACADO_INITIAL_STATE_FIXED
-	for (i = 0; i < NX; ++i) shortTermAcadoVariables.x0[ i ] = 0.1;
+	for (i = 0; i < NX; ++i) acadoVariables.x0[ i ] = 0.1;
 #endif
 
 	if( VERBOSE ) acado_printHeader();

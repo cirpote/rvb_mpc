@@ -389,8 +389,8 @@ real_t acado_getObjective(  );
  * Extern declarations. 
  */
 
-extern ACADOworkspace shortTermAcadoWorkspace;
-extern ACADOvariables shortTermAcadoVariables;
+extern ACADOworkspace acadoWorkspace;
+extern ACADOvariables acadoVariables;
 
 /** @} */
 

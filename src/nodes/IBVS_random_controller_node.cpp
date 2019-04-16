@@ -34,35 +34,35 @@ IBVSRandomNode::~IBVSRandomNode(){
 void IBVSRandomNode::changeFixedObstaclePosition(){
 
     for (size_t i = 0; i < ACADO_N; ++i) {
-      shortTermAcadoVariables.od[ACADO_NOD * i + 15] = _vert_obst1_[0];
-      shortTermAcadoVariables.od[ACADO_NOD * i + 16] = _vert_obst1_[1];
-      shortTermAcadoVariables.od[ACADO_NOD * i + 19] = _vert_obst2_[0];
-      shortTermAcadoVariables.od[ACADO_NOD * i + 20] = _vert_obst2_[1];
-      shortTermAcadoVariables.od[ACADO_NOD * i + 23] = _horiz_obst_[0];
-      shortTermAcadoVariables.od[ACADO_NOD * i + 24] = _horiz_obst_[1];
-      shortTermAcadoVariables.od[ACADO_NOD * i + 33] = _horiz_obst2_[0];
-      shortTermAcadoVariables.od[ACADO_NOD * i + 34] = _horiz_obst2_[1];
+      acadoVariables.od[ACADO_NOD * i + 15] = _vert_obst1_[0];
+      acadoVariables.od[ACADO_NOD * i + 16] = _vert_obst1_[1];
+      acadoVariables.od[ACADO_NOD * i + 19] = _vert_obst2_[0];
+      acadoVariables.od[ACADO_NOD * i + 20] = _vert_obst2_[1];
+      acadoVariables.od[ACADO_NOD * i + 23] = _horiz_obst_[0];
+      acadoVariables.od[ACADO_NOD * i + 24] = _horiz_obst_[1];
+      acadoVariables.od[ACADO_NOD * i + 33] = _horiz_obst2_[0];
+      acadoVariables.od[ACADO_NOD * i + 34] = _horiz_obst2_[1];
     }
 
-    std::cout << FBLU("First vertical obstacle (x,y) Position: ") << shortTermAcadoVariables.od[15] << " " << shortTermAcadoVariables.od[16] << "\n";
-    std::cout << FBLU("Second vertical obstacle (x,y) Position: ") << shortTermAcadoVariables.od[19] << " " << shortTermAcadoVariables.od[20] << "\n";
-    std::cout << FBLU("First Horizontal obstacle (x,z) position: ") << shortTermAcadoVariables.od[23] << " " << shortTermAcadoVariables.od[24] << "\n";
-    std::cout << FBLU("Second Horizontal obstacle (x,z) position: ") << shortTermAcadoVariables.od[33] << " " << shortTermAcadoVariables.od[34] << "\n\n";
+    std::cout << FBLU("First vertical obstacle (x,y) Position: ") << acadoVariables.od[15] << " " << acadoVariables.od[16] << "\n";
+    std::cout << FBLU("Second vertical obstacle (x,y) Position: ") << acadoVariables.od[19] << " " << acadoVariables.od[20] << "\n";
+    std::cout << FBLU("First Horizontal obstacle (x,z) position: ") << acadoVariables.od[23] << " " << acadoVariables.od[24] << "\n";
+    std::cout << FBLU("Second Horizontal obstacle (x,z) position: ") << acadoVariables.od[33] << " " << acadoVariables.od[34] << "\n\n";
 }
 
 void IBVSRandomNode::changeDynObstaclePosition(){
 
     for (int i = 0; i < ACADO_N + 1; i++) {
-      shortTermAcadoVariables.od[ACADO_NOD * i + 27] = dynObst_->getPose()(0);
-      shortTermAcadoVariables.od[ACADO_NOD * i + 28] = dynObst_->getPose()(1);
-      shortTermAcadoVariables.od[ACADO_NOD * i + 29] = dynObst_->getPose()(2);
+      acadoVariables.od[ACADO_NOD * i + 27] = dynObst_->getPose()(0);
+      acadoVariables.od[ACADO_NOD * i + 28] = dynObst_->getPose()(1);
+      acadoVariables.od[ACADO_NOD * i + 29] = dynObst_->getPose()(2);
     }
 
     if( dynObst_->getVel().norm() > 1e-2 ){
       for (int i = 0; i < ACADO_N + 1; i++) {
-        shortTermAcadoVariables.od[ACADO_NOD * i + 30] =  (_target_vel3f[0] > 1e-1) ? 1 / (dynObst_->getVel()(0) * 20) : 1;
-        shortTermAcadoVariables.od[ACADO_NOD * i + 31] =  (_target_vel3f[1] > 1e-1) ? 1 / (dynObst_->getVel()(1) * 20) : 1;
-        shortTermAcadoVariables.od[ACADO_NOD * i + 32] =  (_target_vel3f[2] > 1e-1) ? 1 / (dynObst_->getVel()(2) * 20) : 1;
+        acadoVariables.od[ACADO_NOD * i + 30] =  (_target_vel3f[0] > 1e-1) ? 1 / (dynObst_->getVel()(0) * 20) : 1;
+        acadoVariables.od[ACADO_NOD * i + 31] =  (_target_vel3f[1] > 1e-1) ? 1 / (dynObst_->getVel()(1) * 20) : 1;
+        acadoVariables.od[ACADO_NOD * i + 32] =  (_target_vel3f[2] > 1e-1) ? 1 / (dynObst_->getVel()(2) * 20) : 1;
       }
     }
 
@@ -116,9 +116,9 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   if(new_comand && randomSpawnDynObj){
     new_comand = false;
     
-    Eigen::Vector3d tracjPt( shortTermAcadoVariables.x[ ACADO_N * ACADO_NX ], 
-                             shortTermAcadoVariables.x[ ACADO_N * ACADO_NX + 1 ], 
-                             shortTermAcadoVariables.x[ ACADO_N * ACADO_NX + 2 ]);
+    Eigen::Vector3d tracjPt( acadoVariables.x[ ACADO_N * ACADO_NX ], 
+                             acadoVariables.x[ ACADO_N * ACADO_NX + 1 ], 
+                             acadoVariables.x[ ACADO_N * ACADO_NX + 2 ]);
 
     Eigen::Vector3d spawningPt, spawningVel;
 

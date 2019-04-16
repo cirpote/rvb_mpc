@@ -23,32 +23,32 @@
 
 real_t* acado_getVariablesX( )
 {
-	return shortTermAcadoVariables.x;
+	return acadoVariables.x;
 }
 
 real_t* acado_getVariablesU( )
 {
-	return shortTermAcadoVariables.u;
+	return acadoVariables.u;
 }
 
 #if ACADO_NY > 0
 real_t* acado_getVariablesY( )
 {
-	return shortTermAcadoVariables.y;
+	return acadoVariables.y;
 }
 #endif
 
 #if ACADO_NYN > 0
 real_t* acado_getVariablesYN( )
 {
-	return shortTermAcadoVariables.yN;
+	return acadoVariables.yN;
 }
 #endif
 
 real_t* acado_getVariablesX0( )
 {
 #if ACADO_INITIAL_VALUE_FIXED
-	return shortTermAcadoVariables.x0;
+	return acadoVariables.x0;
 #else
 	return 0;
 #endif
@@ -62,7 +62,7 @@ void acado_printDifferentialVariables( )
 	for (i = 0; i < ACADO_N + 1; ++i)
 	{
 		for (j = 0; j < ACADO_NX; ++j)
-			printf("\t%e", shortTermAcadoVariables.x[i * ACADO_NX + j]);
+			printf("\t%e", acadoVariables.x[i * ACADO_NX + j]);
 		printf("\n");
 	}
 	printf("]\n\n");
@@ -76,7 +76,7 @@ void acado_printControlVariables( )
 	for (i = 0; i < ACADO_N; ++i)
 	{
 		for (j = 0; j < ACADO_NU; ++j)
-			printf("\t%e", shortTermAcadoVariables.u[i * ACADO_NU + j]);
+			printf("\t%e", acadoVariables.u[i * ACADO_NU + j]);
 		printf("\n");
 	}
 	printf("]\n\n");

@@ -10,15 +10,6 @@ add_custom_target(short_term_solver_ACADO_run
      SOURCES short_term_solver_ACADO.cpp
 )
 
-add_custom_target(renaming_short_term_solver_ACADO_variables_run
-     COMMAND bash renamingScript.sh
-     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-     COMMENT "renamed ACADO variables in ${CMAKE_CURRENT_SOURCE_DIR}/src/short_term_solver/core/acado_common.h"
-     VERBATIM
-     DEPENDS short_term_solver_ACADO_run
-     SOURCES renamingScript.sh
-)
-
 add_library(short_term_solver_lib 
         STIVS_controller.cpp
 	qpoases/SRC/Bounds.cpp
@@ -49,11 +40,6 @@ target_include_directories(short_term_solver_lib PUBLIC
 )
 
 if(GENERATE_ACADO_CPP)
-    message("Generating ACADO cpp Solver")
-    add_dependencies(short_term_solver_lib renaming_short_term_solver_ACADO_variables_run)
+    add_dependencies(short_term_solver_lib short_term_solver_ACADO_run)
 endif(GENERATE_ACADO)
-
-add_executable(short_term_solver_ACADO_test short_term_solver_ACADO_test.cpp)
-target_link_libraries(short_term_solver_ACADO_test ${ACADO_SHARED_LIBRARIES})
-set_target_properties(short_term_solver_ACADO_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/src/short_term_solver/")
 

@@ -7,8 +7,8 @@
 
 //namespace shortTerm{
 
-      ACADOvariables shortTermAcadoVariables;
-      ACADOworkspace shortTermAcadoWorkspace; 
+      ACADOvariables acadoVariables;
+      ACADOworkspace acadoWorkspace; 
 
       class stivsController : public BaseibvsController
       {  

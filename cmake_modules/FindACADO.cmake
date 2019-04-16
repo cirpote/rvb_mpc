@@ -65,6 +65,7 @@ ENDIF( ACADO_LIBRARY_DIRS )
 #
 # Static libs
 #
+
 SET ( STATIC_TMP $ENV{ACADO_ENV_STATIC_LIBRARIES})
 IF ( NOT STATIC_TMP )
 	MESSAGE( STATUS "Could not find ACADO static library." )
@@ -153,3 +154,4 @@ IF( ACADO_INCLUDE_DIRS_FOUND AND ACADO_LIBRARY_DIRS_FOUND
 ENDIF()
 
 MESSAGE( STATUS "********************************************************************************" )
+

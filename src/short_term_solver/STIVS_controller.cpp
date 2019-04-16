@@ -71,9 +71,9 @@ using namespace std;
     Eigen::Matrix<double, ACADO_NX, 1> x_0;
     x_0 << odometry.position_W, odometry.getVelocityWorld(), euler_angles, 0;
 
-    Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(shortTermAcadoVariables.x0)) = x_0;
-    Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(shortTermAcadoVariables.y)) = reference_.transpose();
-    Eigen::Map<Eigen::Matrix<double, ACADO_NYN, 1>>(const_cast<double*>(shortTermAcadoVariables.yN)) = referenceN_.transpose();
+    Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(acadoVariables.x0)) = x_0;
+    Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(acadoVariables.y)) = reference_.transpose();
+    Eigen::Map<Eigen::Matrix<double, ACADO_NYN, 1>>(const_cast<double*>(acadoVariables.yN)) = referenceN_.transpose();
     
     //acado_timer t;
     acado_preparationStep();
@@ -110,10 +110,10 @@ using namespace std;
 
     ComputeIntegralAction();  
 
-    command_roll_pitch_yawrate_thrust_(0) = shortTermAcadoVariables.u[0]; // + integral_action_(0) * integral_action_weights_(0);
-    command_roll_pitch_yawrate_thrust_(1) = shortTermAcadoVariables.u[1]; // + integral_action_(1) * integral_action_weights_(1);
-    command_roll_pitch_yawrate_thrust_(2) = 2*shortTermAcadoVariables.u[3] - yaw_rate_damping*odometry.getYawRate() + integral_action_(3) * integral_action_weights_(3);
-    command_roll_pitch_yawrate_thrust_(3) = shortTermAcadoVariables.u[2] + integral_action_(2) * integral_action_weights_(2);
+    command_roll_pitch_yawrate_thrust_(0) = acadoVariables.u[0]; // + integral_action_(0) * integral_action_weights_(0);
+    command_roll_pitch_yawrate_thrust_(1) = acadoVariables.u[1]; // + integral_action_(1) * integral_action_weights_(1);
+    command_roll_pitch_yawrate_thrust_(2) = 2*acadoVariables.u[3] - yaw_rate_damping*odometry.getYawRate() + integral_action_(3) * integral_action_weights_(3);
+    command_roll_pitch_yawrate_thrust_(3) = acadoVariables.u[2] + integral_action_(2) * integral_action_weights_(2);
                                           
   }
 
@@ -122,7 +122,7 @@ using namespace std;
     for (i = 0; i < ACADO_N + 1; ++i)
     {
       for (j = 0; j < ACADO_NX; ++j)
-        std::cout << shortTermAcadoVariables.x[i * ACADO_NX + j] << " ";
+        std::cout << acadoVariables.x[i * ACADO_NX + j] << " ";
       std::cout << "\n";
     }
     std::cout << "\n\n";
@@ -133,7 +133,7 @@ using namespace std;
     for (i = 0; i < ACADO_N; ++i)
     {
       for (j = 0; j < ACADO_NU; ++j)
-        std::cout << shortTermAcadoVariables.u[i * ACADO_NU + j] << " ";
+        std::cout << acadoVariables.u[i * ACADO_NU + j] << " ";
       std::cout << "\n";
     }
     std::cout << "\n\n";
@@ -167,37 +167,37 @@ using namespace std;
       std::cout << WN_.diagonal().transpose() << "\n" << "\n";
     }
 
-    Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_NY>>(const_cast<double*>(shortTermAcadoVariables.W)) = W_.transpose();
-    Eigen::Map<Eigen::Matrix<double, ACADO_NYN, ACADO_NYN>>(const_cast<double*>(shortTermAcadoVariables.WN)) = WN_.transpose();
+    Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_NY>>(const_cast<double*>(acadoVariables.W)) = W_.transpose();
+    Eigen::Map<Eigen::Matrix<double, ACADO_NYN, ACADO_NYN>>(const_cast<double*>(acadoVariables.WN)) = WN_.transpose();
       
     for (size_t i = 0; i < ACADO_N; ++i) {
       
-      shortTermAcadoVariables.lbValues[ACADO_NU * i] = roll_ref_bnds_(0);        // min roll
-      shortTermAcadoVariables.lbValues[ACADO_NU * i + 1] = pitch_ref_bnds_(0);   // min pitch
-      shortTermAcadoVariables.lbValues[ACADO_NU * i + 2] = thrust_bnds_(0);      // min thrust
-      shortTermAcadoVariables.lbValues[ACADO_NU * i + 3] = yaw_rate_bnds_(0);    // min yaw rate
-      shortTermAcadoVariables.ubValues[ACADO_NU * i] = roll_ref_bnds_(1);        // max roll
-      shortTermAcadoVariables.ubValues[ACADO_NU * i + 1] = pitch_ref_bnds_(1);   // max pitch
-      shortTermAcadoVariables.ubValues[ACADO_NU * i + 2] = thrust_bnds_(1);      // max thrust
-      shortTermAcadoVariables.ubValues[ACADO_NU * i + 3] = yaw_rate_bnds_(1);     // max yaw rate
+      acadoVariables.lbValues[ACADO_NU * i] = roll_ref_bnds_(0);        // min roll
+      acadoVariables.lbValues[ACADO_NU * i + 1] = pitch_ref_bnds_(0);   // min pitch
+      acadoVariables.lbValues[ACADO_NU * i + 2] = thrust_bnds_(0);      // min thrust
+      acadoVariables.lbValues[ACADO_NU * i + 3] = yaw_rate_bnds_(0);    // min yaw rate
+      acadoVariables.ubValues[ACADO_NU * i] = roll_ref_bnds_(1);        // max roll
+      acadoVariables.ubValues[ACADO_NU * i + 1] = pitch_ref_bnds_(1);   // max pitch
+      acadoVariables.ubValues[ACADO_NU * i + 2] = thrust_bnds_(1);      // max thrust
+      acadoVariables.ubValues[ACADO_NU * i + 3] = yaw_rate_bnds_(1);     // max yaw rate
 
-      shortTermAcadoVariables.lbAValues[ACADO_NPAC * i] = .3;                   // min obst1 dist
-      shortTermAcadoVariables.lbAValues[ACADO_NPAC * i + 1] = .3;               // min obst2 dist
-      shortTermAcadoVariables.lbAValues[ACADO_NPAC * i + 2] = .3;               // min obst3 dist
-      shortTermAcadoVariables.lbAValues[ACADO_NPAC * i + 3] = .3;               // min obst3 dist
-      shortTermAcadoVariables.lbAValues[ACADO_NPAC * i + 4] = .3;
-      shortTermAcadoVariables.ubAValues[ACADO_NPAC * i] = 1000;                 // max obst1 dist
-      shortTermAcadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000;             // max obst2 dist
-      shortTermAcadoVariables.ubAValues[ACADO_NPAC * i + 2] = 1000;             // max obst3 dist
-      shortTermAcadoVariables.ubAValues[ACADO_NPAC * i + 3] = 1000;             // max obst3 dist
-      shortTermAcadoVariables.ubAValues[ACADO_NPAC * i + 4] = 1000;             // max obst3 dist
+      acadoVariables.lbAValues[ACADO_NPAC * i] = .3;                   // min obst1 dist
+      acadoVariables.lbAValues[ACADO_NPAC * i + 1] = .3;               // min obst2 dist
+      acadoVariables.lbAValues[ACADO_NPAC * i + 2] = .3;               // min obst3 dist
+      acadoVariables.lbAValues[ACADO_NPAC * i + 3] = .3;               // min obst3 dist
+      acadoVariables.lbAValues[ACADO_NPAC * i + 4] = .3;
+      acadoVariables.ubAValues[ACADO_NPAC * i] = 1000;                 // max obst1 dist
+      acadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000;             // max obst2 dist
+      acadoVariables.ubAValues[ACADO_NPAC * i + 2] = 1000;             // max obst3 dist
+      acadoVariables.ubAValues[ACADO_NPAC * i + 3] = 1000;             // max obst3 dist
+      acadoVariables.ubAValues[ACADO_NPAC * i + 4] = 1000;             // max obst3 dist
     }
 
     std::cout << FBLU("Short Term controller Upper Bound Limits: ") << "\n"; 
-    std::cout << shortTermAcadoVariables.lbValues[0] << " " << shortTermAcadoVariables.lbValues[1] << " " << shortTermAcadoVariables.lbValues[2] << " " << shortTermAcadoVariables.lbValues[3] << " " << "\n" << "\n";
+    std::cout << acadoVariables.lbValues[0] << " " << acadoVariables.lbValues[1] << " " << acadoVariables.lbValues[2] << " " << acadoVariables.lbValues[3] << " " << "\n" << "\n";
 
     std::cout << FBLU("Short Term controller Lower Bound Limits: ") << "\n"; 
-    std::cout << shortTermAcadoVariables.ubValues[0] << " " << shortTermAcadoVariables.ubValues[1] << " " << shortTermAcadoVariables.ubValues[2] << " " << shortTermAcadoVariables.ubValues[3] << " " << "\n" << "\n";
+    std::cout << acadoVariables.ubValues[0] << " " << acadoVariables.ubValues[1] << " " << acadoVariables.ubValues[2] << " " << acadoVariables.ubValues[3] << " " << "\n" << "\n";
 
     for (int i = 0; i < ACADO_N + 1; i++) {
       acado_online_data_.block(i, 0, 1, ACADO_NOD) << roll_time_constant_, roll_gain_, pitch_time_constant_, pitch_gain_,  // Horizontal motion model
@@ -220,22 +220,22 @@ using namespace std;
     std::cout << FBLU("Short Term controller Online Data matrix: ") << "\n"; 
     std::cout << acado_online_data_.row(0) << "\n" << "\n";
 
-    Eigen::Map<Eigen::Matrix<double, ACADO_NOD, ACADO_N + 1>>(const_cast<double*>(shortTermAcadoVariables.od)) = acado_online_data_.transpose(); 
+    Eigen::Map<Eigen::Matrix<double, ACADO_NOD, ACADO_N + 1>>(const_cast<double*>(acadoVariables.od)) = acado_online_data_.transpose(); 
     restartSolver();   
   }
 
   void stivsController::restartSolver(){
     
     // Initialize the states and controls. 
-    for (unsigned int i = 0; i < ACADO_NX * (ACADO_N + 1); ++i)  shortTermAcadoVariables.x[ i ] = 0.0;
-    for (unsigned int i = 0; i < ACADO_NU * ACADO_N; ++i)  shortTermAcadoVariables.u[ i ] = 0.0;
+    for (unsigned int i = 0; i < ACADO_NX * (ACADO_N + 1); ++i)  acadoVariables.x[ i ] = 0.0;
+    for (unsigned int i = 0; i < ACADO_NU * ACADO_N; ++i)  acadoVariables.u[ i ] = 0.0;
 
     // Initialize the measurements/reference. 
-    for (unsigned int i = 0; i < ACADO_NY * ACADO_N; ++i)  shortTermAcadoVariables.y[ i ] = 0.0;
-    for (unsigned int i = 0; i < ACADO_NYN; ++i)  shortTermAcadoVariables.yN[ i ] = 0.0;
+    for (unsigned int i = 0; i < ACADO_NY * ACADO_N; ++i)  acadoVariables.y[ i ] = 0.0;
+    for (unsigned int i = 0; i < ACADO_NYN; ++i)  acadoVariables.yN[ i ] = 0.0;
 
     #if ACADO_INITIAL_STATE_FIXED
-      for (unsigned int i = 0; i < ACADO_NX; ++i) shortTermAcadoVariables.x0[ i ] = 0.0;
+      for (unsigned int i = 0; i < ACADO_NX; ++i) acadoVariables.x0[ i ] = 0.0;
     #endif    
 
     std::cout << FBLU("NY: ") << ACADO_NY << 
@@ -273,8 +273,8 @@ using namespace std;
     // Feed Forward term
     // ...
 
-    Eigen::Vector3d des_pos(shortTermAcadoVariables.x[0 + ACADO_NX], shortTermAcadoVariables.x[1 + ACADO_NX], shortTermAcadoVariables.x[2 + ACADO_NX]);
-    Eigen::Vector3d des_vel(shortTermAcadoVariables.x[3 + ACADO_NX], shortTermAcadoVariables.x[4 + ACADO_NX], shortTermAcadoVariables.x[5 + ACADO_NX]);
+    Eigen::Vector3d des_pos(acadoVariables.x[0 + ACADO_NX], acadoVariables.x[1 + ACADO_NX], acadoVariables.x[2 + ACADO_NX]);
+    Eigen::Vector3d des_vel(acadoVariables.x[3 + ACADO_NX], acadoVariables.x[4 + ACADO_NX], acadoVariables.x[5 + ACADO_NX]);
 
 
     Eigen::Vector3d acc_des_w_(Dpos_.cwiseProduct(des_pos-odometry.position_W) 
@@ -298,7 +298,7 @@ using namespace std;
       mav_msgs::getEulerAnglesFromQuaternion(q_e_rp_, &euler_angles_des);
     }
 
-    float des_yaw = shortTermAcadoVariables.x[8 + ACADO_NX];
+    float des_yaw = acadoVariables.x[8 + ACADO_NX];
     Eigen::Vector3d e_x_C_( cos(des_yaw), sin(des_yaw), 0 );
     Eigen::Vector3d e_y_C_( -sin(des_yaw), cos(des_yaw), 0 );
     Eigen::Vector3d e_x_des_B_ = e_y_C_.cross(acc_des_b_);

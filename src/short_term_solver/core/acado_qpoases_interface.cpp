@@ -42,10 +42,10 @@ int acado_solve( void )
 
 	QProblem qp(40, 50);
 	
-	returnValue retVal = qp.init(shortTermAcadoWorkspace.H, shortTermAcadoWorkspace.g, shortTermAcadoWorkspace.A, shortTermAcadoWorkspace.lb, shortTermAcadoWorkspace.ub, shortTermAcadoWorkspace.lbA, shortTermAcadoWorkspace.ubA, acado_nWSR);
+	returnValue retVal = qp.init(acadoWorkspace.H, acadoWorkspace.g, acadoWorkspace.A, acadoWorkspace.lb, acadoWorkspace.ub, acadoWorkspace.lbA, acadoWorkspace.ubA, acado_nWSR);
 
-    qp.getPrimalSolution( shortTermAcadoWorkspace.x );
-    qp.getDualSolution( shortTermAcadoWorkspace.y );
+    qp.getPrimalSolution( acadoWorkspace.x );
+    qp.getDualSolution( acadoWorkspace.y );
 	
 #if ACADO_COMPUTE_COVARIANCE_MATRIX == 1
 
