@@ -31,7 +31,6 @@ IBVSRandomNode::~IBVSRandomNode(){
   logFileStream.close();
 }
 
-
 void IBVSRandomNode::changeFixedObstaclePosition(){
 
     for (size_t i = 0; i < ACADO_N; ++i) {
