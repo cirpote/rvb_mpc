@@ -43,3 +43,6 @@ if(GENERATE_ACADO_CPP)
     add_dependencies(short_term_solver_lib short_term_solver_ACADO_run)
 endif(GENERATE_ACADO)
 
+add_executable(short_term_solver_ACADO_SHERPA short_term_solver_ACADO_SHERPA.cpp)
+target_link_libraries(short_term_solver_ACADO_SHERPA ${ACADO_SHARED_LIBRARIES})
+set_target_properties(short_term_solver_ACADO_SHERPA PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/src/short_term_solver/")
