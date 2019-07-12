@@ -70,6 +70,7 @@ void MavGUI::init3DObjRendering(std::string&& package_path_str){
   strcat(fs_path, "/src/assimp_loader/assets/shaders/modelTextured.fs");
 
   strcpy(model_path, package_path_str.c_str());
+  //strcat(model_path, "/src/assimp_loader/assets/siege_engine/siegeEngine.obj");
   strcat(model_path, "/src/assimp_loader/assets/zeppelin/ZEPLIN_OBJ.obj");
 
   shader =  std::make_shared<Shader>( vs_path, fs_path );
