@@ -1,4 +1,4 @@
-#include "IBVS_random_controller_node.h"
+#include <src/nodes/IBVS_random_controller_node.h>
 
 using namespace std;
 
@@ -15,15 +15,15 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   stnl_controller.InitializeController();
   this->init3DObjRendering( ros::package::getPath("rvb_mpc") );
 
-  int iter = 0;
-  while(true){
-    if (utils::exists( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
-        iter++;
-    } else {
-      logFileStream.open( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
-      break;
-    }
-  }
+  // int iter = 0;
+  // while(true){
+  //   if (utils::exists( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
+  //       iter++;
+  //   } else {
+  //     logFileStream.open( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
+  //     break;
+  //   }
+  // }
 
 }
 
@@ -31,42 +31,42 @@ IBVSRandomNode::~IBVSRandomNode(){
   logFileStream.close();
 }
 
-void IBVSRandomNode::changeFixedObstaclePosition(){
+// void IBVSRandomNode::changeFixedObstaclePosition(){
 
-    for (size_t i = 0; i < ACADO_N; ++i) {
-      acadoVariables.od[ACADO_NOD * i + 15] = _vert_obst1_[0];
-      acadoVariables.od[ACADO_NOD * i + 16] = _vert_obst1_[1];
-      acadoVariables.od[ACADO_NOD * i + 19] = _vert_obst2_[0];
-      acadoVariables.od[ACADO_NOD * i + 20] = _vert_obst2_[1];
-      acadoVariables.od[ACADO_NOD * i + 23] = _horiz_obst_[0];
-      acadoVariables.od[ACADO_NOD * i + 24] = _horiz_obst_[1];
-      acadoVariables.od[ACADO_NOD * i + 33] = _horiz_obst2_[0];
-      acadoVariables.od[ACADO_NOD * i + 34] = _horiz_obst2_[1];
-    }
+//     for (size_t i = 0; i < ACADO_N; ++i) {
+//       acadoVariables.od[ACADO_NOD * i + 15] = _vert_obst1_[0];
+//       acadoVariables.od[ACADO_NOD * i + 16] = _vert_obst1_[1];
+//       acadoVariables.od[ACADO_NOD * i + 19] = _vert_obst2_[0];
+//       acadoVariables.od[ACADO_NOD * i + 20] = _vert_obst2_[1];
+//       acadoVariables.od[ACADO_NOD * i + 23] = _horiz_obst_[0];
+//       acadoVariables.od[ACADO_NOD * i + 24] = _horiz_obst_[1];
+//       acadoVariables.od[ACADO_NOD * i + 33] = _horiz_obst2_[0];
+//       acadoVariables.od[ACADO_NOD * i + 34] = _horiz_obst2_[1];
+//     }
 
-    std::cout << FBLU("First vertical obstacle (x,y) Position: ") << acadoVariables.od[15] << " " << acadoVariables.od[16] << "\n";
-    std::cout << FBLU("Second vertical obstacle (x,y) Position: ") << acadoVariables.od[19] << " " << acadoVariables.od[20] << "\n";
-    std::cout << FBLU("First Horizontal obstacle (x,z) position: ") << acadoVariables.od[23] << " " << acadoVariables.od[24] << "\n";
-    std::cout << FBLU("Second Horizontal obstacle (x,z) position: ") << acadoVariables.od[33] << " " << acadoVariables.od[34] << "\n\n";
-}
+//     std::cout << FBLU("First vertical obstacle (x,y) Position: ") << acadoVariables.od[15] << " " << acadoVariables.od[16] << "\n";
+//     std::cout << FBLU("Second vertical obstacle (x,y) Position: ") << acadoVariables.od[19] << " " << acadoVariables.od[20] << "\n";
+//     std::cout << FBLU("First Horizontal obstacle (x,z) position: ") << acadoVariables.od[23] << " " << acadoVariables.od[24] << "\n";
+//     std::cout << FBLU("Second Horizontal obstacle (x,z) position: ") << acadoVariables.od[33] << " " << acadoVariables.od[34] << "\n\n";
+// }
 
-void IBVSRandomNode::changeDynObstaclePosition(){
+// void IBVSRandomNode::changeDynObstaclePosition(){
 
-    for (int i = 0; i < ACADO_N + 1; i++) {
-      acadoVariables.od[ACADO_NOD * i + 27] = dynObst_->getPose()(0);
-      acadoVariables.od[ACADO_NOD * i + 28] = dynObst_->getPose()(1);
-      acadoVariables.od[ACADO_NOD * i + 29] = dynObst_->getPose()(2);
-    }
+//     for (int i = 0; i < ACADO_N + 1; i++) {
+//       acadoVariables.od[ACADO_NOD * i + 27] = dynObst_->getPose()(0);
+//       acadoVariables.od[ACADO_NOD * i + 28] = dynObst_->getPose()(1);
+//       acadoVariables.od[ACADO_NOD * i + 29] = dynObst_->getPose()(2);
+//     }
 
-    if( dynObst_->getVel().norm() > 1e-2 ){
-      for (int i = 0; i < ACADO_N + 1; i++) {
-        acadoVariables.od[ACADO_NOD * i + 30] =  (_target_vel3f[0] > 1e-1) ? 1 / (dynObst_->getVel()(0) * 20) : 1;
-        acadoVariables.od[ACADO_NOD * i + 31] =  (_target_vel3f[1] > 1e-1) ? 1 / (dynObst_->getVel()(1) * 20) : 1;
-        acadoVariables.od[ACADO_NOD * i + 32] =  (_target_vel3f[2] > 1e-1) ? 1 / (dynObst_->getVel()(2) * 20) : 1;
-      }
-    }
+//     if( dynObst_->getVel().norm() > 1e-2 ){
+//       for (int i = 0; i < ACADO_N + 1; i++) {
+//         acadoVariables.od[ACADO_NOD * i + 30] =  (_target_vel3f[0] > 1e-1) ? 1 / (dynObst_->getVel()(0) * 20) : 1;
+//         acadoVariables.od[ACADO_NOD * i + 31] =  (_target_vel3f[1] > 1e-1) ? 1 / (dynObst_->getVel()(1) * 20) : 1;
+//         acadoVariables.od[ACADO_NOD * i + 32] =  (_target_vel3f[2] > 1e-1) ? 1 / (dynObst_->getVel()(2) * 20) : 1;
+//       }
+//     }
 
-}
+// }
 
 void IBVSRandomNode::writeLogData(){
 
@@ -113,65 +113,64 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
 
   stnl_controller.calculateRollPitchYawRateThrustCommands(command_roll_pitch_yaw_thrust_st_);
 
-  if(new_comand && randomSpawnDynObj){
-    new_comand = false;
+  // if(new_comand && randomSpawnDynObj){
+  //   new_comand = false;
     
-    Eigen::Vector3d tracjPt( acadoVariables.x[ ACADO_N * ACADO_NX ], 
-                             acadoVariables.x[ ACADO_N * ACADO_NX + 1 ], 
-                             acadoVariables.x[ ACADO_N * ACADO_NX + 2 ]);
+  //   Eigen::Vector3d tracjPt( acadoVariables.x[ ACADO_N * ACADO_NX ], 
+  //                            acadoVariables.x[ ACADO_N * ACADO_NX + 1 ], 
+  //                            acadoVariables.x[ ACADO_N * ACADO_NX + 2 ]);
 
-    Eigen::Vector3d spawningPt, spawningVel;
+  //   Eigen::Vector3d spawningPt, spawningVel;
 
-    if( dynObjSpawner.computeDynamicObstacleSpawningPosition( stnl_controller.trajectory_point.position_W,
-                                                              _t_delay,
-                                                              tracjPt,
-                                                              spawningPt,
-                                                              spawningVel ) ){
+  //   if( dynObjSpawner.computeDynamicObstacleSpawningPosition( stnl_controller.trajectory_point.position_W,
+  //                                                             _t_delay,
+  //                                                             tracjPt,
+  //                                                             spawningPt,
+  //                                                             spawningVel ) ){
 
-      std::cout << FRED("Dynamic Object spawn request sent!\n");
+  //     std::cout << FRED("Dynamic Object spawn request sent!\n");
 
-      _target_pos3f[0] = spawningPt.x();
-      _target_pos3f[1] = spawningPt.y();
-      _target_pos3f[2] = spawningPt.z();
+  //     _target_pos3f[0] = spawningPt.x();
+  //     _target_pos3f[1] = spawningPt.y();
+  //     _target_pos3f[2] = spawningPt.z();
 
-      _target_vel3f[0] = spawningVel.x();
-      _target_vel3f[1] = spawningVel.y();
-      _target_vel3f[2] = spawningVel.z();
+  //     _target_vel3f[0] = spawningVel.x();
+  //     _target_vel3f[1] = spawningVel.y();
+  //     _target_vel3f[2] = spawningVel.z();
 
-      trigger_dyn_obst_1_request = true;
-    }
-  }
+  //     trigger_dyn_obst_1_request = true;
+  //   }
+  // }
 
-  command_roll_pitch_yawrate_thrust_msg.header = odom_msg->header;
-  command_roll_pitch_yawrate_thrust_msg.roll = command_roll_pitch_yaw_thrust_st_(0);
-  command_roll_pitch_yawrate_thrust_msg.pitch = command_roll_pitch_yaw_thrust_st_(1);
-  command_roll_pitch_yawrate_thrust_msg.yaw_rate = command_roll_pitch_yaw_thrust_st_(2);
-  command_roll_pitch_yawrate_thrust_msg.thrust.z = command_roll_pitch_yaw_thrust_st_(3)*stnl_controller.getMass();
+  // command_roll_pitch_yawrate_thrust_msg.header = odom_msg->header;
+  // command_roll_pitch_yawrate_thrust_msg.roll = command_roll_pitch_yaw_thrust_st_(0);
+  // command_roll_pitch_yawrate_thrust_msg.pitch = command_roll_pitch_yaw_thrust_st_(1);
+  // command_roll_pitch_yawrate_thrust_msg.yaw_rate = command_roll_pitch_yaw_thrust_st_(2);
+  // command_roll_pitch_yawrate_thrust_msg.thrust.z = command_roll_pitch_yaw_thrust_st_(3)*stnl_controller.getMass();
     
-  command_roll_pitch_yawrate_thrust_pub_.publish(command_roll_pitch_yawrate_thrust_msg); 
+  // command_roll_pitch_yawrate_thrust_pub_.publish(command_roll_pitch_yawrate_thrust_msg); 
 
-  if( ( ros::Time::now().toSec() - startTime ) > GenerationNum*10.f && randomWaypointGeneration ){
+  // if( ( ros::Time::now().toSec() - startTime ) > GenerationNum*10.f && randomWaypointGeneration ){
 
-    GenerationNum++;
-    Eigen::Vector2f rand_xy_cmd(Eigen::Vector2f::Zero());
-    bool generationSucceded = false;
+  //   GenerationNum++;
+  //   Eigen::Vector2f rand_xy_cmd(Eigen::Vector2f::Zero());
+  //   bool generationSucceded = false;
     
-    while(!generationSucceded){
-      dynObjSpawner.computeRandomXYCommand(rand_xy_cmd);
-      nav_msgs::Odometry random_cmd;
-      random_cmd.pose.pose.position.x = rand_xy_cmd.x();
-      random_cmd.pose.pose.position.y = rand_xy_cmd.y();
-      generationSucceded = stnl_controller.setCommandPose(random_cmd);
-    }
-    command_sent = true;
-    new_comand = true;
-    std::cout << FGRN("Generating new trajectory comand: ") << GenerationNum << " " << ros::Time::now().toSec() << "\n";
-  }
+  //   while(!generationSucceded){
+  //     dynObjSpawner.computeRandomXYCommand(rand_xy_cmd);
+  //     nav_msgs::Odometry random_cmd;
+  //     random_cmd.pose.pose.position.x = rand_xy_cmd.x();
+  //     random_cmd.pose.pose.position.y = rand_xy_cmd.y();
+  //     generationSucceded = stnl_controller.setCommandPose(random_cmd);
+  //   }
+  //   command_sent = true;
+  //   new_comand = true;
+  //   std::cout << FGRN("Generating new trajectory comand: ") << GenerationNum << " " << ros::Time::now().toSec() << "\n";
+  // }
 
-  writeLogData();
+  //writeLogData();
   return;
 }
-
 
 static void error_callback(int error, const char* description)
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../short_term_solver/STIVS_controller.h"
+#include <src/local_planner_solver/SHERPA_local_planner.h>
 #include "randomObjectSpawner.h"
 #include <ros/package.h>
 
@@ -15,7 +15,7 @@
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Twist.h>
 
-//MavGui
+//MavGuilocal_planner_solver_lib
 #include <stdio.h>
 #include "../gui/imgui/imgui.h"
 #include "../gui/imgui/imgui_impl_glfw_gl3.h"

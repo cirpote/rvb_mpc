@@ -35,6 +35,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${ACADO_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}
 )
 
 #ASSIMP
@@ -49,5 +50,3 @@ if (GLEW_FOUND)
 endif()
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
-
-

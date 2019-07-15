@@ -1,7 +1,6 @@
 #pragma oncerandomObjestSpawner
 
-#include "../short_term_solver/STIVS_controller.h"
-
+#include <src/local_planner_solver/SHERPA_local_planner.h>
 
 class randomSpawner
 {

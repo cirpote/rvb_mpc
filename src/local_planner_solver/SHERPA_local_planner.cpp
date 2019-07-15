@@ -1,4 +1,4 @@
-#include "STIVS_controller.h"
+#include "SHERPA_local_planner.h"
 
 using namespace std;
 
@@ -19,18 +19,18 @@ using namespace std;
 
   bool stivsController::setCommandPose(const nav_msgs::Odometry odom_msg){
 
-    if( ( mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position).head(2) - pObst_vert1 ).norm() < .5 ||
-        ( mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position).head(2) - pObst_vert2 ).norm() < .5 ||
-        ( Eigen::Vector2d(mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position)(0),mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position)(1)) - pObst_horiz ).norm() < .5 ){
-            std::cout << FRED("Trajectory Point not allowed! Too much close to the obstacle!\n\n");
-      return false;
-    }
+    // if( ( mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position).head(2) - pObst_vert1 ).norm() < .5 ||
+    //     ( mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position).head(2) - pObst_vert2 ).norm() < .5 ||
+    //     ( Eigen::Vector2d(mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position)(0),mav_msgs::vector3FromPointMsg(odom_msg.pose.pose.position)(1)) - pObst_horiz ).norm() < .5 ){
+    //         std::cout << FRED("Trajectory Point not allowed! Too much close to the obstacle!\n\n");
+    //   return false;
+    // }
 
     mav_msgs::eigenOdometryFromMsg(odom_msg, &trajectory_point);  
-    computeDesiredState(); 
+    //computeDesiredState(); 
 
-    std::cerr << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose() << 
-                 " " << trajectory_point.orientation_W_B.w() << " " << trajectory_point.orientation_W_B.vec().transpose() << "\n";  
+    // std::cerr << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose() << 
+    //              " " << trajectory_point.orientation_W_B.w() << " " << trajectory_point.orientation_W_B.vec().transpose() << "\n";  
           
     return true;
   }
