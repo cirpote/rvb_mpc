@@ -8,11 +8,11 @@
 ACADOvariables acadoVariables;
 ACADOworkspace acadoWorkspace; 
 
-class stivsController : public BaseibvsController
+class SherpaAckermannPlanner : public BaseibvsController
 {  
 public:
-      stivsController(const std::string& yaml_file);
-      ~stivsController();
+      SherpaAckermannPlanner(const std::string& yaml_file);
+      ~SherpaAckermannPlanner();
 
       bool InitializeController();
       void calculateRollPitchYawRateThrustCommands(Eigen::Vector4d&);
@@ -22,8 +22,6 @@ public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       //private:
 
-      Eigen::Vector4d computeControls();
-      void computeDesiredState();
       void printDifferentialVariables();
       void printControlVariables();
 

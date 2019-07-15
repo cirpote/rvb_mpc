@@ -34,29 +34,24 @@ class BaseibvsController
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       // path_constraints params
-      Eigen::Vector2d q_target_;
-      Eigen::Vector3d q_position_, q_velocity_, q_attitude_;
-      Eigen::Vector4d q_command_;
+      Eigen::Vector2d q_command_, q_position_;
+      double q_orientation_, q_steering_angle_;
 
       // terminal_constraints params
-      Eigen::Vector2d qf_target_;
-      Eigen::Vector3d qf_position_, qf_velocity_, qf_attitude_;
+      Eigen::Vector2d qf_position_;
+      double qf_orientation_, qf_steering_angle_;
 
       // boundary_constraints params
-      Eigen::Vector2d roll_ref_bnds_, pitch_ref_bnds_, yaw_rate_bnds_, thrust_bnds_;
-      Eigen::Vector4d uv_bnds_;
+      Eigen::Vector2d vel_bnds_, phi_cmd_bnds_;
 
-      // target params
-      Eigen::Vector2d camera_instrinsics_;
-      Eigen::Vector3d pT_W_, pCam_B_, qCam_B_Cam_;
 
       // obstacle params
-      Eigen::Vector2d pObst_vert1, pObst_vert2, pObst_horiz, pObst_horiz2;
-      Eigen::Vector2d pObst_vert1_WMat, pObst_vert2_WMat, pObst_horiz_WMat, pObst_horiz2_WMat;
-      Eigen::Vector3d pDyn_Obst, pDyn_Obst_WMat;
+      Eigen::Vector2d pObst_vert1;
+      Eigen::Vector2d pObst_vert1_WMat;
       float obst_penalty_;
 
       //constant by parameters
+      float l_;
       float yaw_rate_damping;
       float mass_;
       float roll_time_constant_, roll_gain_, pitch_time_constant_, pitch_gain_;
