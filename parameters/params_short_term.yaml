@@ -32,9 +32,9 @@ boundary_constraints:
 ros_parameters:
 
   command_topic:          /command/pose      
-  odometry_topic:         /firefly/ground_truth/odometry 
-  image_topic:            /firefly/vi_sensor/left/image_raw
-  rpyrt_topic:            /command/roll_pitch_yawrate_thrust
+  odometry_topic:         /odom
+  image_topic:            /...
+  rpyrt_topic:            /sherpa/akrm_cmd
 
 integral_action:
 

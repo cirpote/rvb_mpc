@@ -258,7 +258,7 @@ void MavGUI::activatePublisher(const std::string &cmd_publisher_name) {
 
 void MavGUI::showGUI(bool *p_open) {
 
-  processAvatar();
+  //processAvatar();
   float curr_time = ros::Time::now().toSec();
   dt = curr_time - previous_time;
   previous_time = curr_time;

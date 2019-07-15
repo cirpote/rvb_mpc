@@ -7,15 +7,13 @@
 //ros STUFF
 #include <cv_bridge/cv_bridge.h>
 
-//mav msgs
-#include <mav_msgs/default_topics.h>
-
 //opencv library
 #include <opencv2/opencv.hpp>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 #include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/Twist.h>
 
 //MavGui
 #include <stdio.h>
