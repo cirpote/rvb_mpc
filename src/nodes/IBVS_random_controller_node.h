@@ -38,14 +38,14 @@ class IBVSRandomNode: public MavGUI
    
       // Boolean controls
       bool first_trajectory_cmd_;
-      randomSpawner dynObjSpawner;
+     //  randomSpawner dynObjSpawner;
 
       ofstream logFileStream;
       char packagePath[200];
       std::string fileName;
 
       //Controllers
-      stivsController stnl_controller;
+      SherpaAckermannPlanner SHERPA_planner_;
 
       // ros node handles
       ros::NodeHandle nh_;
@@ -54,9 +54,6 @@ class IBVSRandomNode: public MavGUI
       ros::Publisher command_roll_pitch_yawrate_thrust_pub_;
       ros::Subscriber odom_sub_;
       ros::Subscriber cmd_pose_sub_;
-      
-      //state variables
-      mav_msgs::EigenOdometry trajectory_point;
       
       //Solver Functions
       void initializeAcadoSolver();
@@ -71,7 +68,7 @@ class IBVSRandomNode: public MavGUI
 
       //commands
       Eigen::Vector4d command_roll_pitch_yaw_thrust_st_, command_roll_pitch_yaw_thrust_lt_;  
-      mav_msgs::RollPitchYawrateThrust command_roll_pitch_yawrate_thrust_msg;
+     //  mav_msgs::RollPitchYawrateThrust command_roll_pitch_yawrate_thrust_msg;
 
       //Random things
       bool new_comand = false;

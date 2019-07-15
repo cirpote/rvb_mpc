@@ -5,18 +5,14 @@
 #include <stdio.h>
 #include "utils.hpp"
 #include <chrono>
+#include <yaml-cpp/yaml.h>
 
 //ros
 #include <ros/ros.h>
 #include <ros/package.h>
-
-//ros msgs
+#include <tf/transform_listener.h>
 #include <nav_msgs/Odometry.h>
 
-// mav msgs
-#include <mav_msgs/conversions.h>
-#include <mav_msgs/eigen_mav_msgs.h>
-#include <yaml-cpp/yaml.h>
 
 class BaseibvsController
 {
@@ -44,7 +40,6 @@ class BaseibvsController
       // boundary_constraints params
       Eigen::Vector2d vel_bnds_, phi_cmd_bnds_;
 
-
       // obstacle params
       Eigen::Vector2d pObst_vert1;
       Eigen::Vector2d pObst_vert1_WMat;
@@ -59,15 +54,17 @@ class BaseibvsController
       int verbosity_;
       
       //state variables
-      mav_msgs::EigenOdometry odometry;
-      mav_msgs::EigenOdometry trajectory_point;
+      utils::EigenOdometry odometry;
+      utils::EigenOdometry trajectory_point;
+      float steer_angle_;
 
       //integral action variables
       Eigen::Vector4d integral_action_, integral_action_weights_;
       float attraction_ball_, anti_windup_ball_;
       float delta_time_, prev_time_;
       bool is_first_odometry_set_ = true;
-      
+      tf::TransformListener tfListner_;
+
  private:
 
       void initializeControllerfromYAML(const std::string& yaml_file);

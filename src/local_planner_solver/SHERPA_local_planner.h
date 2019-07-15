@@ -5,6 +5,8 @@
 #include "core/acado_common.h"
 #include "core/acado_auxiliary_functions.h"
 
+#include <chrono>
+
 ACADOvariables acadoVariables;
 ACADOworkspace acadoWorkspace; 
 

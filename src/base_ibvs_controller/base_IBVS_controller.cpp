@@ -26,10 +26,10 @@ void BaseibvsController::initializeControllerfromYAML(const std::string& yaml_fi
 
   // Path constraints factors assignment
   q_command_ << q_command.at(0), q_command.at(1);
-  q_position_ << q_position.at(0), q_position.at(1), q_position.at(2);
+  q_position_ << q_position.at(0), q_position.at(1);
   
   // Terminal constraints factors assignment
-  qf_position_ << qf_position.at(0), qf_position.at(1),qf_position.at(2);
+  qf_position_ << qf_position.at(0), qf_position.at(1);
 
   l_ = configuration["vehicle_parameters"]["l"].as<double>();
   anti_windup_ball_ = configuration["integral_action"]["anti_windup_ball"].as<double>();
@@ -37,17 +37,20 @@ void BaseibvsController::initializeControllerfromYAML(const std::string& yaml_fi
   integral_action_weights = configuration["integral_action"]["integral_weights"].as<std::vector<double>>();
   yaw_rate_damping = configuration["integral_action"]["yaw_rate_damping_factor"].as<double>();
 
-  vel_bnds = configuration["boundary_constraints"]["roll_bounds"].as<std::vector<double>>();
-  phi_cmd_bnds = configuration["boundary_constraints"]["pitch_bounds"].as<std::vector<double>>();
+
+  vel_bnds = configuration["boundary_constraints"]["vel_bounds"].as<std::vector<double>>();
+  phi_cmd_bnds = configuration["boundary_constraints"]["phi_cmd_bounds"].as<std::vector<double>>();
+
 
   vel_bnds_ << vel_bnds.at(0), vel_bnds.at(1);
   phi_cmd_bnds_ << phi_cmd_bnds.at(0), phi_cmd_bnds.at(1);
 
+
   verbosity_ = configuration["general_params"]["verbosity"].as<int>();
 
-  p_vert1 = configuration["obstacle"]["p_vert1_W"].as<std::vector<double>>();
+  p_vert1 = configuration["obstacles"]["p_vert1_W"].as<std::vector<double>>();
 
-  p_vert1_weights = configuration["obstacle"]["p_vert1_WMat"].as<std::vector<double>>();
+  p_vert1_weights = configuration["obstacles"]["p_vert1_WMat"].as<std::vector<double>>();
   
   pObst_vert1 << p_vert1.at(0), p_vert1.at(1);
 
@@ -72,7 +75,7 @@ void BaseibvsController::ComputeIntegralAction(){
 
     if( integral_action_.norm() < anti_windup_ball_ ){
       integral_action_.head(3) += delta_time_ * delta_position;
-      integral_action_(3) += delta_time_ * mav_utils::yawFromQuaternion(q_err);
+      integral_action_(3) += delta_time_ * utils::yawFromQuaternion(q_err);
     }
 
   } else if( delta_position.norm() > attraction_ball_ ) {
@@ -85,7 +88,7 @@ BaseibvsController::~BaseibvsController(){}
 
 void BaseibvsController::setOdometry(const nav_msgs::OdometryConstPtr& odom_msg) {
 
-  mav_msgs::eigenOdometryFromMsg(*odom_msg, &odometry);
+  utils::eigenOdometryFromMsg(*odom_msg, &odometry);
   if(is_first_odometry_set_){
     prev_time_ = odom_msg->header.stamp.toSec();
     is_first_odometry_set_ = false;

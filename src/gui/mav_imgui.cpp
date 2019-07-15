@@ -248,7 +248,7 @@ void MavGUI::updateFinalState() {
   cmd_msg.pose.pose.position.z = _des_pos_vec3f[2];
 
   Eigen::Quaterniond q( Eigen::AngleAxisd(_des_orientationf, Eigen::Vector3d::UnitZ() ) );
-  cmd_msg.pose.pose.orientation = mav_utils::fromEigenQuaternionrToQuaternion(q);
+  cmd_msg.pose.pose.orientation = utils::fromEigenQuaternionrToQuaternion(q);
   _cmd_pub.publish( cmd_msg );
 }
 
@@ -425,29 +425,29 @@ void MavGUI::changeGazeboFixedObstacleposition(){
 
   curr_pos_ = Eigen::Vector3d(_horiz_obst_[0] - 1.5, 0, _horiz_obst_[1] - 2.6);
   curr_att_ = Eigen::Vector3d(0, 0, 0);
-  curr_q_ = Eigen::Quaterniond( mav_utils::fromEulerAngToRotMat(curr_att_) );
+  curr_q_ = Eigen::Quaterniond( utils::fromEulerAngToRotMat(curr_att_) );
 
   gazebo_msgs::SetModelState setmodelstate;
   setmodelstate.request.model_state.model_name = "horizontal_obst_1";
-  setmodelstate.request.model_state.pose.position = mav_utils::fromEigenVectorToPoint(curr_pos_);
-  setmodelstate.request.model_state.pose.orientation = mav_utils::fromEigenQuaternionrToQuaternion(curr_q_);
+  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
+  setmodelstate.request.model_state.pose.orientation = utils::fromEigenQuaternionrToQuaternion(curr_q_);
   _set_mode_state.call(setmodelstate);
 
   curr_pos_ = Eigen::Vector3d(_horiz_obst2_[0] - 1.5, 0, _horiz_obst2_[1] - 3.7);
   setmodelstate.request.model_state.model_name = "horizontal_obst_2";
-  setmodelstate.request.model_state.pose.position = mav_utils::fromEigenVectorToPoint(curr_pos_);
+  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
   _set_mode_state.call(setmodelstate);
 
 
   curr_pos_ = Eigen::Vector3d(_vert_obst1_[0] - 1, 0, _vert_obst1_[1] - 0.45);
   setmodelstate.request.model_state.model_name = "vertical_obst_1";
-  setmodelstate.request.model_state.pose.position = mav_utils::fromEigenVectorToPoint(curr_pos_);
+  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
   _set_mode_state.call(setmodelstate);
 
 
   curr_pos_ = Eigen::Vector3d(_vert_obst2_[0] - 2, 0, _vert_obst2_[1] + 0.45);
   setmodelstate.request.model_state.model_name = "vertical_obst_2";
-  setmodelstate.request.model_state.pose.position = mav_utils::fromEigenVectorToPoint(curr_pos_);
+  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
   _set_mode_state.call(setmodelstate);
 
 
@@ -487,12 +487,12 @@ void MavGUI::setDynObstacleState(){
 
   curr_pos_ = Eigen::Vector3d( dynObst_->getPose()(0) + 4, dynObst_->getPose()(1), dynObst_->getPose()(2) );
   curr_att_ = Eigen::Vector3d(0.f, 0.f, 0.f);
-  curr_q_ = Eigen::Quaterniond( mav_utils::fromEulerAngToRotMat(curr_att_) );
+  curr_q_ = Eigen::Quaterniond( utils::fromEulerAngToRotMat(curr_att_) );
 
   gazebo_msgs::SetModelState setmodelstate;
   setmodelstate.request.model_state.model_name = "dynamic_obst_1";
-  setmodelstate.request.model_state.pose.position = mav_utils::fromEigenVectorToPoint(curr_pos_);
-  setmodelstate.request.model_state.pose.orientation = mav_utils::fromEigenQuaternionrToQuaternion(curr_q_);
+  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
+  setmodelstate.request.model_state.pose.orientation = utils::fromEigenQuaternionrToQuaternion(curr_q_);
   
   _set_mode_state.call(setmodelstate);
   changeDynObstaclePosition();

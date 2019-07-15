@@ -11,7 +11,7 @@ path_constraints:
 
 terminal_constraints:
 
-  qf_p:                   [100, 100, 100]
+  qf_p:                   [100, 100]
   qf_orientation:         100
   qf_steering_angle:      100
 
@@ -37,6 +37,11 @@ integral_action:
 general_params:
 
   verbosity:              0  # Verbosity_Level : 0,1,2
+
+obstacles:
+  
+  p_vert1_W:              [1.5, 1.5]
+  p_vert1_WMat:           [1, 1]
 
 log_params:
 

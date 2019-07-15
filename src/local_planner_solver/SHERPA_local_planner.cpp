@@ -3,7 +3,7 @@
 using namespace std;
 
 SherpaAckermannPlanner::SherpaAckermannPlanner(const std::string& yaml_file) 
-                                                : BaseibvsController(yaml_file){
+                                              : BaseibvsController(yaml_file) {
 
   W_.setZero();
   WN_.setZero();
@@ -24,7 +24,7 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
   //   return false;
   // }
 
-  mav_msgs::eigenOdometryFromMsg(odom_msg, &trajectory_point);  
+  utils::eigenOdometryFromMsg(odom_msg, &trajectory_point);  
 
   std::cerr << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose() << 
                " " << trajectory_point.orientation_W_B.w() << " " << trajectory_point.orientation_W_B.vec().transpose() << "\n";  
@@ -35,24 +35,26 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
 void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(Eigen::Vector4d& command_roll_pitch_yawrate_thrust_)
 {
     
-  // Eigen::Vector3d euler_angles;
-  // odometry.getEulerAngles(&euler_angles);
+  Eigen::Vector3d euler_angles;
+  odometry.getEulerAngles(&euler_angles);
   
-  // for (size_t i = 0; i < ACADO_N; i++) {
-  //   // Possibility to add here the FeedForward Term in "reference_" velocities 
-  //   reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W.transpose(), 
-  //                                           0, 0, 0, 
-  //                                           0, 0, trajectory_point.getYaw(), 
-  //                                           0, 0, 0,
-  //                                           0, 0, 0,
-  //                                           0, 0, 0, 0;
+  tf::StampedTransform leftWheelTf, rightWheelTf;
+  tfListner_.lookupTransform("/sherpa/base_link", "/sherpa/right_front_wheel", ros::Time(0), rightWheelTf);
+  tfListner_.lookupTransform("/sherpa/base_link", "/sherpa/left_front_wheel", ros::Time(0), leftWheelTf);
 
-  // }    
+  steer_angle_ = ( utils::yawFromTfQuaternion( leftWheelTf.getRotation() ) + utils::yawFromTfQuaternion( rightWheelTf.getRotation() ) ) / 2;
+
+  for (size_t i = 0; i < ACADO_N; i++) {
+    // Possibility to add here the FeedForward Term in "reference_" velocities 
+    reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W.block<2,1>(0,0).transpose(), 
+                                           trajectory_point.getYaw(), 0, 
+                                           0, 0;
+  }    
   
-  // referenceN_ << trajectory_point.position_W.transpose(), 0, 0, 0, 0, 0, trajectory_point.getYaw(), 0, 0;
+  referenceN_ << trajectory_point.position_W.block<2,1>(0,0).transpose(), trajectory_point.getYaw(), 0;
 
-  // Eigen::Matrix<double, ACADO_NX, 1> x_0;
-  // x_0 << odometry.position_W, odometry.getVelocityWorld(), euler_angles, 0;
+  Eigen::Matrix<double, ACADO_NX, 1> x_0;
+  x_0 << odometry.position_W.block<2,1>(0,0), trajectory_point.getYaw(), steer_angle_, 0;
 
   // Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(acadoVariables.x0)) = x_0;
   // Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(acadoVariables.y)) = reference_.transpose();
@@ -156,10 +158,10 @@ bool SherpaAckermannPlanner::InitializeController()
 
   }
 
-  std::cout << FBLU("Short Term controller Upper Bound Limits: ") << "\n"; 
+  std::cout << FBLU("Short Term controller Lower Bound Limits: ") << "\n"; 
   std::cout << acadoVariables.lbValues[0] << " " << acadoVariables.lbValues[1] << " " << "\n" << "\n";
 
-  std::cout << FBLU("Short Term controller Lower Bound Limits: ") << "\n"; 
+  std::cout << FBLU("Short Term controller Upper Bound Limits: ") << "\n"; 
   std::cout << acadoVariables.ubValues[0] << " " << acadoVariables.ubValues[1] << " " << "\n" << "\n";
 
   for (int i = 0; i < ACADO_N + 1; i++) {
