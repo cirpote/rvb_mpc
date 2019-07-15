@@ -1,9 +1,9 @@
-add_executable(local_planner_solver_ACADO_SHERPA local_planner_solver_ACADO_SHERPA.cpp)
-target_link_libraries(local_planner_solver_ACADO_SHERPA ${ACADO_SHARED_LIBRARIES})
-set_target_properties(local_planner_solver_ACADO_SHERPA PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/src/local_planner_solver/")
+add_executable(local_planner_solver_ACADO_SHERPA_exec local_planner_solver_ACADO_SHERPA.cpp)
+target_link_libraries(local_planner_solver_ACADO_SHERPA_exec ${ACADO_SHARED_LIBRARIES})
+set_target_properties(local_planner_solver_ACADO_SHERPA_exec PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/src/local_planner_solver/")
 
 add_custom_target(local_planner_solver_ACADO_SHERPA_run
-     COMMAND local_planner_solver_ACADO_SHERPA
+     COMMAND local_planner_solver_ACADO_SHERPA_exec
      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
      COMMENT "run generated local_planner_solver_ACADO_SHERPA in ${CMAKE_CURRENT_SOURCE_DIR}"
      VERBATIM
@@ -43,6 +43,6 @@ if(GENERATE_ACADO_CPP)
     add_dependencies(local_planner_solver_lib local_planner_solver_ACADO_SHERPA_run)
 endif(GENERATE_ACADO)
 
-add_executable(local_planner_solver_ACADO_SHERPA_TEST local_planner_solver_ACADO_SHERPA_TEST.cpp)
-target_link_libraries(local_planner_solver_ACADO_SHERPA_TEST ${ACADO_SHARED_LIBRARIES})
-set_target_properties(local_planner_solver_ACADO_SHERPA_TEST PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/src/local_planner_solver/")
+add_executable(local_planner_solver_ACADO_SHERPA_TEST_exec local_planner_solver_ACADO_SHERPA_TEST.cpp)
+target_link_libraries(local_planner_solver_ACADO_SHERPA_TEST_exec ${ACADO_SHARED_LIBRARIES})
+set_target_properties(local_planner_solver_ACADO_SHERPA_TEST_exec PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/src/local_planner_solver/")
