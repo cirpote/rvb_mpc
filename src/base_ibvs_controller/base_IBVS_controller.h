@@ -21,7 +21,7 @@ class BaseibvsController
       ~BaseibvsController();
 
       virtual bool InitializeController() = 0;
-      virtual void calculateRollPitchYawRateThrustCommands(Eigen::Vector4d&) = 0;
+      virtual void calculateRollPitchYawRateThrustCommands(Eigen::Vector2d&) = 0;
       void setOdometry(const nav_msgs::OdometryConstPtr&);
       virtual bool setCommandPose(const nav_msgs::Odometry) = 0;
       float inline getMass(){return mass_;}
@@ -54,8 +54,8 @@ class BaseibvsController
       int verbosity_;
       
       //state variables
-      utils::EigenOdometry odometry;
-      utils::EigenOdometry trajectory_point;
+      EigenOdometry odometry;
+      EigenOdometry trajectory_point;
       float steer_angle_;
 
       //integral action variables

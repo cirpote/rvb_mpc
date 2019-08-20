@@ -3,13 +3,13 @@
 using namespace std;
 
 IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& gui_file)
-  : MavGUI(nh, gui_file), nh_(nh), first_trajectory_cmd_(false), command_roll_pitch_yaw_thrust_st_(0,0,0,0), 
-    command_roll_pitch_yaw_thrust_lt_(0,0,0,0), SHERPA_planner_(yaml_short_file)
+  : MavGUI(nh, gui_file), nh_(nh), first_trajectory_cmd_(false), commands_(0,0), SHERPA_planner_(yaml_short_file), 
+    ang_vel_ref(SHERPA_planner_.odometry.angular_velocity_B)
 {
 
   odom_sub_ = nh_.subscribe( "/odom", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
   cmd_pose_sub_ = nh_.subscribe("/command/pose", 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
-  command_roll_pitch_yawrate_thrust_pub_ = nh_.advertise<geometry_msgs::Twist>("/sherpa/akrm_cmd", 1);
+  //command_vel_steering_angle_pub_ = nh_.advertise<geometry_msgs::Twist>("/sherpa/akrm_cmd", 1);
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   SHERPA_planner_.InitializeController();
@@ -24,11 +24,14 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   //     break;
   //   }
   // }
-
 }
 
 IBVSRandomNode::~IBVSRandomNode(){
   logFileStream.close();
+}
+
+void IBVSRandomNode::resetSolver(){
+  SHERPA_planner_.InitializeController();
 }
 
 void IBVSRandomNode::changeFixedObstaclePosition(){
@@ -83,15 +86,14 @@ void IBVSRandomNode::writeLogData(){
 void IBVSRandomNode::CommandPoseCallback(const nav_msgs::OdometryConstPtr& cmd_pose_msg)
 {
   ROS_INFO_ONCE("Optimal IBVS controller got first command message.");
-  // eigenOdometryFromMsg(*cmd_pose_msg, &trajectory_point);
-  // SHERPA_planner_.setCommandPose(*cmd_pose_msg);
+  SHERPA_planner_.setCommandPose(*cmd_pose_msg);
   
-  // if(first_trajectory_cmd_){
-  //   new_comand = true;
-  //   return;
-  // }
+  if(first_trajectory_cmd_){
+    new_comand = true;
+    return;
+  }
 
-  // startTime = ros::Time::now().toSec();
+  startTime = ros::Time::now().toSec();
   first_trajectory_cmd_ = true;  
 
   return;
@@ -111,62 +113,14 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   _current_yaw_orientation = utils::yawFromQuaternion(_current_orientation);
   _current_odom_position = utils::vector3FromPointMsg(odom_msg->pose.pose.position);   
 
-  SHERPA_planner_.calculateRollPitchYawRateThrustCommands(command_roll_pitch_yaw_thrust_st_);
+  SHERPA_planner_.calculateRollPitchYawRateThrustCommands(commands_);
 
-  // if(new_comand && randomSpawnDynObj){
-  //   new_comand = false;
-    
-  //   Eigen::Vector3d tracjPt( acadoVariables.x[ ACADO_N * ACADO_NX ], 
-  //                            acadoVariables.x[ ACADO_N * ACADO_NX + 1 ], 
-  //                            acadoVariables.x[ ACADO_N * ACADO_NX + 2 ]);
-
-  //   Eigen::Vector3d spawningPt, spawningVel;
-
-  //   if( dynObjSpawner.computeDynamicObstacleSpawningPosition( stnl_controller.trajectory_point.position_W,
-  //                                                             _t_delay,
-  //                                                             tracjPt,
-  //                                                             spawningPt,
-  //                                                             spawningVel ) ){
-
-  //     std::cout << FRED("Dynamic Object spawn request sent!\n");
-
-  //     _target_pos3f[0] = spawningPt.x();
-  //     _target_pos3f[1] = spawningPt.y();
-  //     _target_pos3f[2] = spawningPt.z();
-
-  //     _target_vel3f[0] = spawningVel.x();
-  //     _target_vel3f[1] = spawningVel.y();
-  //     _target_vel3f[2] = spawningVel.z();
-
-  //     trigger_dyn_obst_1_request = true;
-  //   }
-  // }
-
-  // command_roll_pitch_yawrate_thrust_msg.header = odom_msg->header;
-  // command_roll_pitch_yawrate_thrust_msg.roll = command_roll_pitch_yaw_thrust_st_(0);
-  // command_roll_pitch_yawrate_thrust_msg.pitch = command_roll_pitch_yaw_thrust_st_(1);
-  // command_roll_pitch_yawrate_thrust_msg.yaw_rate = command_roll_pitch_yaw_thrust_st_(2);
-  // command_roll_pitch_yawrate_thrust_msg.thrust.z = command_roll_pitch_yaw_thrust_st_(3)*stnl_controller.getMass();
-    
-  // command_roll_pitch_yawrate_thrust_pub_.publish(command_roll_pitch_yawrate_thrust_msg); 
-
-  // if( ( ros::Time::now().toSec() - startTime ) > GenerationNum*10.f && randomWaypointGeneration ){
-
-  //   GenerationNum++;
-  //   Eigen::Vector2f rand_xy_cmd(Eigen::Vector2f::Zero());
-  //   bool generationSucceded = false;
-    
-  //   while(!generationSucceded){
-  //     dynObjSpawner.computeRandomXYCommand(rand_xy_cmd);
-  //     nav_msgs::Odometry random_cmd;
-  //     random_cmd.pose.pose.position.x = rand_xy_cmd.x();
-  //     random_cmd.pose.pose.position.y = rand_xy_cmd.y();
-  //     generationSucceded = stnl_controller.setCommandPose(random_cmd);
-  //   }
-  //   command_sent = true;
-  //   new_comand = true;
-  //   std::cout << FGRN("Generating new trajectory comand: ") << GenerationNum << " " << ros::Time::now().toSec() << "\n";
-  // }
+  
+  //std::cout << FRED("current command: ") << commands_.transpose() << "\n"; 
+  //command.linear.x = fmax( -.5, fmin(.5, commands_(0)) );
+  //command.angular.z = fmax( -.5, fmin(.5, commands_(1)) );
+  //command_vel_steering_angle_pub_.publish(command);
+  //std::cout << FRED("current command: ") << command << "\n";
 
   //writeLogData();
   return;

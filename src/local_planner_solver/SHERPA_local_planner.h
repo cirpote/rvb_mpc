@@ -17,7 +17,7 @@ public:
       ~SherpaAckermannPlanner();
 
       bool InitializeController();
-      void calculateRollPitchYawRateThrustCommands(Eigen::Vector4d&);
+      void calculateRollPitchYawRateThrustCommands(Eigen::Vector2d&);
       bool setCommandPose(const nav_msgs::Odometry);
       void restartSolver();
 
@@ -27,7 +27,7 @@ public:
       void printDifferentialVariables();
       void printControlVariables();
 
-      const int NUM_STEPS = 5; /* Number of real-time iterations. */
+      const int NUM_STEPS = 4; /* Number of real-time iterations. */
       const float KKT_THRESHOLD = 1e-5; /* Threshold as termination criterion. */
 
       // solver matrices
@@ -42,5 +42,5 @@ public:
       //debug info
       double solve_time_average_;
       int solve_time, iter;
-
+      Eigen::Vector2d acc_W, vel_W_prev;
 };

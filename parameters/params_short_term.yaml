@@ -4,21 +4,21 @@ vehicle_parameters:
 
 path_constraints:
 
-  q_p:                    [100, 100]
+  q_p:                    [1000, 1000]
   q_orientation:          100
   q_steering_angle:       100
   q_control:              [100, 100]
 
 terminal_constraints:
 
-  qf_p:                   [100, 100]
-  qf_orientation:         100
+  qf_p:                   [2000, 2000]
+  qf_orientation:         2000
   qf_steering_angle:      100
 
 boundary_constraints:
 
-  vel_bounds:            [-1.5, 1.5]   
-  phi_cmd_bounds:        [-1, 1] 
+  vel_bounds:            [-.5, .5]   
+  phi_cmd_bounds:        [-.5, .5] 
 
 ros_parameters:
 
@@ -40,8 +40,8 @@ general_params:
 
 obstacles:
   
-  p_vert1_W:              [1.5, 1.5]
-  p_vert1_WMat:           [1, 1]
+  p_vert1_W:              [2, 2]
+  p_vert1_WMat:           [1.5, 1.5]
 
 log_params:
 

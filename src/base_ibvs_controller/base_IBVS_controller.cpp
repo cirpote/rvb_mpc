@@ -88,7 +88,7 @@ BaseibvsController::~BaseibvsController(){}
 
 void BaseibvsController::setOdometry(const nav_msgs::OdometryConstPtr& odom_msg) {
 
-  utils::eigenOdometryFromMsg(*odom_msg, &odometry);
+  eigenOdometryFromMsg(*odom_msg, &odometry);
   if(is_first_odometry_set_){
     prev_time_ = odom_msg->header.stamp.toSec();
     is_first_odometry_set_ = false;

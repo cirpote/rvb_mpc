@@ -11,6 +11,7 @@ SherpaAckermannPlanner::SherpaAckermannPlanner(const std::string& yaml_file)
   state_.setZero();
   reference_.setZero();
   referenceN_.setZero();
+  acc_W = vel_W_prev = Eigen::Vector2d::Zero();
 }
 
 SherpaAckermannPlanner::~SherpaAckermannPlanner(){}
@@ -24,7 +25,7 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
   //   return false;
   // }
 
-  utils::eigenOdometryFromMsg(odom_msg, &trajectory_point);  
+  eigenOdometryFromMsg(odom_msg, &trajectory_point);  
 
   std::cerr << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose() << 
                " " << trajectory_point.orientation_W_B.w() << " " << trajectory_point.orientation_W_B.vec().transpose() << "\n";  
@@ -32,75 +33,108 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
   return true;
 }
 
-void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(Eigen::Vector4d& command_roll_pitch_yawrate_thrust_)
+void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(Eigen::Vector2d& command_roll_pitch_yawrate_thrust_)
 {
     
   Eigen::Vector3d euler_angles;
   odometry.getEulerAngles(&euler_angles);
-  
+
   tf::StampedTransform leftWheelTf, rightWheelTf;
   tfListner_.lookupTransform("/sherpa/base_link", "/sherpa/right_front_wheel", ros::Time(0), rightWheelTf);
   tfListner_.lookupTransform("/sherpa/base_link", "/sherpa/left_front_wheel", ros::Time(0), leftWheelTf);
 
-  steer_angle_ = ( utils::yawFromTfQuaternion( leftWheelTf.getRotation() ) + utils::yawFromTfQuaternion( rightWheelTf.getRotation() ) ) / 2;
+  float left_steering_angle = utils::yawFromTfQuaternion( leftWheelTf.getRotation() );
+  while (left_steering_angle <= -1.57) left_steering_angle += 3.14;
+  while (left_steering_angle > 1.57) left_steering_angle -= 3.14;
 
+  float right_steering_angle = utils::yawFromTfQuaternion( rightWheelTf.getRotation() );
+  while (right_steering_angle <= -1.57) right_steering_angle += 3.14;
+  while (right_steering_angle > 1.57) right_steering_angle -= 3.14;
+  steer_angle_ = ( left_steering_angle + right_steering_angle ) / 2;
+
+
+  /*  NON LINEAR CONTROLLER INITIAL STATE AND CONSTRAINTS  */
   for (size_t i = 0; i < ACADO_N; i++) {
-    // Possibility to add here the FeedForward Term in "reference_" velocities 
     reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W.block<2,1>(0,0).transpose(), 
-                                           trajectory_point.getYaw(), 0, 
-                                           0, 0;
+                                           trajectory_point.getYaw(), 
+                                           0, 0,
+                                           0;
   }    
-  
-  referenceN_ << trajectory_point.position_W.block<2,1>(0,0).transpose(), trajectory_point.getYaw(), 0;
+
+  referenceN_ << trajectory_point.position_W.block<2,1>(0,0).transpose(), trajectory_point.getYaw();
 
   Eigen::Matrix<double, ACADO_NX, 1> x_0;
-  x_0 << odometry.position_W.block<2,1>(0,0), trajectory_point.getYaw(), steer_angle_, 0;
+  x_0 << odometry.position_W.block<2,1>(0,0), odometry.getYaw(), steer_angle_, 0;
 
-  // Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(acadoVariables.x0)) = x_0;
-  // Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(acadoVariables.y)) = reference_.transpose();
-  // Eigen::Map<Eigen::Matrix<double, ACADO_NYN, 1>>(const_cast<double*>(acadoVariables.yN)) = referenceN_.transpose();
+  // Eigen::Vector2d diff( odometry.getVelocityWorld().head(2) - vel_W_prev );
+  // acc_W = .9*acc_W +  .1 * ( diff / 0.01 );
+  // vel_W_prev = odometry.getVelocityWorld().head(2);
+
+  // for (size_t i = 0; i < ACADO_N; i++) 
+  //   reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W(0), 0, 0, trajectory_point.position_W(1), 0, 0, 0, 0;  
+
+  // referenceN_ << trajectory_point.position_W.block<2,1>(0,0).transpose();
+
+  // Eigen::Matrix<double, ACADO_NX, 1> x_0;
+  // x_0 << odometry.position_W(0), odometry.getVelocityWorld()(0), acc_W(0), 
+  //        odometry.position_W(1), odometry.getVelocityWorld()(1), acc_W(1);
+
+  Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(acadoVariables.x0)) = x_0;
+  Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(acadoVariables.y)) = reference_.transpose();
+  Eigen::Map<Eigen::Matrix<double, ACADO_NYN, 1>>(const_cast<double*>(acadoVariables.yN)) = referenceN_.transpose();
   
-  // //acado_timer t;
-  // acado_preparationStep();
-  // //acado_tic( &t );
-  // auto start = chrono::steady_clock::now();
+  acado_preparationStep();
+  auto start = chrono::steady_clock::now();
 
-  // for(iter = 0; iter < NUM_STEPS; ++iter)
-  // {
-  //   acado_feedbackStep( );
+  for(iter = 0; iter < NUM_STEPS; ++iter)
+  {
+    acado_feedbackStep( );
 
-  //   if(acado_getKKT() < KKT_THRESHOLD)
-  //     break;
+    //if(acado_getKKT() < KKT_THRESHOLD)
+    //  break;
 
-  //   acado_preparationStep();
-  // }
-  // //real_t te = acado_toc( &t );
-  // auto end = chrono::steady_clock::now();
-  // solve_time = chrono::duration_cast<chrono::microseconds>(end - start).count();
+    acado_preparationStep();
+  }
+  auto end = chrono::steady_clock::now();
+  solve_time = chrono::duration_cast<chrono::microseconds>(end - start).count();
 
-  // if(verbosity_ == Verbosity_Level::VERBOSE){   
-  //   std::cout << FBLU("Short Term time elapsed: ") << solve_time << "microsecs\n";
-  //   std::cout << FBLU("Short Term N° Iteration Performed: ") << iter << "\n\n"; 
-  // } else if (verbosity_ == Verbosity_Level::FEMMINA_CAGACAZZI ) {
-  //   std::cout << FBLU("Short Term time of one real-time iteration: ") <<  solve_time << " microsecs\n";
-  //   std::cout << FBLU("Short Term N° Iteration Performed: ") << iter << "\n\n"; 
-  //   std::cout << FBLU("Short Term Differential Variables: ") << "\n";
-  //   printDifferentialVariables();
-  //   std::cout << FBLU("Short Term Control Variables: ") << "\n";
-  //   printControlVariables();
-  // }
+  if(verbosity_ == Verbosity_Level::VERBOSE){   
+    std::cout << FBLU("Short Term time elapsed: ") << solve_time << "microsecs\n";
+    std::cout << FBLU("Short Term N° Iteration Performed: ") << iter << "\n\n"; 
+  } else if (verbosity_ == Verbosity_Level::FEMMINA_CAGACAZZI ) {
+    std::cout << FBLU("Short Term time of one real-time iteration: ") <<  solve_time << " microsecs\n";
+    std::cout << FBLU("Short Term N° Iteration Performed: ") << iter << "\n\n"; 
+    std::cout << FBLU("Short Term Differential Variables: ") << "\n";
+    printDifferentialVariables();
+    std::cout << FBLU("Short Term Control Variables: ") << "\n";
+    printControlVariables();
+    std::cout << FBLU("Short Term Desired State: ") << "\n";
+    std::cout << referenceN_.transpose() << "\n";
+  }
 
-  //real_t time_elapsed = iter * te;
-  //sendToLog( time_elapsed );
+  // float heading = atan2(acadoVariables.x[1+6], acadoVariables.x[4+6]);
+  // float vel_cmd = acadoVariables.x[1];  //cos(0) * acadoVariables.x[1+6] - sin(0) * acadoVariables.x[4+6]; 
+  
+  // std::cout << vel_cmd << " " << acadoVariables.x[1+6*5]  << "\n"; 
+
+  // float steer_angle_cmd = 0;
+  // if( fabs(vel_cmd) > 5e-2 )
+  //   steer_angle_cmd = atan2( 1.33*(acadoVariables.x[1]*acadoVariables.x[2] - acadoVariables.x[4]*acadoVariables.x[5]), 
+  //                     pow(acadoVariables.x[1]*acadoVariables.x[1] + acadoVariables.x[4]*acadoVariables.x[4], 3/2));
+
+  // command_roll_pitch_yawrate_thrust_ = Eigen::Vector2d(vel_cmd, steer_angle_cmd);
+
+  command_roll_pitch_yawrate_thrust_ = Eigen::Vector2d(acadoVariables.u[0], acadoVariables.u[1]);
 
   // ComputeIntegralAction();  
-
   // command_roll_pitch_yawrate_thrust_(0) = acadoVariables.u[0]; // + integral_action_(0) * integral_action_weights_(0);
   // command_roll_pitch_yawrate_thrust_(1) = acadoVariables.u[1]; // + integral_action_(1) * integral_action_weights_(1);
   // command_roll_pitch_yawrate_thrust_(2) = 2*acadoVariables.u[3] - yaw_rate_damping*odometry.getYawRate() + integral_action_(3) * integral_action_weights_(3);
   // command_roll_pitch_yawrate_thrust_(3) = acadoVariables.u[2] + integral_action_(2) * integral_action_weights_(2);
                                         
 }
+
+
 
 void SherpaAckermannPlanner::printDifferentialVariables(){
   int i, j;
@@ -129,14 +163,25 @@ bool SherpaAckermannPlanner::InitializeController()
   
   acado_initializeSolver();
 
+  // W_(0,0) = 100;
+  // W_(1,1) = 100;
+  // W_(2,2) = 100;
+  // W_(3,3) = 100;
+  // W_(4,4) = 100;
+  // W_(5,5) = 100;
+  // W_(6,6) = 300;
+  // W_(7,7) = 300;
+
+  // WN_(0,0) = 1000;
+  // WN_(1,1) = 1000;
+
   W_.block(0, 0, 2, 2) = q_position_.asDiagonal();
   W_(2, 2) = q_orientation_;
-  W_(3, 3) = q_steering_angle_;
-  W_.block(4, 4, 2, 2) = q_command_.asDiagonal();
+  W_.block(3, 3, 2, 2) = q_command_.asDiagonal();
+  W_(5,5) = 1000;
 
   WN_.block(0, 0, 2, 2) = qf_position_.asDiagonal();
   WN_(2, 2) = qf_orientation_;
-  WN_(3, 3) = qf_steering_angle_;
   
   std::cout << FBLU("Short Term controller W matrix: ") << "\n";    
   std::cout << W_.diagonal().transpose() << "\n" << "\n";
@@ -148,13 +193,18 @@ bool SherpaAckermannPlanner::InitializeController()
     
   for (size_t i = 0; i < ACADO_N; ++i) {
     
+    // acadoVariables.lbValues[ACADO_NU * i] = -.5;           // min vel
+    // acadoVariables.lbValues[ACADO_NU * i + 1] = -.5;   // min phi_cmd
+    // acadoVariables.ubValues[ACADO_NU * i] = .5;           // max vel
+    // acadoVariables.ubValues[ACADO_NU * i + 1] = .5;   // max phi_cmd
+
     acadoVariables.lbValues[ACADO_NU * i] = vel_bnds_(0);           // min vel
     acadoVariables.lbValues[ACADO_NU * i + 1] = phi_cmd_bnds_(0);   // min phi_cmd
     acadoVariables.ubValues[ACADO_NU * i] = vel_bnds_(1);           // max vel
     acadoVariables.ubValues[ACADO_NU * i + 1] = phi_cmd_bnds_(1);   // max phi_cmd
 
-    acadoVariables.lbAValues[ACADO_NPAC * i] = 1;                    // min obst1 dist
-    acadoVariables.ubAValues[ACADO_NPAC * i] = 1000;                 // max obst1 dist
+    acadoVariables.lbAValues[ACADO_NPAC * i] = 1;                     
+    acadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000;               
 
   }
 

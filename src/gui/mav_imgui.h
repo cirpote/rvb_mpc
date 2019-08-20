@@ -65,17 +65,15 @@ protected:
     void updateFinalState();
     void imageCb(const sensor_msgs::ImageConstPtr&);
     void activatePublisher(const std::string &cmd_publisher_name);
-    void setDynObstacleState();
-    virtual void changeDynObstaclePosition() = 0;
-    void changeGazeboFixedObstacleposition();
-    virtual void changeFixedObstaclePosition() = 0;
+    virtual void resetSolver() = 0;
     void computeRelativeTargetPose( vector<AprilTags::TagDetection>& detections, Eigen::Matrix4d& T);
     void initializeFromYaml(const std::string& yaml_file);
-    void checkAndChangeDynObstacle();
 
     // Gui utils
-    float _des_pos_vec3f[3];
-    float _des_orientationf;
+    float _des_pos_vec3f_t[2], _des_pos_vec3f_w[2];
+    float _des_orientationf_t, _des_orientationf_w;
+
+
     float _x_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _x_min = 0;
     float _x_max = 0;

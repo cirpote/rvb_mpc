@@ -34,6 +34,9 @@ class BaseGUI {
   
  protected:
 
+  virtual void resetSolver() = 0;
+
+
   void playGazeboScene(){
     ros::ServiceClient play_client =  _base_nh.serviceClient<std_srvs::Empty>("/gazebo/unpause_physics");
     std_srvs::Empty srv_play;
@@ -53,6 +56,7 @@ class BaseGUI {
     srv_model_state.request.model_state.pose.position.z = 0.08;
 
     resetModel_client.call(srv_model_state);
+    resetSolver();
   }
 
   

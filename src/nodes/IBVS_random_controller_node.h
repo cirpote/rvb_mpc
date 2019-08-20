@@ -51,7 +51,7 @@ class IBVSRandomNode: public MavGUI
       ros::NodeHandle nh_;
  
       // ros publisher and subscribers
-      ros::Publisher command_roll_pitch_yawrate_thrust_pub_;
+      ros::Publisher command_vel_steering_angle_pub_;
       ros::Subscriber odom_sub_;
       ros::Subscriber cmd_pose_sub_;
       
@@ -65,11 +65,13 @@ class IBVSRandomNode: public MavGUI
       void changeDynObstaclePosition();
       void changeFixedObstaclePosition();
       void writeLogData();
+      void resetSolver();
 
       //commands
-      Eigen::Vector4d command_roll_pitch_yaw_thrust_st_, command_roll_pitch_yaw_thrust_lt_;  
-     //  mav_msgs::RollPitchYawrateThrust command_roll_pitch_yawrate_thrust_msg;
-
+      Eigen::Vector2d commands_;  
+      geometry_msgs::Twist command;
+      Eigen::Matrix<double,3,1>& ang_vel_ref;
+      
       //Random things
       bool new_comand = false;
 

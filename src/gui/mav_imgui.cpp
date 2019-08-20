@@ -6,10 +6,13 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
 
   previous_time = ros::Time::now().toSec();
 
-  _des_pos_vec3f[0] = 0.f;
-  _des_pos_vec3f[1] = 0.f;
-  _des_pos_vec3f[2] = 0.f;
-  _des_orientationf = 0.f;
+  _des_pos_vec3f_t[0] = 0.f;
+  _des_pos_vec3f_t[1] = 0.f;
+  _des_orientationf_t = 0.f;
+
+  _des_pos_vec3f_w[0] = 0.f;
+  _des_pos_vec3f_w[1] = 0.f;
+  _des_orientationf_w = 0.f;
 
   _u_bounds[0] = -300.f;
   _u_bounds[1] = 300.f;
@@ -243,11 +246,11 @@ void MavGUI::updateFinalState() {
 
   nav_msgs::Odometry cmd_msg;
   cmd_msg.header.stamp = ros::Time::now();
-  cmd_msg.pose.pose.position.x = _des_pos_vec3f[0];
-  cmd_msg.pose.pose.position.y = _des_pos_vec3f[1];
-  cmd_msg.pose.pose.position.z = _des_pos_vec3f[2];
+  cmd_msg.pose.pose.position.x = _des_pos_vec3f_t[0];
+  cmd_msg.pose.pose.position.y = _des_pos_vec3f_t[1];
+  cmd_msg.pose.pose.position.z = 0;
 
-  Eigen::Quaterniond q( Eigen::AngleAxisd(_des_orientationf, Eigen::Vector3d::UnitZ() ) );
+  Eigen::Quaterniond q( Eigen::AngleAxisd(_des_orientationf_t, Eigen::Vector3d::UnitZ() ) );
   cmd_msg.pose.pose.orientation = utils::fromEigenQuaternionrToQuaternion(q);
   _cmd_pub.publish( cmd_msg );
 }
@@ -296,36 +299,36 @@ void MavGUI::showGUI(bool *p_open) {
   
   
   ImGui::Columns(2, "state_time");
-  ImGui::Text("Desired Final State.");
-  ImGui::DragFloat3("x y z [meters]", _des_pos_vec3f, 0.01f, -10.0f, 10.0f);
-  ImGui::DragFloat("yaw [radians]", &_des_orientationf, 0.01f, -M_PI, M_PI);
-  bool update_final_state2 = ImGui::Button("Update Final State");
-  if (update_final_state2) {
+  ImGui::Text("Desired State (Trajectory)");
+  ImGui::DragFloat2("x y [meters]", _des_pos_vec3f_t, 0.01f, -20.0f, 20.0f);
+  ImGui::DragFloat("yaw [radians]", &_des_orientationf_t, 0.01f, -M_PI, M_PI);
+  bool update_final_state = ImGui::Button("Update Final State");
+  if (update_final_state) {
     command_sent = true;
     updateFinalState();
   }
 
 
   ImGui::NextColumn();
-  ImGui::Text("Activate Perception Boundaries");
-  ImGui::DragFloat2("u_Lb u_Ub [pixels]", _u_bounds, 0.01f, -10000.0f, 10000.0f);
-  ImGui::DragFloat2("v_Lb v_Ub [pixels]", _v_bounds, 0.01f, -10000.0f, 10000.0f);
-  if(ImGui::Button("Activate Perception Boundaries")) std::cout << FRED("set UV bounds not available anymore!!\n");
-  
+  ImGui::Text("Desired State (Waypoint)");
+  ImGui::DragFloat2("x y [meters]", _des_pos_vec3f_w, 0.01f, -20.0f, 200.0f);
+  ImGui::DragFloat("yaw [radians]", &_des_orientationf_w, 0.01f, -M_PI, M_PI);
+  bool update_final_state2 = ImGui::Button("Update Final State");
+  if (update_final_state2) {
+    command_sent = true;
+    updateFinalState();
+  }
+
   ImGui::Spacing();
   ImGui::Separator();
-  ImGui::Spacing();
-
+  ImGui::Columns(1); // 4-ways, with border
+  ImGui::Text("Current State:");
+  ImGui::Columns(4, "mycolumns"); // 4-ways, with border
   //add new data for plot and update min_max
   addDataPlot(_x_values, _x_min, _x_max, _current_odom_position(0));
   addDataPlot(_y_values, _y_min, _y_max, _current_odom_position(1));
   addDataPlot(_z_values, _z_min, _z_max, _current_odom_position(2));
   addDataPlot(_yaw_values, _yaw_min, _yaw_max, _current_yaw_orientation);
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Text("Current State:");
-  ImGui::Columns(4, "mycolumns"); // 4-ways, with border
   ImGui::Separator();
   ImGui::Text("x[m]"); ImGui::NextColumn();
   ImGui::Text("y[m]"); ImGui::NextColumn();
@@ -348,40 +351,6 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Columns(1);
   
 
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
-  
-  ImGui::Columns(2, "target_state");
-  ImGui::Text("Desired Terget State");
-  ImGui::DragFloat3("xt yt zt [meters]", _target_pos3f, 0.01f, -10.0f, 10.0f);
-  ImGui::DragFloat3("vxt vyt vzt [meters/sec]", _target_vel3f, 0.01f, -10.0f, 10.0f);
-  ImGui::DragFloat("time delay [sec]", _t_delay, 0.01f, 0.f, 0.5f);
-
-  if( ImGui::Button("Set Target State") ) {
-    command_sent = false;
-    trigger_dyn_obst_1_request = true;
-    integrateDynObjecet = false;
-    std::cout << FGRN("Dyn Obstacle change position request received\n\n");
-  }
-
-  ImGui::NextColumn();
-  ImGui::Text("Fixed Obstacles Position");
-  ImGui::DragFloat2("x1 y1 [meters]", _vert_obst1_, 0.01f, -10.0f, 10.0f);
-  ImGui::DragFloat2("x2 y2 [meters]", _vert_obst2_, 0.01f, -10.0f, 10.0f);
-  ImGui::DragFloat2("x3 z3 [meters]", _horiz_obst_, 0.01f, -10.0f, 10.0f);
-  ImGui::DragFloat2("x4 z4 [meters]", _horiz_obst2_, 0.01f, -10.0f, 10.0f);
-  if(ImGui::Button("Change Fixed Obstacle Position")) changeGazeboFixedObstacleposition();
-
-  ImGui::Columns(1); 
-  checkAndChangeDynObstacle();
-
-  if(integrateDynObjecet){
-    dynObst_->Integrate(dt);
-    setDynObstacleState();
-  }
 
   ImGui::Spacing();
   ImGui::Separator();
@@ -419,81 +388,4 @@ void MavGUI::showGUI(bool *p_open) {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, avatarImg_res.cols, avatarImg_res.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, avatarImg_res.data);
   ImGui::Image((void*)(intptr_t)my_avatar_texture, ImVec2(avatarImg_res.cols, avatarImg_res.rows));
 
-}
-
-void MavGUI::changeGazeboFixedObstacleposition(){
-
-  curr_pos_ = Eigen::Vector3d(_horiz_obst_[0] - 1.5, 0, _horiz_obst_[1] - 2.6);
-  curr_att_ = Eigen::Vector3d(0, 0, 0);
-  curr_q_ = Eigen::Quaterniond( utils::fromEulerAngToRotMat(curr_att_) );
-
-  gazebo_msgs::SetModelState setmodelstate;
-  setmodelstate.request.model_state.model_name = "horizontal_obst_1";
-  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
-  setmodelstate.request.model_state.pose.orientation = utils::fromEigenQuaternionrToQuaternion(curr_q_);
-  _set_mode_state.call(setmodelstate);
-
-  curr_pos_ = Eigen::Vector3d(_horiz_obst2_[0] - 1.5, 0, _horiz_obst2_[1] - 3.7);
-  setmodelstate.request.model_state.model_name = "horizontal_obst_2";
-  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
-  _set_mode_state.call(setmodelstate);
-
-
-  curr_pos_ = Eigen::Vector3d(_vert_obst1_[0] - 1, 0, _vert_obst1_[1] - 0.45);
-  setmodelstate.request.model_state.model_name = "vertical_obst_1";
-  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
-  _set_mode_state.call(setmodelstate);
-
-
-  curr_pos_ = Eigen::Vector3d(_vert_obst2_[0] - 2, 0, _vert_obst2_[1] + 0.45);
-  setmodelstate.request.model_state.model_name = "vertical_obst_2";
-  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
-  _set_mode_state.call(setmodelstate);
-
-
-  changeFixedObstaclePosition();
-}
-
-void MavGUI::checkAndChangeDynObstacle(){
-
-
-
-    if(trigger_dyn_obst_1_request && command_sent){
-
-      if(!start_time_taken){
-            std::cout << FGRN("Target ") << "dynamic_obst" << FGRN(" Set to: ") << "\n"
-                      << FGRN("position: ") << _target_pos3f[0] << " " << _target_pos3f[1] << " " << _target_pos3f[2] << "\n"
-                      << FGRN("attitude: ") << _target_att3f[0] << " " << _target_att3f[1] << " " << _target_att3f[2] << "\n\n";
-            start_time = ros::Time::now().toSec();
-            start_time_taken = true;
-      }
-
-      float diff = ros::Time::now().toSec() - start_time;
-      if(diff >= *_t_delay){
-          dynObst_->setPoseandVelocity( Eigen::Vector3d( _target_pos3f[0], _target_pos3f[1], _target_pos3f[2] ),
-                                        Eigen::Vector3d( _target_vel3f[0], _target_vel3f[1], _target_vel3f[2] ));
-          setDynObstacleState();
-          changeGazeboFixedObstacleposition();
-          command_sent = false;
-          trigger_dyn_obst_1_request = false;
-          start_time_taken = false;
-          integrateDynObjecet = true;
-          std::cout << FGRN("Dynamic Obstacle moved!\n");
-      }
-    }
-}
-
-void MavGUI::setDynObstacleState(){
-
-  curr_pos_ = Eigen::Vector3d( dynObst_->getPose()(0) + 4, dynObst_->getPose()(1), dynObst_->getPose()(2) );
-  curr_att_ = Eigen::Vector3d(0.f, 0.f, 0.f);
-  curr_q_ = Eigen::Quaterniond( utils::fromEulerAngToRotMat(curr_att_) );
-
-  gazebo_msgs::SetModelState setmodelstate;
-  setmodelstate.request.model_state.model_name = "dynamic_obst_1";
-  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(curr_pos_);
-  setmodelstate.request.model_state.pose.orientation = utils::fromEigenQuaternionrToQuaternion(curr_q_);
-  
-  _set_mode_state.call(setmodelstate);
-  changeDynObstaclePosition();
 }
