@@ -1,10 +1,6 @@
 #include "mav_imgui.h"
 
 MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
-  
-  dynObst_ = std::shared_ptr<DynObstacle>( new DynObstacle(Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero()) );
-
-  previous_time = ros::Time::now().toSec();
 
   _des_pos_vec3f_t[0] = 0.f;
   _des_pos_vec3f_t[1] = 0.f;
@@ -14,46 +10,10 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _des_pos_vec3f_w[1] = 0.f;
   _des_orientationf_w = 0.f;
 
-  _u_bounds[0] = -300.f;
-  _u_bounds[1] = 300.f;
-
-  _v_bounds[0] = -300.f;
-  _v_bounds[1] = 300.f;
-
-  _target_pos3f[0] = 3.5;
-  _target_pos3f[1] = 0.f;
-  _target_pos3f[2] = 3.f;
-
-  _target_vel3f[0] = 0.f;
-  _target_vel3f[1] = 0.f;
-  _target_vel3f[2] = 0.f;
-  
-  _target_att3f[0] = 0.f;
-  _target_att3f[1] = 0.f;
-  _target_att3f[2] = 0.f;
-
-  _vert_obst1_[0] = 1.f;
-  _vert_obst1_[1] = 0.45;
-
-  _vert_obst2_[0] = 2;
-  _vert_obst2_[1] = -0.45;
-
-  _horiz_obst_[0] = 1.5;
-  _horiz_obst_[1] = 2.6;
-
-  _horiz_obst2_[0] = 1.5;
-  _horiz_obst2_[1] = 3.7;
-
   _gui_ros_time = ros::Time::now();
 
   _img_sub = _base_nh.subscribe("/firefly/vi_sensor/right/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
   _set_mode_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
-
-  m_tagDetector = NULL;
-  m_tagCodes = new AprilTags::TagCodes(AprilTags::tagCodes36h11);
-  m_tagDetector = new AprilTags::TagDetector(*m_tagCodes);
-
-  initializeFromYaml(yaml_file);
 
   camera = std::make_shared<Camera>( glm::vec3(15.f, 20.f, -65.0f), glm::vec3(0.0f, 1.0f, 0.0f), 100.f );
   std::cout << FGRN("Camera Correctly Initialized\n\n");
@@ -127,82 +87,6 @@ void MavGUI::processAvatar(){
 
 }
 
-void MavGUI::initializeFromYaml(const std::string& yaml_file){
-
-  std::cerr << "\n" << FBLU("Initializing GUI from:") << " " << yaml_file << "\n" << "\n";
-  YAML::Node configuration = YAML::LoadFile(yaml_file);
-
-  std::vector<double> camera_intrinsics, distortion_params, pCam_B, qCam_B__Cam;
-
-  double _target_size = configuration["camera_parameters"]["target_size"].as<double>();
-  camera_intrinsics = configuration["camera_parameters"]["camera_intrinsics"].as<std::vector<double>>();
-  distortion_params = configuration["camera_parameters"]["distortion_params"].as<std::vector<double>>();
-  pCam_B = configuration["camera_parameters"]["pCam_B"].as<std::vector<double>>();
-  qCam_B__Cam = configuration["camera_parameters"]["qCam_B__Cam"].as<std::vector<double>>();
-
-
-  cameraMatrix = cv::Matx33f( camera_intrinsics[0], 0, camera_intrinsics[2],
-                              0, camera_intrinsics[1], camera_intrinsics[3],
-                              0, 0, 1 ); 
-
-  distParam = cv::Vec4f(distortion_params[0], distortion_params[1], distortion_params[2], distortion_params[3]);
-
-  double s = _target_size/2;
-  objPts.push_back(cv::Point3f(-s,-s, 0));
-  objPts.push_back(cv::Point3f( s,-s, 0));
-  objPts.push_back(cv::Point3f( s, s, 0));
-  objPts.push_back(cv::Point3f(-s, s, 0));
-
-  R_body__cam << 0, 0, 1,
-                 1, 0, 0,
-                 0, -1, 0;
-
-  pCam_B_ << pCam_B[0], pCam_B[1], pCam_B[2];
-
-
-  Eigen::AngleAxisd rollAngle(qCam_B__Cam[0], Eigen::Vector3d::UnitX());
-  Eigen::AngleAxisd pitchAngle(qCam_B__Cam[1], Eigen::Vector3d::UnitY());
-  Eigen::AngleAxisd yawAngle(qCam_B__Cam[2], Eigen::Vector3d::UnitZ());
-
-  RCam_B__Cam_ = yawAngle * pitchAngle * rollAngle;
-
-}
-
-void MavGUI::computeRelativeTargetPose( vector<AprilTags::TagDetection>& detections, Eigen::Matrix4d& T){
-
-    cv::Mat rvec, tvec;
-    Eigen::Matrix3d wRo;
-
-    std::pair<float, float> p1 = detections[0].p[0];
-    std::pair<float, float> p2 = detections[0].p[1];
-    std::pair<float, float> p3 = detections[0].p[2];
-    std::pair<float, float> p4 = detections[0].p[3];
-
-    std::vector<cv::Point2f> imgPts;
-    imgPts.push_back(cv::Point2f(p1.first, p1.second));
-    imgPts.push_back(cv::Point2f(p2.first, p2.second));
-    imgPts.push_back(cv::Point2f(p3.first, p3.second));
-    imgPts.push_back(cv::Point2f(p4.first, p4.second));
-
-
-    cv::solvePnP(objPts, imgPts, cameraMatrix, distParam, rvec, tvec);
-    cv::Mat r;
-    cv::Rodrigues(rvec, r);
-
-    r.convertTo(r, CV_64FC1);
-    tvec.convertTo(tvec, CV_64FC1);
-    
-    wRo << r.at<double>(0,0), r.at<double>(0,1), r.at<double>(0,2), r.at<double>(1,0), r.at<double>(1,1), r.at<double>(1,2), r.at<double>(2,0), r.at<double>(2,1), r.at<double>(2,2);
-
-    T.topLeftCorner(3,3) = wRo;
-    T.col(3).head(3) << tvec.at<double>(0), tvec.at<double>(1), tvec.at<double>(2);
-    T.col(3).head(3) = T.col(3).head(3);
-    T.row(3) << 0,0,0,1; 
-
-    return;
-}
-
-
 void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
 
 
@@ -212,37 +96,12 @@ void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
   currImg_ = cv_ptr->image.clone();
   cv::cvtColor(currImg_, draw_image_, cv::COLOR_GRAY2BGR);
 
-  vector<AprilTags::TagDetection> detections = m_tagDetector->extractTags(currImg_);
-  
-  cv::circle(draw_image_, cv::Point(draw_image_.cols/2, draw_image_.rows/2), 3, cv::Scalar(255,0,0));
-  Eigen::Matrix4d T;
-
-  if (detections.size() > 0) {
-    
-    computeRelativeTargetPose(detections, T);
-    cv::circle(draw_image_, cv::Point2f(detections[0].cxy.first, detections[0].cxy.second), 3, cv::Scalar(0,255,0), 4);
-    cv::circle(draw_image_, cv::Point2f(detections[0].p[0].first,detections[0].p[0].second),2,cv::Scalar(255,0,0),2); //punto in basso a destra
-    cv::circle(draw_image_, cv::Point2f(detections[0].p[1].first,detections[0].p[1].second),2,cv::Scalar(255,0,0),2); //punto in alto a destra
-    cv::circle(draw_image_, cv::Point2f(detections[0].p[2].first,detections[0].p[2].second),2,cv::Scalar(255,0,0),2); //punto in alto a sinistra
-    cv::circle(draw_image_, cv::Point2f(detections[0].p[3].first,detections[0].p[3].second),2,cv::Scalar(255,0,0),2); //punto in basso a sinistra
-
-    // COMPUTING TARGET WORLD COORDINATES
-    /*Eigen::Vector3d curr_pT_W = _current_orientation.toRotationMatrix() * Eigen::AngleAxisd(_current_yaw_orientation, Eigen::Vector3d::UnitZ()).inverse() 
-          * Eigen::AngleAxisd(_current_yaw_orientation, Eigen::Vector3d::UnitZ()).inverse() * ( RCam_B__Cam_*R_body__cam*T.col(3).head(3) + pCam_B_) + _current_odom_position;
-          
-    if( ( curr_pT_W - pT_W_ ).norm() > 1e-1 ){
-      std::cout << FRED("ERROR: ") << ( curr_pT_W - pT_W_ ).norm() << std::endl;
-      pT_W_ = curr_pT_W;
-    }*/
-
-  }
-
   cv::resize(draw_image_, draw_image_res_, cv::Size( draw_image_.cols/2, draw_image_.rows/2) );
 
 }
 
 
-void MavGUI::updateFinalState() {
+void MavGUI::updateDesiredState() {
 
   nav_msgs::Odometry cmd_msg;
   cmd_msg.header.stamp = ros::Time::now();
@@ -255,17 +114,23 @@ void MavGUI::updateFinalState() {
   _cmd_pub.publish( cmd_msg );
 }
 
-void MavGUI::activatePublisher(const std::string &cmd_publisher_name) {
+void MavGUI::sendWaypoint() {
+
+  geometry_msgs::Point pt_msg;
+  pt_msg.x = _des_pos_vec3f_w[0];
+  pt_msg.x = _des_pos_vec3f_w[1];
+  pt_msg.x = _des_orientationf_w;
+  _waypoint_pub.publish(pt_msg);
+}
+
+void MavGUI::activatePublisher(const std::string &cmd_publisher_name, const std::string &waypoint_publisher_name) {
   _cmd_pub = _base_nh.advertise<nav_msgs::Odometry>(cmd_publisher_name, 1, this);
+  _waypoint_pub = _base_nh.advertise<geometry_msgs::Point>(waypoint_publisher_name, 1, this);
 }
 
 void MavGUI::showGUI(bool *p_open) {
 
   //processAvatar();
-  float curr_time = ros::Time::now().toSec();
-  dt = curr_time - previous_time;
-  previous_time = curr_time;
-
   ImGuiWindowFlags window_flags = 0;
   window_flags |= ImGuiWindowFlags_MenuBar;
  
@@ -284,40 +149,33 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Spacing(); 
   ImGui::Separator();
   ImGui::Spacing(); 
-  ImGui::Separator();
-  ImGui::Spacing();
   static char cmd_pub[64] = "/command/pose";
+  static char waypoint_pub[64] = "/waypoint";
   ImGui::InputText("cmd_pub", cmd_pub, 64);
-  bool activate_publisher = ImGui::Button("Activate Publisher");
-  if (activate_publisher) {
-    std::cerr << "activating publisher: " << cmd_pub << std::endl;
-    activatePublisher(cmd_pub);
+  ImGui::InputText("waypoint_pub", waypoint_pub, 64);
+  if (ImGui::Button("Activate Publisher")) {
+    std::cerr << "activating publishers: " << cmd_pub << " " << waypoint_pub << "\n";
+    activatePublisher(cmd_pub, waypoint_pub);
   }
 
   ImGui::Spacing();
   ImGui::Separator();
-  
-  
   ImGui::Columns(2, "state_time");
   ImGui::Text("Desired State (Trajectory)");
   ImGui::DragFloat2("x y [meters]", _des_pos_vec3f_t, 0.01f, -20.0f, 20.0f);
   ImGui::DragFloat("yaw [radians]", &_des_orientationf_t, 0.01f, -M_PI, M_PI);
-  bool update_final_state = ImGui::Button("Update Final State");
-  if (update_final_state) {
-    command_sent = true;
-    updateFinalState();
-  }
+  if (ImGui::Button("Update Desired State")) 
+    updateDesiredState();
+  
 
 
   ImGui::NextColumn();
   ImGui::Text("Desired State (Waypoint)");
   ImGui::DragFloat2("x y [meters]", _des_pos_vec3f_w, 0.01f, -20.0f, 200.0f);
   ImGui::DragFloat("yaw [radians]", &_des_orientationf_w, 0.01f, -M_PI, M_PI);
-  bool update_final_state2 = ImGui::Button("Update Final State");
-  if (update_final_state2) {
-    command_sent = true;
-    updateFinalState();
-  }
+  if (ImGui::Button("Send Waypoint"))
+    sendWaypoint();
+  
 
   ImGui::Spacing();
   ImGui::Separator();
