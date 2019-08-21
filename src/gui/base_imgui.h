@@ -78,7 +78,7 @@ class BaseGUI {
     ImGui::Separator();
     ImGui::Spacing();
 
-    static char urdf_model_name[64] = "firefly";
+    static char urdf_model_name[64] = "sherpa";
     ImGui::InputText("model name", urdf_model_name, 64);
     if(ImGui::Button("Reset")) resetGazeboScene(urdf_model_name); ImGui::NextColumn();
   }

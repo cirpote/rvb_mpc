@@ -63,6 +63,7 @@ protected:
     // Gui utils
     float _des_pos_vec3f_t[2], _des_pos_vec3f_w[2];
     float _des_orientationf_t, _des_orientationf_w;
+    float _des_pos[2], _des_orientation_w;
 
 
     float _x_values[PLOT_LINE_ARRAY_SIZE] = {0};

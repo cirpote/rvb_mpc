@@ -10,6 +10,10 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _des_pos_vec3f_w[1] = 0.f;
   _des_orientationf_w = 0.f;
 
+  _des_pos[0] = 0.f;
+  _des_pos[1] = 0.f;
+  _des_orientation_w = 0.f;
+
   _gui_ros_time = ros::Time::now();
 
   _img_sub = _base_nh.subscribe("/firefly/vi_sensor/right/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
@@ -117,9 +121,9 @@ void MavGUI::updateDesiredState() {
 void MavGUI::sendWaypoint() {
 
   geometry_msgs::Point pt_msg;
-  pt_msg.x = _des_pos_vec3f_w[0];
-  pt_msg.x = _des_pos_vec3f_w[1];
-  pt_msg.x = _des_orientationf_w;
+  pt_msg.x = _des_pos[0];
+  pt_msg.y = _des_pos[1];
+  pt_msg.z = _des_orientation_w;
   _waypoint_pub.publish(pt_msg);
 }
 
@@ -171,10 +175,15 @@ void MavGUI::showGUI(bool *p_open) {
 
   ImGui::NextColumn();
   ImGui::Text("Desired State (Waypoint)");
-  ImGui::DragFloat2("x y [meters]", _des_pos_vec3f_w, 0.01f, -20.0f, 200.0f);
-  ImGui::DragFloat("yaw [radians]", &_des_orientationf_w, 0.01f, -M_PI, M_PI);
-  if (ImGui::Button("Send Waypoint"))
-    sendWaypoint();
+  ImGui::DragFloat2("x y [meters] ", _des_pos_vec3f_w, 0.01f, -20.0f, 200.0f);
+  ImGui::DragFloat("yaw [radians] ", &_des_orientationf_w, 0.01f, -M_PI, M_PI);
+  if (ImGui::Button("Send Waypoint")){
+    _des_pos[0] = _des_pos_vec3f_w[0];
+    _des_pos[1] = _des_pos_vec3f_w[1];
+    _des_orientation_w = _des_orientationf_w;
+  }
+    
+  sendWaypoint();
   
 
   ImGui::Spacing();

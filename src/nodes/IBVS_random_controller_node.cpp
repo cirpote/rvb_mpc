@@ -34,54 +34,6 @@ void IBVSRandomNode::resetSolver(){
   SHERPA_planner_.InitializeController();
 }
 
-void IBVSRandomNode::changeFixedObstaclePosition(){
-
-//     for (size_t i = 0; i < ACADO_N; ++i) {
-//       acadoVariables.od[ACADO_NOD * i + 15] = _vert_obst1_[0];
-//       acadoVariables.od[ACADO_NOD * i + 16] = _vert_obst1_[1];
-//       acadoVariables.od[ACADO_NOD * i + 19] = _vert_obst2_[0];
-//       acadoVariables.od[ACADO_NOD * i + 20] = _vert_obst2_[1];
-//       acadoVariables.od[ACADO_NOD * i + 23] = _horiz_obst_[0];
-//       acadoVariables.od[ACADO_NOD * i + 24] = _horiz_obst_[1];
-//       acadoVariables.od[ACADO_NOD * i + 33] = _horiz_obst2_[0];
-//       acadoVariables.od[ACADO_NOD * i + 34] = _horiz_obst2_[1];
-//     }
-
-//     std::cout << FBLU("First vertical obstacle (x,y) Position: ") << acadoVariables.od[15] << " " << acadoVariables.od[16] << "\n";
-//     std::cout << FBLU("Second vertical obstacle (x,y) Position: ") << acadoVariables.od[19] << " " << acadoVariables.od[20] << "\n";
-//     std::cout << FBLU("First Horizontal obstacle (x,z) position: ") << acadoVariables.od[23] << " " << acadoVariables.od[24] << "\n";
-//     std::cout << FBLU("Second Horizontal obstacle (x,z) position: ") << acadoVariables.od[33] << " " << acadoVariables.od[34] << "\n\n";
-}
-
-void IBVSRandomNode::changeDynObstaclePosition(){
-
-//     for (int i = 0; i < ACADO_N + 1; i++) {
-//       acadoVariables.od[ACADO_NOD * i + 27] = dynObst_->getPose()(0);
-//       acadoVariables.od[ACADO_NOD * i + 28] = dynObst_->getPose()(1);
-//       acadoVariables.od[ACADO_NOD * i + 29] = dynObst_->getPose()(2);
-//     }
-
-//     if( dynObst_->getVel().norm() > 1e-2 ){
-//       for (int i = 0; i < ACADO_N + 1; i++) {
-//         acadoVariables.od[ACADO_NOD * i + 30] =  (_target_vel3f[0] > 1e-1) ? 1 / (dynObst_->getVel()(0) * 20) : 1;
-//         acadoVariables.od[ACADO_NOD * i + 31] =  (_target_vel3f[1] > 1e-1) ? 1 / (dynObst_->getVel()(1) * 20) : 1;
-//         acadoVariables.od[ACADO_NOD * i + 32] =  (_target_vel3f[2] > 1e-1) ? 1 / (dynObst_->getVel()(2) * 20) : 1;
-//       }
-//     }
-
-}
-
-void IBVSRandomNode::writeLogData(){
-
-  // logFileStream << ros::Time::now().toSec() << " " << stnl_controller.odometry.position_W.x() << " " << stnl_controller.odometry.position_W.y() << " " << stnl_controller.odometry.position_W.z() << " " <<
-  //                  stnl_controller.odometry.orientation_W_B.w() << " " << stnl_controller.odometry.orientation_W_B.x() << " " << stnl_controller.odometry.orientation_W_B.y() << " " << stnl_controller.odometry.orientation_W_B.z() << " " <<
-  //                  command_roll_pitch_yawrate_thrust_msg.roll << " " << command_roll_pitch_yawrate_thrust_msg.pitch << " " << command_roll_pitch_yawrate_thrust_msg.yaw_rate << " " <<  command_roll_pitch_yawrate_thrust_msg.thrust.z << " " <<
-  //                  trajectory_point.position_W.x() << " " << trajectory_point.position_W.y() << " " << trajectory_point.position_W.z() << " " << trajectory_point.getYaw() << " " <<
-  //                  _target_pos3f[0] << " " << _target_pos3f[1] << " " << _target_pos3f[2] << " " << _target_vel3f[0] << " " << _target_vel3f[1] << " " << _target_vel3f[2] << " " << *_t_delay << " " <<
-  //                  _vert_obst1_[0] << " " << _vert_obst1_[1] << " " << _vert_obst2_[0] << " " << _vert_obst2_[1] << " " << _horiz_obst_[0] << " " << _horiz_obst_[1] << " " <<
-  //                  stnl_controller.pT_W_.x() << " " << stnl_controller.pT_W_.y() << " " << stnl_controller.pT_W_.z() << " " << stnl_controller.camera_instrinsics_.x() << " " << stnl_controller.camera_instrinsics_.y() <<  " " <<
-  //                  stnl_controller.iter << " " << stnl_controller.solve_time << "\n";
-}
 
 void IBVSRandomNode::CommandPoseCallback(const nav_msgs::OdometryConstPtr& cmd_pose_msg)
 {
@@ -104,17 +56,16 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   
   ROS_INFO_ONCE("Optimal IBVS controller got first odometry message.");
 
+  SHERPA_planner_.setOdometry(odom_msg);
+  _current_orientation = utils::quaternionFromMsg(odom_msg->pose.pose.orientation); 
+  _current_yaw_orientation = utils::yawFromQuaternion(_current_orientation);
+  _current_odom_position = utils::vector3FromPointMsg(odom_msg->pose.pose.position);  
+
   // Check Is the first trajectory msg has been received
   if(!first_trajectory_cmd_)
     return;
 
-  SHERPA_planner_.setOdometry(odom_msg);
-  _current_orientation = utils::quaternionFromMsg(odom_msg->pose.pose.orientation); 
-  _current_yaw_orientation = utils::yawFromQuaternion(_current_orientation);
-  _current_odom_position = utils::vector3FromPointMsg(odom_msg->pose.pose.position);   
-
   SHERPA_planner_.calculateRollPitchYawRateThrustCommands(commands_);
-
   
   //std::cout << FRED("current command: ") << commands_.transpose() << "\n"; 
   //command.linear.x = fmax( -.5, fmin(.5, commands_(0)) );
@@ -122,7 +73,6 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   //command_vel_steering_angle_pub_.publish(command);
   //std::cout << FRED("current command: ") << command << "\n";
 
-  //writeLogData();
   return;
 }
 

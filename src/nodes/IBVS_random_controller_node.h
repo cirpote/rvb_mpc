@@ -62,9 +62,6 @@ class IBVSRandomNode: public MavGUI
       void OdometryCallback(const nav_msgs::OdometryConstPtr&);
       void CommandPoseCallback(const nav_msgs::OdometryConstPtr&);
       void ImageCallback(const sensor_msgs::ImageConstPtr&);
-      void changeDynObstaclePosition();
-      void changeFixedObstaclePosition();
-      void writeLogData();
       void resetSolver();
 
       //commands
