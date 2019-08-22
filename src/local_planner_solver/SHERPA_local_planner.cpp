@@ -39,20 +39,6 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(Eigen::Vect
   Eigen::Vector3d euler_angles;
   odometry.getEulerAngles(&euler_angles);
 
-  tf::StampedTransform leftWheelTf, rightWheelTf;
-  tfListner_.lookupTransform("/sherpa/base_link", "/sherpa/right_front_wheel", ros::Time(0), rightWheelTf);
-  tfListner_.lookupTransform("/sherpa/base_link", "/sherpa/left_front_wheel", ros::Time(0), leftWheelTf);
-
-  float left_steering_angle = utils::yawFromTfQuaternion( leftWheelTf.getRotation() );
-  while (left_steering_angle <= -1.57) left_steering_angle += 3.14;
-  while (left_steering_angle > 1.57) left_steering_angle -= 3.14;
-
-  float right_steering_angle = utils::yawFromTfQuaternion( rightWheelTf.getRotation() );
-  while (right_steering_angle <= -1.57) right_steering_angle += 3.14;
-  while (right_steering_angle > 1.57) right_steering_angle -= 3.14;
-  steer_angle_ = ( left_steering_angle + right_steering_angle ) / 2;
-
-
   /*  NON LINEAR CONTROLLER INITIAL STATE AND CONSTRAINTS  */
   for (size_t i = 0; i < ACADO_N; i++) {
     reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W.block<2,1>(0,0).transpose(), 

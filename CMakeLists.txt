@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   roslib
   tf
+  rm3_ackermann_controller
 )
 
 find_package(yaml-cpp REQUIRED)

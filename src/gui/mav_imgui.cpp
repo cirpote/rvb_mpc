@@ -10,14 +10,14 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _des_pos_vec3f_w[1] = 0.f;
   _des_orientationf_w = 0.f;
 
-  _des_pos[0] = 0.f;
-  _des_pos[1] = 0.f;
-  _des_orientation_w = 0.f;
+  _K_values[0] = 0.2;
+  _K_values[1] = 0.4;
+  _K_values[2] = 4.f;
 
   _gui_ros_time = ros::Time::now();
 
   _img_sub = _base_nh.subscribe("/firefly/vi_sensor/right/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
-  _set_mode_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
+  _set_control_gains = _base_nh.serviceClient<rm3_ackermann_controller::SetKvalues>("/set_k");
 
   camera = std::make_shared<Camera>( glm::vec3(15.f, 20.f, -65.0f), glm::vec3(0.0f, 1.0f, 0.0f), 100.f );
   std::cout << FGRN("Camera Correctly Initialized\n\n");
@@ -121,10 +121,11 @@ void MavGUI::updateDesiredState() {
 void MavGUI::sendWaypoint() {
 
   geometry_msgs::Point pt_msg;
-  pt_msg.x = _des_pos[0];
-  pt_msg.y = _des_pos[1];
-  pt_msg.z = _des_orientation_w;
-  _waypoint_pub.publish(pt_msg);
+  pt_msg.x = _des_pos_vec3f_w[0];
+  pt_msg.y = _des_pos_vec3f_w[1];
+  pt_msg.z = _des_orientationf_w;
+  if(_sendingWaypoint)
+    _waypoint_pub.publish(pt_msg);
 }
 
 void MavGUI::activatePublisher(const std::string &cmd_publisher_name, const std::string &waypoint_publisher_name) {
@@ -177,11 +178,11 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Text("Desired State (Waypoint)");
   ImGui::DragFloat2("x y [meters] ", _des_pos_vec3f_w, 0.01f, -20.0f, 200.0f);
   ImGui::DragFloat("yaw [radians] ", &_des_orientationf_w, 0.01f, -M_PI, M_PI);
-  if (ImGui::Button("Send Waypoint")){
-    _des_pos[0] = _des_pos_vec3f_w[0];
-    _des_pos[1] = _des_pos_vec3f_w[1];
-    _des_orientation_w = _des_orientationf_w;
-  }
+  if (ImGui::Button("Start Sending"))
+    _sendingWaypoint = true;
+  ImGui::SameLine();
+  if (ImGui::Button("Stop Sending"))
+    _sendingWaypoint = false;
     
   sendWaypoint();
   
@@ -251,8 +252,21 @@ void MavGUI::showGUI(bool *p_open) {
   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
   ImGui::NextColumn();
-  ImGui::Text("UAV Avatar");
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, avatarImg_res.cols, avatarImg_res.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, avatarImg_res.data);
-  ImGui::Image((void*)(intptr_t)my_avatar_texture, ImVec2(avatarImg_res.cols, avatarImg_res.rows));
+  ImGui::Text("Control law gains");
+  ImGui::DragFloat3(" K1 K2 K3 ", _K_values, 0.01f, -20.0f, 200.0f);
+  if (ImGui::Button("Send gains"))
+    changeControlLawGains();
+
+}
+
+void MavGUI::changeControlLawGains(){
+
+  rm3_ackermann_controller::SetKvalues srvCall;
+  srvCall.request.k1 = _K_values[0];
+  srvCall.request.k2 = _K_values[1];
+  srvCall.request.k3 = _K_values[2];
+  _set_control_gains.call(srvCall);
+
+  std::cout << FBLU("MavGUI: ") << srvCall.response.result << "\n";
 
 }

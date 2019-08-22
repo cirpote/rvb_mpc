@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="rosbag" type="play" name="rosbag" required="true" args="/home/ciro/sucker_detection/sherpa_03082019/mohammed_25.bag --clock"/>
+  <node name="extract" pkg="image_view" type="extract_images" respawn="false" required="true" output="screen" cwd="ROS_HOME">
+    <remap from="image" to="/usb_cam/image_raw"/>
+    <param name="sec_per_frame" type="double" value="0.3"/>
+  </node>
+</launch>

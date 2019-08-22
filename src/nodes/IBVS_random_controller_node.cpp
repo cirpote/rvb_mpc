@@ -13,17 +13,6 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   SHERPA_planner_.InitializeController();
-  this->init3DObjRendering( ros::package::getPath("rvb_mpc") );
-
-  // int iter = 0;
-  // while(true){
-  //   if (utils::exists( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
-  //       iter++;
-  //   } else {
-  //     logFileStream.open( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
-  //     break;
-  //   }
-  // }
 }
 
 IBVSRandomNode::~IBVSRandomNode(){

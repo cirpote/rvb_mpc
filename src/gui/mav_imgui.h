@@ -29,6 +29,8 @@
 #include "../assimp_loader/camera.h"
 #include "../assimp_loader/model.h"
 
+#include <rm3_ackermann_controller/SetKvalues.h>
+
 class MavGUI: public BaseGUI{
 public:
     MavGUI(ros::NodeHandle nh, const std::string& yaml_file);
@@ -44,14 +46,14 @@ public:
 
 protected:
 
-    ros::ServiceClient _set_mode_state;
-
+    // ROS service call
+    ros::ServiceClient _set_control_gains;
     ros::Time _gui_ros_time;
 
-    //ROS subscriber
+    // ROS subscriber
     ros::Subscriber _img_sub;
-
-    //ROS publisher
+    
+    // ROS publisher
     ros::Publisher _cmd_pub, _waypoint_pub;
 
     void updateDesiredState();
@@ -59,11 +61,13 @@ protected:
     void imageCb(const sensor_msgs::ImageConstPtr&);
     void activatePublisher(const std::string&, const std::string&);
     virtual void resetSolver() = 0;
+    void changeControlLawGains();
 
     // Gui utils
     float _des_pos_vec3f_t[2], _des_pos_vec3f_w[2];
     float _des_orientationf_t, _des_orientationf_w;
-    float _des_pos[2], _des_orientation_w;
+    bool _sendingWaypoint = false;
+    float _K_values[3];
 
 
     float _x_values[PLOT_LINE_ARRAY_SIZE] = {0};
