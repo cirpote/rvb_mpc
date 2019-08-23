@@ -186,13 +186,12 @@ void MavGUI::showGUI(bool *p_open) {
     
   sendWaypoint();
   
-
+  // Plotting Telemetry
   ImGui::Spacing();
   ImGui::Separator();
   ImGui::Columns(1); // 4-ways, with border
   ImGui::Text("Current State:");
   ImGui::Columns(4, "mycolumns"); // 4-ways, with border
-  //add new data for plot and update min_max
   addDataPlot(_x_values, _x_min, _x_max, _current_odom_position(0));
   addDataPlot(_y_values, _y_min, _y_max, _current_odom_position(1));
   addDataPlot(_z_values, _z_min, _z_max, _current_odom_position(2));
@@ -216,10 +215,39 @@ void MavGUI::showGUI(bool *p_open) {
                     "z", _z_min, _z_max, ImVec2(0,40)); ImGui::NextColumn();
   ImGui::PlotLines("",_yaw_values, IM_ARRAYSIZE(_yaw_values), 0,
                     "yaw", _yaw_min, _yaw_max, ImVec2(0,40));
+
+  // Plotting Ackermann Commands and Lyapunov Cost Function
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Columns(1); // 4-ways, with border
+  ImGui::Text("Commands and Lyapunov Cost Function:");
+  ImGui::Columns(3, "mycolumns"); 
+  addDataPlot(_v_values, _v_min, _v_max, _v);
+  addDataPlot(_phi_values, _phi_min, _phi_max, _phi);
+  addDataPlot(_lyapunov_values, _lyapunov_min, _lyapunov_max, _lyapunov_cost);
+  ImGui::Separator();
+  ImGui::Text("v[m/s]"); ImGui::NextColumn();
+  ImGui::Text("phi[rad]"); ImGui::NextColumn();
+  ImGui::Text("Lyapunov"); ImGui::NextColumn();
+  ImGui::Separator();
+  ImGui::Text("%f", _v); ImGui::NextColumn();
+  ImGui::Text("%f", _phi); ImGui::NextColumn();
+  ImGui::Text("%f", _lyapunov_cost); ImGui::NextColumn();
+
+  // ImGui::PlotHistogram("Histogram", _v_values, IM_ARRAYSIZE(_v_values), 0, NULL, _v_min, _v_max, ImVec2(0,80)); ImGui::NextColumn();
+
+  ImGui::PlotLines("",_v_values, IM_ARRAYSIZE(_v_values), 0,
+                    "v", _v_min, _v_max, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::PlotLines("",_phi_values, IM_ARRAYSIZE(_phi_values), 0,
+                    "phi", _phi_min, _phi_max, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::PlotLines("",_lyapunov_values, IM_ARRAYSIZE(_lyapunov_values), 0,
+                    "lyapunov", _lyapunov_min, _lyapunov_max, ImVec2(0,40)); ImGui::NextColumn();
+
+
+
+
+
   ImGui::Columns(1);
-  
-
-
   ImGui::Spacing();
   ImGui::Separator();
 

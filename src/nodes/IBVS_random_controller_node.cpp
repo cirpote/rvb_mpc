@@ -9,6 +9,7 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
 
   odom_sub_ = nh_.subscribe( "/odom", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
   cmd_pose_sub_ = nh_.subscribe("/command/pose", 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
+  ackrmann_cms_sub_ = nh_.subscribe("/sherpa/akrm_cmd", 1, &IBVSRandomNode::AkrmCommandsCallback, this, ros::TransportHints().tcpNoDelay() );
   //command_vel_steering_angle_pub_ = nh_.advertise<geometry_msgs::Twist>("/sherpa/akrm_cmd", 1);
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
@@ -23,6 +24,10 @@ void IBVSRandomNode::resetSolver(){
   SHERPA_planner_.InitializeController();
 }
 
+void IBVSRandomNode::AkrmCommandsCallback(const geometry_msgs::TwistConstPtr& akrm_cmd_msg){
+  _v = akrm_cmd_msg->linear.x;
+  _phi = akrm_cmd_msg->angular.z;
+}
 
 void IBVSRandomNode::CommandPoseCallback(const nav_msgs::OdometryConstPtr& cmd_pose_msg)
 {

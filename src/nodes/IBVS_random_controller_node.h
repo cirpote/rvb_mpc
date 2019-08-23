@@ -54,6 +54,7 @@ class IBVSRandomNode: public MavGUI
       ros::Publisher command_vel_steering_angle_pub_;
       ros::Subscriber odom_sub_;
       ros::Subscriber cmd_pose_sub_;
+      ros::Subscriber ackrmann_cms_sub_;
       
       //Solver Functions
       void initializeAcadoSolver();
@@ -61,6 +62,7 @@ class IBVSRandomNode: public MavGUI
       //Callbacks
       void OdometryCallback(const nav_msgs::OdometryConstPtr&);
       void CommandPoseCallback(const nav_msgs::OdometryConstPtr&);
+      void AkrmCommandsCallback(const geometry_msgs::TwistConstPtr&);
       void ImageCallback(const sensor_msgs::ImageConstPtr&);
       void resetSolver();
 

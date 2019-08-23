@@ -82,7 +82,17 @@ protected:
     float _yaw_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _yaw_min = 0;
     float _yaw_max = 0;
-    
+
+
+    float _v_values[PLOT_LINE_ARRAY_SIZE] = {0};
+    float _v_min = 0;
+    float _v_max = 0;
+    float _phi_values[PLOT_LINE_ARRAY_SIZE] = {0};
+    float _phi_min = 0;
+    float _phi_max = 0;
+    float _lyapunov_values[PLOT_LINE_ARRAY_SIZE] = {0};
+    float _lyapunov_min = 0;
+    float _lyapunov_max = 0;    
 
     // Target Variables
     Eigen::Vector3d curr_pos_, curr_att_, curr_lin_vel_, curr_ang_vel_; 
@@ -96,7 +106,7 @@ protected:
 protected:
 
     Eigen::Vector3d _current_odom_position;
-    float _current_yaw_orientation;
+    float _current_yaw_orientation, _v, _phi, _lyapunov_cost;
     Eigen::Quaterniond _current_orientation;
 
     std::shared_ptr<Camera> camera;
