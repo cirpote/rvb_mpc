@@ -87,9 +87,13 @@ protected:
     float _v_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _v_min = 0;
     float _v_max = 0;
+    float _v_sup = 1;
+    float _v_sdown = -1;
     float _phi_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _phi_min = 0;
     float _phi_max = 0;
+    float _phi_sup = 0.8;
+    float _phi_sdown = -0.8;
     float _lyapunov_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _lyapunov_min = 0;
     float _lyapunov_max = 0;    

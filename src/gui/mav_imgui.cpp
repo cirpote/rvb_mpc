@@ -236,10 +236,10 @@ void MavGUI::showGUI(bool *p_open) {
 
   // ImGui::PlotHistogram("Histogram", _v_values, IM_ARRAYSIZE(_v_values), 0, NULL, _v_min, _v_max, ImVec2(0,80)); ImGui::NextColumn();
 
-  ImGui::PlotLines("",_v_values, IM_ARRAYSIZE(_v_values), 0,
-                    "v", _v_min, _v_max, ImVec2(0,40)); ImGui::NextColumn();
-  ImGui::PlotLines("",_phi_values, IM_ARRAYSIZE(_phi_values), 0,
-                    "phi", _phi_min, _phi_max, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::PlotLinesSaturation("",_v_values, IM_ARRAYSIZE(_v_values), _v_sup, _v_sdown,
+                    0, "v", FLT_MAX, FLT_MAX, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::PlotLinesSaturation("",_phi_values, IM_ARRAYSIZE(_phi_values), _phi_sup, _phi_sdown, 
+                    0, "phi", FLT_MAX, FLT_MAX, ImVec2(0,40)); ImGui::NextColumn();
   ImGui::PlotLines("",_lyapunov_values, IM_ARRAYSIZE(_lyapunov_values), 0,
                     "lyapunov", _lyapunov_min, _lyapunov_max, ImVec2(0,40)); ImGui::NextColumn();
 
