@@ -16,7 +16,7 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
 
   _gui_ros_time = ros::Time::now();
 
-  _img_sub = _base_nh.subscribe("/firefly/vi_sensor/right/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
+  _img_sub = _base_nh.subscribe("/camera_gui/camera/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
   _set_control_gains = _base_nh.serviceClient<rm3_ackermann_controller::SetKvalues>("/set_k");
 
   camera = std::make_shared<Camera>( glm::vec3(15.f, 20.f, -65.0f), glm::vec3(0.0f, 1.0f, 0.0f), 100.f );
@@ -139,7 +139,7 @@ void MavGUI::showGUI(bool *p_open) {
   ImGuiWindowFlags window_flags = 0;
   window_flags |= ImGuiWindowFlags_MenuBar;
  
-  ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowSize(ImVec2(700, 800), ImGuiCond_FirstUseEver);
   if (!ImGui::Begin("GnomicMavGUI", p_open, window_flags)) {
     // Early out if the window is collapsed, as an optimization.
     ImGui::End();

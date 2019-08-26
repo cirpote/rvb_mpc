@@ -4,21 +4,19 @@ vehicle_parameters:
 
 path_constraints:
 
-  q_p:                    [1000, 1000]
-  q_orientation:          100
-  q_steering_angle:       100
-  q_control:              [100, 100]
+  q_p:                    [100, 100]
+  q_v:                    [100, 100]
+  q_obst:                 0
 
 terminal_constraints:
 
-  qf_p:                   [2000, 2000]
-  qf_orientation:         2000
-  qf_steering_angle:      100
+  qf_p:                   [1000, 1000]
+  qf_v:                   [1000, 1000]
 
 boundary_constraints:
 
-  vel_bounds:            [-.5, .5]   
-  phi_cmd_bounds:        [-.5, .5] 
+  velx_bounds:            [-.5, .5]   
+  vely_bounds:            [-.5, .5] 
 
 ros_parameters:
 
@@ -27,12 +25,6 @@ ros_parameters:
   image_topic:            /...
   rpyrt_topic:            /sherpa/akrm_cmd
 
-integral_action:
-
-  attraction_ball:        0.1
-  anti_windup_ball:       0.1
-  integral_weights:       [0.05, 0.05, 0.1, 0.01]
-  yaw_rate_damping_factor: 1
 
 general_params:
 
@@ -40,8 +32,13 @@ general_params:
 
 obstacles:
   
-  p_vert1_W:              [2, 2]
-  p_vert1_WMat:           [1.5, 1.5]
+  obst1:                  [1000, 1000]
+  obst2:                  [1000, 1000]
+  obst3:                  [1000, 1000]
+  obst4:                  [1000, 1000]
+  obst5:                  [1000, 1000]
+  obst6:                  [1000, 1000]
+  safety_dist:            0.5
 
 log_params:
 

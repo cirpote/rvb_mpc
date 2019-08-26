@@ -52,7 +52,7 @@ int main( )
       IntermediateState obstDist6 = (xObst6 - eps1) * (xObst6 - eps1) + (yObst6 - eps3) * (yObst6 - eps3);
 
       Function h, hN;
-      h <<  eps1 << eps3 << //vi1 << vi2 << 
+      h <<  eps1 << eps3 << 
             1 / obstDist1 << 1 / obstDist2 << 1 / obstDist3 <<
             1 / obstDist4 << 1 / obstDist5 << 1 / obstDist6;
       hN << eps1 << eps2 << eps3 << eps4;

@@ -32,20 +32,18 @@ class BaseibvsController
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       // path_constraints params
-      Eigen::Vector2d q_command_, q_position_;
-      double q_orientation_, q_steering_angle_;
+      Eigen::Vector2d q_v_, q_p_;
+      double q_obst_;
 
       // terminal_constraints params
-      Eigen::Vector2d qf_position_;
-      double qf_orientation_, qf_steering_angle_;
+      Eigen::Vector2d qf_p_, qf_v_;
 
       // boundary_constraints params
-      Eigen::Vector2d vel_bnds_, phi_cmd_bnds_;
+      Eigen::Vector2d velx_bnds_, vely_bnds_;
 
       // obstacle params
-      Eigen::Vector2d pObst_vert1;
-      Eigen::Vector2d pObst_vert1_WMat;
-      float obst_penalty_;
+      Eigen::Vector2d obst1_, obst2_, obst3_, obst4_, obst5_, obst6_;
+      double safety_distance_;
 
       //constant by parameters
       float l_;

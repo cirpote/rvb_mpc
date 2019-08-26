@@ -10,59 +10,51 @@ void BaseibvsController::initializeControllerfromYAML(const std::string& yaml_fi
   std::cout << FBLU("Reading Input params from: ") << yaml_file << "\n";
 
   YAML::Node configuration = YAML::LoadFile(yaml_file);
-  std::vector<double> q_position, q_command, qf_position,  
-                      integral_action_weights, 
-                      vel_bnds, phi_cmd_bnds,
-                      p_vert1, p_vert1_weights;
+  std::vector<double> q_p, q_v, qf_p, qf_v,  
+                      velx_bnds, vely_bnds,
+                      obst1, obst2, obst3, 
+                      obst4, obst5, obst6;
 
-  q_position = configuration["path_constraints"]["q_p"].as<std::vector<double>>();
-  q_orientation_ = configuration["path_constraints"]["q_orientation"].as<double>();
-  q_steering_angle_ = configuration["path_constraints"]["q_steering_angle"].as<double>();
-  q_command = configuration["path_constraints"]["q_control"].as<std::vector<double>>();
-
-  qf_position = configuration["terminal_constraints"]["qf_p"].as<std::vector<double>>();
-  qf_orientation_ = configuration["terminal_constraints"]["qf_orientation"].as<double>();
-  qf_steering_angle_ = configuration["terminal_constraints"]["qf_steering_angle"].as<double>();
-
-  // Path constraints factors assignment
-  q_command_ << q_command.at(0), q_command.at(1);
-  q_position_ << q_position.at(0), q_position.at(1);
   
+  // Path constraints factors assignment
+  q_p = configuration["path_constraints"]["q_p"].as<std::vector<double>>();
+  q_v = configuration["path_constraints"]["q_v"].as<std::vector<double>>();
+  q_obst_ = configuration["path_constraints"]["q_obst"].as<double>();
+
+  q_p_ << q_p.at(0), q_p.at(1);
+  q_v_ << q_v.at(0), q_v.at(1);
+
   // Terminal constraints factors assignment
-  qf_position_ << qf_position.at(0), qf_position.at(1);
+  qf_p = configuration["terminal_constraints"]["qf_p"].as<std::vector<double>>();
+  qf_v = configuration["terminal_constraints"]["qf_v"].as<std::vector<double>>();
+  qf_p_ << qf_p.at(0), qf_p.at(1);
+  qf_v_ << qf_v.at(0), qf_v.at(1);
 
   l_ = configuration["vehicle_parameters"]["l"].as<double>();
-  anti_windup_ball_ = configuration["integral_action"]["anti_windup_ball"].as<double>();
-  attraction_ball_ = configuration["integral_action"]["attraction_ball"].as<double>();
-  integral_action_weights = configuration["integral_action"]["integral_weights"].as<std::vector<double>>();
-  yaw_rate_damping = configuration["integral_action"]["yaw_rate_damping_factor"].as<double>();
-
-
-  vel_bnds = configuration["boundary_constraints"]["vel_bounds"].as<std::vector<double>>();
-  phi_cmd_bnds = configuration["boundary_constraints"]["phi_cmd_bounds"].as<std::vector<double>>();
-
-
-  vel_bnds_ << vel_bnds.at(0), vel_bnds.at(1);
-  phi_cmd_bnds_ << phi_cmd_bnds.at(0), phi_cmd_bnds.at(1);
-
-
   verbosity_ = configuration["general_params"]["verbosity"].as<int>();
 
-  p_vert1 = configuration["obstacles"]["p_vert1_W"].as<std::vector<double>>();
+  // Inputs Contraints
+  velx_bnds = configuration["boundary_constraints"]["velx_bounds"].as<std::vector<double>>();
+  vely_bnds = configuration["boundary_constraints"]["vely_bounds"].as<std::vector<double>>();
+  velx_bnds_ << velx_bnds.at(0), velx_bnds.at(1);
+  vely_bnds_ << vely_bnds.at(0), vely_bnds.at(1);
 
-  p_vert1_weights = configuration["obstacles"]["p_vert1_WMat"].as<std::vector<double>>();
-  
-  pObst_vert1 << p_vert1.at(0), p_vert1.at(1);
 
-  pObst_vert1_WMat << p_vert1_weights.at(0), p_vert1_weights.at(1);
+  // // Obstacles
+  obst1 = configuration["obstacles"]["obst1"].as<std::vector<double>>();
+  obst2 = configuration["obstacles"]["obst2"].as<std::vector<double>>();
+  obst3 = configuration["obstacles"]["obst3"].as<std::vector<double>>();
+  obst4 = configuration["obstacles"]["obst4"].as<std::vector<double>>();
+  obst5 = configuration["obstacles"]["obst5"].as<std::vector<double>>();
+  obst6 = configuration["obstacles"]["obst6"].as<std::vector<double>>();
+  safety_distance_ = configuration["obstacles"]["safety_dist"].as<double>();
+  obst1_ << obst1.at(0), obst1.at(1);
+  obst2_ << obst2.at(0), obst2.at(1);
+  obst3_ << obst3.at(0), obst3.at(1);
+  obst4_ << obst4.at(0), obst4.at(1);
+  obst5_ << obst5.at(0), obst5.at(1);
+  obst6_ << obst6.at(0), obst6.at(1);
 
-  // Obstacle World Position Check
-  if( fabs(pObst_vert1(0)) < 1e-2 )
-    pObst_vert1(0) = 1e-2;
-
-  // Init additional variables
-  integral_action_.setZero();
-  integral_action_weights_ << integral_action_weights.at(0), integral_action_weights.at(1), integral_action_weights.at(2), integral_action_weights.at(3);
 }
 
 void BaseibvsController::ComputeIntegralAction(){

@@ -68,20 +68,20 @@ int main( )
       // End cost weight matrix
       DMatrix QN(hN.getDim(), hN.getDim());
       QN.setIdentity();
-      QN(0,0) = 10000;   // x
-      QN(1,1) = 100000;   // y
-      QN(2,2) = 10000;   // x
-      QN(3,3) = 100000;   // y
+      QN(0,0) = 100;   // x
+      QN(1,1) = 100;   // y
+      QN(2,2) = 100;   // x
+      QN(3,3) = 100;   // y
 
       // Set a reference for the analysis (if CODE_GEN is false).
       // Reference is at x = 2.0m in hover (qw = 1).
       DVector r(h.getDim());    // Running cost reference
       r.setZero();
-      r(0) = 4;
-      r(1) = -.5;
+      r(0) = 0;
+      r(1) = 0;
       r(2) = 0;
-      r(3) = 2.5;
-      r(4) = 0;
+      r(3) = 0;
+      r(4) = -1;
       r(5) = 0;
       r(6) = 0;
       r(7) = 0;
@@ -90,9 +90,9 @@ int main( )
       DVector rN(hN.getDim());   // End cost reference
       rN.setZero();
       rN(0) = 0;
-      rN(1) = -.5;
-      rN(2) = 5;
-      rN(3) = 0;
+      rN(1) = 0;
+      rN(2) = 0;
+      rN(3) = -1;
 
       // DEFINE AN OPTIMAL CONTROL PROBLEM:
       // ----------------------------------
@@ -118,7 +118,7 @@ int main( )
 
       // Set initial state
       ocp.subjectTo( AT_START, eps1 ==  0.0 );
-      ocp.subjectTo( AT_START, eps2 ==  0.5 );
+      ocp.subjectTo( AT_START, eps2 ==  0.1 );
       ocp.subjectTo( AT_START, eps3 ==  0.0 );
       ocp.subjectTo( AT_START, eps4 ==  0.0 );
       ocp.subjectTo( AT_START, eps5 ==  0.0 );

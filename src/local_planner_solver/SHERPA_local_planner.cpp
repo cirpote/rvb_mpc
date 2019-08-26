@@ -119,23 +119,19 @@ bool SherpaAckermannPlanner::InitializeController()
   
   acado_initializeSolver();
 
-  W_(0,0) = 100;
-  W_(1,1) = 100;
-  W_(2,2) = 100;
-  W_(3,3) = 100;
-  W_(4,4) = 100;
-  W_(5,5) = 100;
+  W_(0,0) = q_p_(0);
+  W_(1,1) = q_p_(1);
+  W_(2,2) = 0;
+  W_(3,3) = 0;
+  W_(4,4) = 0;
+  W_(5,5) = 0;
   W_(6,6) = 0;
   W_(7,7) = 0;
-  W_(8,8) = 0;
-  W_(9,9) = 0;
-  W_(10,10) = 0;
-  W_(11,11) = 0;
 
-  WN_(0,0) = 1000;
-  WN_(1,1) = 1000;
-  WN_(2,2) = 1000;
-  WN_(3,3) = 1000;
+  WN_(0,0) = qf_p_(0);
+  WN_(1,1) = qf_v_(0);
+  WN_(2,2) = qf_p_(1);
+  WN_(3,3) = qf_v_(1);
 
   
   std::cout << FBLU("Short Term controller W matrix: ") << "\n";    
@@ -148,23 +144,23 @@ bool SherpaAckermannPlanner::InitializeController()
     
   for (size_t i = 0; i < ACADO_N; ++i) {
     
-    acadoVariables.lbAValues[ACADO_NU * i] = 0.25;       // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 1] = 0.25;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 2] = 0.25;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 3] = 0.25;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 4] = 0.25;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 5] = 0.25;   // 1st Obstacle min distance
-    acadoVariables.ubAValues[ACADO_NU * i] = 10000;      // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 1] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 2] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 3] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 4] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 5] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.lbAValues[ACADO_NU * i] = safety_distance_;       // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 1] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 2] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 3] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 4] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 5] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.ubAValues[ACADO_NU * i] = 10000;                  // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 1] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 2] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 3] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 4] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 5] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
 
-    acadoVariables.lbValues[ACADO_NU * i] = -0.5;       // min vel_x
-    acadoVariables.lbValues[ACADO_NU * i + 1] = -0.5;   // min vel_y
-    acadoVariables.ubValues[ACADO_NU * i] = 0.5;        // max vel_x
-    acadoVariables.ubValues[ACADO_NU * i + 1] = 0.5;    // max vel_y              
+    acadoVariables.lbValues[ACADO_NU * i] = velx_bnds_(0);        // min vel_x
+    acadoVariables.lbValues[ACADO_NU * i + 1] = vely_bnds_(0);    // min vel_y
+    acadoVariables.ubValues[ACADO_NU * i] = velx_bnds_(1);        // max vel_x
+    acadoVariables.ubValues[ACADO_NU * i + 1] = vely_bnds_(1);    // max vel_y              
 
   }
 
@@ -175,12 +171,12 @@ bool SherpaAckermannPlanner::InitializeController()
   std::cout << acadoVariables.ubValues[0] << " " << acadoVariables.ubValues[1] << " " << "\n" << "\n";
 
   for (int i = 0; i < ACADO_N + 1; i++) {
-    acado_online_data_.block(i, 0, 1, ACADO_NOD) << 100.f, 100.f,     // 1st Obstacle x-y position
-                                                    100.f, 100.f,     // 2st Obstacle x-y position
-                                                    100.f, 100.f,     // 3st Obstacle x-y position
-                                                    100.f, 100.f,     // 4st Obstacle x-y position
-                                                    100.f, 100.f,     // 5st Obstacle x-y position
-                                                    100.f, 100.f;     // 6st Obstacle x-y position
+    acado_online_data_.block(i, 0, 1, ACADO_NOD) << obst1_(0), obst1_(1),     // 1st Obstacle x-y position
+                                                    obst2_(0), obst2_(1),     // 2st Obstacle x-y position
+                                                    obst3_(0), obst3_(1),     // 3st Obstacle x-y position
+                                                    obst4_(0), obst4_(1),     // 4st Obstacle x-y position
+                                                    obst5_(0), obst5_(1),     // 5st Obstacle x-y position
+                                                    obst6_(0), obst6_(1);     // 6st Obstacle x-y position
   }
 
   std::cout << FBLU("Short Term controller Online Data matrix: ") << "\n"; 
