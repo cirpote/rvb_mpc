@@ -34,15 +34,16 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_
 
   /*  NON LINEAR CONTROLLER INITIAL STATE AND CONSTRAINTS  */
   for (size_t i = 0; i < ACADO_N; i++) {
-    reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W(0), 0,
-                                           trajectory_point.position_W(1), 0,
-                                           0.f, 0.f;
+    reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W(0), //0,
+                                           trajectory_point.position_W(1), //0,
+                                           //0.f, 0.f, 
+                                           0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
   }    
 
   referenceN_ << trajectory_point.position_W(0), 0.f, trajectory_point.position_W(1), 0.f;
 
   Eigen::Matrix<double, ACADO_NX, 1> x_0;
-  x_0 << odometry.position_W(0), odometry.getVelocityWorld()(0), odometry.position_W(1), odometry.getVelocityWorld()(1);
+  x_0 << odometry.position_W(0), odometry.velocity_B(0), odometry.position_W(1), odometry.velocity_B(1), 0.f;
 
   Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(acadoVariables.x0)) = x_0;
   Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(acadoVariables.y)) = reference_.transpose();
@@ -76,13 +77,6 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_
     std::cout << FBLU("Short Term Desired State: ") << "\n";
     std::cout << referenceN_.transpose() << "\n";
   }
-
-  // float theta = atan2( acadoVariables.u[1] , acadoVariables.u[0] );
-  // float v = cos(theta) * acadoVariables.u[0] + sin(theta) * acadoVariables.u[1];
-  // float phi = atan2(1.33 * ..., ...);
-  // if( acadoVariables.u[0] < 1e-2 )
-  //   phi = 0.f;
-  // command_roll_pitch_yawrate_thrust_ = Eigen::Vector2d(v, phi);
                                         
   getTrajectoryVector(trajectory_pts);
   return;
@@ -130,20 +124,19 @@ bool SherpaAckermannPlanner::InitializeController()
   W_(2,2) = 100;
   W_(3,3) = 100;
   W_(4,4) = 100;
-  // W_(5,5) = 100;
-  // W_(6,6) = 300;
-  // W_(7,7) = 300;
+  W_(5,5) = 100;
+  W_(6,6) = 0;
+  W_(7,7) = 0;
+  W_(8,8) = 0;
+  W_(9,9) = 0;
+  W_(10,10) = 0;
+  W_(11,11) = 0;
 
   WN_(0,0) = 1000;
   WN_(1,1) = 1000;
+  WN_(2,2) = 1000;
+  WN_(3,3) = 1000;
 
-  // W_.block(0, 0, 2, 2) = q_position_.asDiagonal();
-  // W_(2, 2) = q_orientation_;
-  // W_.block(3, 3, 2, 2) = q_command_.asDiagonal();
-  // W_(5,5) = 1000;
-
-  // WN_.block(0, 0, 2, 2) = qf_position_.asDiagonal();
-  // WN_(2, 2) = qf_orientation_;
   
   std::cout << FBLU("Short Term controller W matrix: ") << "\n";    
   std::cout << W_.diagonal().transpose() << "\n" << "\n";
@@ -155,18 +148,23 @@ bool SherpaAckermannPlanner::InitializeController()
     
   for (size_t i = 0; i < ACADO_N; ++i) {
     
-    // acadoVariables.lbValues[ACADO_NU * i] = -.5;           // min vel
-    // acadoVariables.lbValues[ACADO_NU * i + 1] = -.5;   // min phi_cmd
-    // acadoVariables.ubValues[ACADO_NU * i] = .5;           // max vel
-    // acadoVariables.ubValues[ACADO_NU * i + 1] = .5;   // max phi_cmd
+    acadoVariables.lbAValues[ACADO_NU * i] = 0.25;       // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 1] = 0.25;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 2] = 0.25;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 3] = 0.25;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 4] = 0.25;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NU * i + 5] = 0.25;   // 1st Obstacle min distance
+    acadoVariables.ubAValues[ACADO_NU * i] = 10000;      // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 1] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 2] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 3] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 4] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NU * i + 5] = 10000;  // 1st Obstacle max distance (needed by the algorithm)
 
-    acadoVariables.lbValues[ACADO_NU * i] = -0.5;           // min vel
-    acadoVariables.lbValues[ACADO_NU * i + 1] = -0.5;   // min phi_cmd
-    acadoVariables.ubValues[ACADO_NU * i] = 0.5;           // max vel
-    acadoVariables.ubValues[ACADO_NU * i + 1] = 0.5;   // max phi_cmd
-
-    // acadoVariables.lbAValues[ACADO_NPAC * i] = 1;                     
-    // acadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000;               
+    acadoVariables.lbValues[ACADO_NU * i] = -0.5;       // min vel_x
+    acadoVariables.lbValues[ACADO_NU * i + 1] = -0.5;   // min vel_y
+    acadoVariables.ubValues[ACADO_NU * i] = 0.5;        // max vel_x
+    acadoVariables.ubValues[ACADO_NU * i + 1] = 0.5;    // max vel_y              
 
   }
 
@@ -177,8 +175,12 @@ bool SherpaAckermannPlanner::InitializeController()
   std::cout << acadoVariables.ubValues[0] << " " << acadoVariables.ubValues[1] << " " << "\n" << "\n";
 
   for (int i = 0; i < ACADO_N + 1; i++) {
-    acado_online_data_.block(i, 0, 1, ACADO_NOD) << l_,                               // vehicle lenghts
-                                                    pObst_vert1(0), pObst_vert1(1);   // Obstacle Position
+    acado_online_data_.block(i, 0, 1, ACADO_NOD) << 100.f, 100.f,     // 1st Obstacle x-y position
+                                                    100.f, 100.f,     // 2st Obstacle x-y position
+                                                    100.f, 100.f,     // 3st Obstacle x-y position
+                                                    100.f, 100.f,     // 4st Obstacle x-y position
+                                                    100.f, 100.f,     // 5st Obstacle x-y position
+                                                    100.f, 100.f;     // 6st Obstacle x-y position
   }
 
   std::cout << FBLU("Short Term controller Online Data matrix: ") << "\n"; 

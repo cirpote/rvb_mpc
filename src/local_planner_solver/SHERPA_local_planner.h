@@ -29,7 +29,7 @@ public:
       void getTrajectoryVector(trajectory_msgs::JointTrajectory&);
 
       const int NUM_STEPS = 4; /* Number of real-time iterations. */
-      const float KKT_THRESHOLD = 1e-5; /* Threshold as termination criterion. */
+      const float KKT_THRESHOLD = 1e-8; /* Threshold as termination criterion. */
 
       // solver matrices
       Eigen::Matrix<double, ACADO_NY, ACADO_NY> W_;

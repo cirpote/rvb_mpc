@@ -16,10 +16,23 @@ int main( )
       DifferentialState eps2;
       DifferentialState eps3;
       DifferentialState eps4;
+      DifferentialState dump;
+
       Control vi1;
       Control vi2;
-      OnlineData xObst;
-      OnlineData yObst;
+
+      OnlineData xObst1;
+      OnlineData yObst1;
+      OnlineData xObst2;
+      OnlineData yObst2;
+      OnlineData xObst3;
+      OnlineData yObst3;
+      OnlineData xObst4;
+      OnlineData yObst4;
+      OnlineData xObst5;
+      OnlineData yObst5;
+      OnlineData xObst6;
+      OnlineData yObst6;
 
       const double  Ts = 0.2;
       const int N = 40;
@@ -29,9 +42,19 @@ int main( )
       f << dot(eps2) == vi1;
       f << dot(eps3) == eps4;
       f << dot(eps4) == vi2;
+      f << dot(dump) == xObst1 + yObst1 + xObst2 + yObst2 + xObst3 + yObst3 + xObst4 + yObst4 + xObst5 + yObst5 + xObst6 + yObst6;
+
+      IntermediateState obstDist1 = (xObst1 - eps1) * (xObst1 - eps1) + (yObst1 - eps3) * (yObst1 - eps3);
+      IntermediateState obstDist2 = (xObst2 - eps1) * (xObst2 - eps1) + (yObst2 - eps3) * (yObst2 - eps3);
+      IntermediateState obstDist3 = (xObst3 - eps1) * (xObst3 - eps1) + (yObst3 - eps3) * (yObst3 - eps3);
+      IntermediateState obstDist4 = (xObst4 - eps1) * (xObst4 - eps1) + (yObst4 - eps3) * (yObst4 - eps3);
+      IntermediateState obstDist5 = (xObst5 - eps1) * (xObst5 - eps1) + (yObst5 - eps3) * (yObst5 - eps3);
+      IntermediateState obstDist6 = (xObst6 - eps1) * (xObst6 - eps1) + (yObst6 - eps3) * (yObst6 - eps3);
 
       Function h, hN;
-      h <<  eps1 << eps2 << eps3 << eps4 << vi1 << vi2;
+      h <<  eps1 << eps3 << //vi1 << vi2 << 
+            1 / obstDist1 << 1 / obstDist2 << 1 / obstDist3 <<
+            1 / obstDist4 << 1 / obstDist5 << 1 / obstDist6;
       hN << eps1 << eps2 << eps3 << eps4;
 
       BMatrix W = eye<bool>( h.getDim() );
@@ -41,15 +64,17 @@ int main( )
       ocp.minimizeLSQ( W, h); 
       ocp.minimizeLSQEndTerm( WN, hN);
 
-      // ocp.subjectTo(-.5 <= eps2 <= .5);
-      // ocp.subjectTo(-.5 <= eps3 <= .5);
-      // ocp.subjectTo(-1 <= eps5 <= 1);
-      // ocp.subjectTo(-1 <= eps6 <= 1);
+      ocp.subjectTo(1.25 <= obstDist1 <= 10000);
+      ocp.subjectTo(1.25 <= obstDist2 <= 10000);
+      ocp.subjectTo(1.25 <= obstDist3 <= 10000);
+      ocp.subjectTo(1.25 <= obstDist4 <= 10000);
+      ocp.subjectTo(1.25 <= obstDist5 <= 10000);
+      ocp.subjectTo(1.25 <= obstDist6 <= 10000);
 
       ocp.subjectTo(-.5 <= vi1 <= .5);
       ocp.subjectTo(-.5 <= vi2 <= .5);
 
-      ocp.setNOD(2);
+      ocp.setNOD(12);
 
       ocp.setModel(f);
       OCPexport mpc(ocp);

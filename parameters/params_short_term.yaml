@@ -36,7 +36,7 @@ integral_action:
 
 general_params:
 
-  verbosity:              2 # Verbosity_Level : 0,1,2
+  verbosity:              1 # Verbosity_Level : 0,1,2
 
 obstacles:
   
