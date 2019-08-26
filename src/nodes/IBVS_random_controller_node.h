@@ -15,6 +15,7 @@
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Twist.h>
 
+
 //MavGuilocal_planner_solver_lib
 #include <stdio.h>
 #include "../gui/imgui/imgui.h"
@@ -51,7 +52,7 @@ class IBVSRandomNode: public MavGUI
       ros::NodeHandle nh_;
  
       // ros publisher and subscribers
-      ros::Publisher command_vel_steering_angle_pub_;
+      ros::Publisher trajectory_pts_pub_;
       ros::Subscriber odom_sub_;
       ros::Subscriber cmd_pose_sub_;
       ros::Subscriber ackrmann_cms_sub_;
@@ -67,15 +68,10 @@ class IBVSRandomNode: public MavGUI
       void resetSolver();
 
       //commands
-      Eigen::Vector2d commands_;  
-      geometry_msgs::Twist command;
+      trajectory_msgs::JointTrajectory trajectory_pts_;
       Eigen::Matrix<double,3,1>& ang_vel_ref;
-      
+
       //Random things
       bool new_comand = false;
-
-      float RandomGenerationTiming = 10.f;
-      float startTime;
-      float GenerationNum = 1;
 
 };

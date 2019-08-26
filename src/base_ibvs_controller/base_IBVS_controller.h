@@ -12,6 +12,8 @@
 #include <ros/package.h>
 #include <tf/transform_listener.h>
 #include <nav_msgs/Odometry.h>
+#include <trajectory_msgs/JointTrajectory.h>
+#include <trajectory_msgs/JointTrajectoryPoint.h>
 
 
 class BaseibvsController
@@ -21,7 +23,7 @@ class BaseibvsController
       ~BaseibvsController();
 
       virtual bool InitializeController() = 0;
-      virtual void calculateRollPitchYawRateThrustCommands(Eigen::Vector2d&) = 0;
+      virtual void calculateRollPitchYawRateThrustCommands(trajectory_msgs::JointTrajectory&) = 0;
       void setOdometry(const nav_msgs::OdometryConstPtr&);
       virtual bool setCommandPose(const nav_msgs::Odometry) = 0;
       float inline getMass(){return mass_;}

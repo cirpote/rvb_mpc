@@ -3,17 +3,24 @@
 using namespace std;
 
 IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& gui_file)
-  : MavGUI(nh, gui_file), nh_(nh), first_trajectory_cmd_(false), commands_(0,0), SHERPA_planner_(yaml_short_file), 
+  : MavGUI(nh, gui_file), nh_(nh), first_trajectory_cmd_(false), SHERPA_planner_(yaml_short_file), 
     ang_vel_ref(SHERPA_planner_.odometry.angular_velocity_B)
 {
 
   odom_sub_ = nh_.subscribe( "/odom", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
   cmd_pose_sub_ = nh_.subscribe("/command/pose", 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
   ackrmann_cms_sub_ = nh_.subscribe("/sherpa/akrm_cmd", 1, &IBVSRandomNode::AkrmCommandsCallback, this, ros::TransportHints().tcpNoDelay() );
-  //command_vel_steering_angle_pub_ = nh_.advertise<geometry_msgs::Twist>("/sherpa/akrm_cmd", 1);
+  trajectory_pts_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/sherpa/trajectory_pts", 1);
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   SHERPA_planner_.InitializeController();
+
+  trajectory_msgs::JointTrajectoryPoint pt;
+  pt.positions.resize( ( ACADO_N )*2 );
+  pt.velocities.resize( ( ACADO_N )*2 );
+  trajectory_pts_.points.push_back(pt);
+  trajectory_pts_.joint_names.push_back("sherpa_base_link");
+
 }
 
 IBVSRandomNode::~IBVSRandomNode(){
@@ -39,7 +46,6 @@ void IBVSRandomNode::CommandPoseCallback(const nav_msgs::OdometryConstPtr& cmd_p
     return;
   }
 
-  startTime = ros::Time::now().toSec();
   first_trajectory_cmd_ = true;  
 
   return;
@@ -59,13 +65,9 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   if(!first_trajectory_cmd_)
     return;
 
-  SHERPA_planner_.calculateRollPitchYawRateThrustCommands(commands_);
-  
-  //std::cout << FRED("current command: ") << commands_.transpose() << "\n"; 
-  //command.linear.x = fmax( -.5, fmin(.5, commands_(0)) );
-  //command.angular.z = fmax( -.5, fmin(.5, commands_(1)) );
-  //command_vel_steering_angle_pub_.publish(command);
-  //std::cout << FRED("current command: ") << command << "\n";
+  SHERPA_planner_.calculateRollPitchYawRateThrustCommands(trajectory_pts_);
+  trajectory_pts_.header.stamp. ros::Time::now();
+  trajectory_pts_pub_.publish(trajectory_pts_);
 
   return;
 }

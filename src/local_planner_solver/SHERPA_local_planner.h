@@ -17,7 +17,7 @@ public:
       ~SherpaAckermannPlanner();
 
       bool InitializeController();
-      void calculateRollPitchYawRateThrustCommands(Eigen::Vector2d&);
+      void calculateRollPitchYawRateThrustCommands(trajectory_msgs::JointTrajectory&);
       bool setCommandPose(const nav_msgs::Odometry);
       void restartSolver();
 
@@ -26,6 +26,7 @@ public:
 
       void printDifferentialVariables();
       void printControlVariables();
+      void getTrajectoryVector(trajectory_msgs::JointTrajectory&);
 
       const int NUM_STEPS = 4; /* Number of real-time iterations. */
       const float KKT_THRESHOLD = 1e-5; /* Threshold as termination criterion. */
