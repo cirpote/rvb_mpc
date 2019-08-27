@@ -11,7 +11,7 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _des_orientationf_w = 0.f;
 
   _K_values[0] = 0.2;
-  _K_values[1] = 0.4;
+  _K_values[1] = 1.f;
   _K_values[2] = 4.f;
 
   _gui_ros_time = ros::Time::now();
