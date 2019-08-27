@@ -11,6 +11,7 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   cmd_pose_sub_ = nh_.subscribe("/command/pose", 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
   ackrmann_cms_sub_ = nh_.subscribe("/sherpa/akrm_cmd", 1, &IBVSRandomNode::AkrmCommandsCallback, this, ros::TransportHints().tcpNoDelay() );
   trajectory_pts_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/sherpa/trajectory_pts", 1);
+  lyapunov_sub_ = nh.subscribe("/lyapunov", 1, &IBVSRandomNode::LyapunovCallback, this, ros::TransportHints().tcpNoDelay() );
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   SHERPA_planner_.InitializeController();
@@ -29,6 +30,10 @@ IBVSRandomNode::~IBVSRandomNode(){
 
 void IBVSRandomNode::resetSolver(){
   SHERPA_planner_.InitializeController();
+}
+
+void IBVSRandomNode::LyapunovCallback(const std_msgs::Float32ConstPtr& lyapunov_msg){
+  _lyapunov_cost = lyapunov_msg->data;
 }
 
 void IBVSRandomNode::AkrmCommandsCallback(const geometry_msgs::TwistConstPtr& akrm_cmd_msg){

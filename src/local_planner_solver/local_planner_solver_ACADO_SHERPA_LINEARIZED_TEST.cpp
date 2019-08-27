@@ -31,7 +31,7 @@ int main( )
       const double xObst = 0.5;
       const double yObst = 0.01;
 
-      IntermediateState obstDist = ( eps1 - xObst ) * ( eps1 - xObst ) + ( eps4 - yObst ) * ( eps4 - yObst );
+      //IntermediateState obstDist = ( eps1 - xObst ) * ( eps1 - xObst ) + ( eps4 - yObst ) * ( eps4 - yObst );
       IntermediateState theta = atan( eps5/eps2 );
 
       // System Dynamics
@@ -131,7 +131,7 @@ int main( )
       //window.addSubplot( eps7,"distance_sum");
       window.addSubplot( vi1,"input1" );
       window.addSubplot( vi2,"input2");
-      window.addSubplot( obstDist,"obstacle distance");
+      //window.addSubplot( obstDist,"obstacle distance");
       window.addSubplot( theta + 3, "heading + 3 rads");
 
       GnuplotWindow window2( PLOT_AT_EACH_ITERATION );

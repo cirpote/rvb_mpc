@@ -7370,6 +7370,134 @@ void ImGui::PlotExSaturation(ImGuiPlotType plot_type, const char* label, float (
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
 }
 
+void ImGui::PlotExTarget(ImGuiPlotType plot_type, const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, float target)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return;
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    if (graph_size.x == 0.0f)
+        graph_size.x = CalcItemWidth();
+    if (graph_size.y == 0.0f)
+        graph_size.y = label_size.y + (style.FramePadding.y * 2);
+
+    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(graph_size.x, graph_size.y));
+    const ImRect inner_bb(frame_bb.Min + style.FramePadding, frame_bb.Max - style.FramePadding);
+    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0));
+    ItemSize(total_bb, style.FramePadding.y);
+    if (!ItemAdd(total_bb, NULL))
+        return;
+    const bool hovered = ItemHoverable(inner_bb, 0);
+
+    // Determine scale from values if not specified
+    if (scale_min == FLT_MAX || scale_max == FLT_MAX)
+    {
+        float v_min = FLT_MAX;
+        float v_max = -FLT_MAX;
+        for (int i = 0; i < values_count; i++)
+        {
+            const float v = values_getter(data, i);
+            v_min = ImMin(v_min, v);
+            v_max = ImMax(v_max, v);
+        }
+
+        if( target > 0 && v_max < target ){
+            v_max = target;
+            v_min = 0.f;
+        }    
+        if( target < 0 && v_min > target ){
+            v_min = target;
+            v_max = 0;
+        } 
+
+        if (scale_min == FLT_MAX)
+            scale_min = v_min;
+        if (scale_max == FLT_MAX)
+            scale_max = v_max;
+    }
+
+    RenderFrame(frame_bb.Min, frame_bb.Max, GetColorU32(ImGuiCol_FrameBg), true, style.FrameRounding);
+
+    if (values_count > 0)
+    {
+        int res_w = ImMin((int)graph_size.x, values_count) + ((plot_type == ImGuiPlotType_Lines) ? -1 : 0);
+        int item_count = values_count + ((plot_type == ImGuiPlotType_Lines) ? -1 : 0);
+
+        // Tooltip on hover
+        int v_hovered = -1;
+        if (hovered)
+        {
+            const float t = ImClamp((g.IO.MousePos.x - inner_bb.Min.x) / (inner_bb.Max.x - inner_bb.Min.x), 0.0f, 0.9999f);
+            const int v_idx = (int)(t * item_count);
+            IM_ASSERT(v_idx >= 0 && v_idx < values_count);
+
+            const float v0 = values_getter(data, (v_idx + values_offset) % values_count);
+            const float v1 = values_getter(data, (v_idx + 1 + values_offset) % values_count);
+            if (plot_type == ImGuiPlotType_Lines)
+                SetTooltip("%d: %8.4g\n%d: %8.4g", v_idx, v0, v_idx+1, v1);
+            else if (plot_type == ImGuiPlotType_Histogram)
+                SetTooltip("%d: %8.4g", v_idx, v0);
+            v_hovered = v_idx;
+        }
+
+        const float t_step = 1.0f / (float)res_w;
+
+        float v0 = values_getter(data, (0 + values_offset) % values_count);
+        float t0 = 0.0f;
+        ImVec2 tp0 = ImVec2( t0, 1.0f - ImSaturate((v0 - scale_min) / (scale_max - scale_min)) );                       // Point in the normalized space of our target rectangle
+        ImVec2 tp0target = ImVec2( t0, 1.0f - ImSaturate((target - scale_min) / (scale_max - scale_min)));
+        float histogram_zero_line_t = (scale_min * scale_max < 0.0f) ? (-scale_min / (scale_max - scale_min)) : (scale_min < 0.0f ? 0.0f : 1.0f);   // Where does the zero line stands
+
+        const ImU32 col_base = GetColorU32((plot_type == ImGuiPlotType_Lines) ? ImGuiCol_PlotLines : ImGuiCol_PlotHistogram);
+        const ImU32 col_hovered = GetColorU32((plot_type == ImGuiPlotType_Lines) ? ImGuiCol_PlotLinesHovered : ImGuiCol_PlotHistogramHovered);
+        const ImU32 col_target = GetColorU32(ImVec4(0,1,0,1));
+
+        for (int n = 0; n < res_w; n++)
+        {
+            const float t1 = t0 + t_step;
+            const int v1_idx = (int)(t0 * item_count + 0.5f);
+            IM_ASSERT(v1_idx >= 0 && v1_idx < values_count);
+            const float v1 = values_getter(data, (v1_idx + values_offset + 1) % values_count);
+            const ImVec2 tp1 = ImVec2( t1, 1.0f - ImSaturate((v1 - scale_min) / (scale_max - scale_min)) );
+            const ImVec2 tp1target = ImVec2( t1, 1.0f - ImSaturate((target - scale_min) / (scale_max - scale_min)) );
+
+            // NB: Draw calls are merged together by the DrawList system. Still, we should render our batch are lower level to save a bit of CPU.
+            ImVec2 pos0 = ImLerp(inner_bb.Min, inner_bb.Max, tp0);
+            ImVec2 pos1 = ImLerp(inner_bb.Min, inner_bb.Max, (plot_type == ImGuiPlotType_Lines) ? tp1 : ImVec2(tp1.x, histogram_zero_line_t));
+            ImVec2 pos0target = ImLerp(inner_bb.Min, inner_bb.Max, tp0target);
+            ImVec2 pos1target = ImLerp(inner_bb.Min, inner_bb.Max, tp1target);
+
+
+            if (plot_type == ImGuiPlotType_Lines)
+            {
+                window->DrawList->AddLine(pos0, pos1, v_hovered == v1_idx ? col_hovered : col_base);
+                window->DrawList->AddLine(pos0target, pos1target, col_target);
+            }
+            else if (plot_type == ImGuiPlotType_Histogram)
+            {
+                if (pos1.x >= pos0.x + 2.0f)
+                    pos1.x -= 1.0f;
+                window->DrawList->AddRectFilled(pos0, pos1, v_hovered == v1_idx ? col_hovered : col_base);
+            }
+
+            t0 = t1;
+            tp0 = tp1;
+            tp0target = tp1target;
+        }
+    }
+
+    // Text overlay
+    if (overlay_text)
+        RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, overlay_text, NULL, NULL, ImVec2(0.5f,0.0f));
+
+    if (label_size.x > 0.0f)
+        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
+}
+
 void ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_getter)(void* data, int idx), void* data, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size)
 {
     ImGuiWindow* window = GetCurrentWindow();
@@ -7499,6 +7627,13 @@ void ImGui::PlotLinesSaturation(const char* label, const float* values, int valu
     ImGuiPlotArrayGetterData data(values, stride);
     PlotExSaturation(ImGuiPlotType_Lines, label, &Plot_ArrayGetter, (void*)&data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, sup, sdown);
 }
+
+void ImGui::PlotLinesWithTarget(const char* label, const float* values, int values_count, float target, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, int stride)
+{
+    ImGuiPlotArrayGetterData data(values, stride);
+    PlotExTarget(ImGuiPlotType_Lines, label, &Plot_ArrayGetter, (void*)&data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, target);
+}    
+
 
 void ImGui::PlotLines(const char* label, const float* values, int values_count, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, int stride)
 {

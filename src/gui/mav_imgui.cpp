@@ -207,14 +207,14 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Text("%f", _current_odom_position(2)); ImGui::NextColumn();
   ImGui::Text("%f", _current_yaw_orientation);  ImGui::NextColumn();
 
-  ImGui::PlotLines("",_x_values, IM_ARRAYSIZE(_x_values), 0,
-                    "x", _x_min, _x_max, ImVec2(0,40)); ImGui::NextColumn();
-  ImGui::PlotLines("",_y_values, IM_ARRAYSIZE(_y_values), 0,
-                    "y", _y_min, _y_max, ImVec2(0,40)); ImGui::NextColumn();
-  ImGui::PlotLines("",_z_values, IM_ARRAYSIZE(_z_values), 0,
-                    "z", _z_min, _z_max, ImVec2(0,40)); ImGui::NextColumn();
-  ImGui::PlotLines("",_yaw_values, IM_ARRAYSIZE(_yaw_values), 0,
-                    "yaw", _yaw_min, _yaw_max, ImVec2(0,40));
+  ImGui::PlotLinesWithTarget("",_x_values, IM_ARRAYSIZE(_x_values), _des_pos_vec3f_w[0],
+                             0,"x", FLT_MAX, FLT_MAX, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::PlotLinesWithTarget("",_y_values, IM_ARRAYSIZE(_y_values), _des_pos_vec3f_w[1],
+                             0, "y", FLT_MAX, FLT_MAX, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::PlotLinesWithTarget("",_z_values, IM_ARRAYSIZE(_z_values), 0,
+                             0, "z", _z_min, _z_max, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::PlotLinesWithTarget("",_yaw_values, IM_ARRAYSIZE(_yaw_values), _des_orientationf_w,
+                             0, "yaw", FLT_MAX, FLT_MAX, ImVec2(0,40));
 
   // Plotting Ackermann Commands and Lyapunov Cost Function
   ImGui::Spacing();

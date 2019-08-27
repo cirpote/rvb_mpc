@@ -14,6 +14,7 @@
 #include <sensor_msgs/image_encodings.h>
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Float32.h>
 
 
 //MavGuilocal_planner_solver_lib
@@ -56,6 +57,7 @@ class IBVSRandomNode: public MavGUI
       ros::Subscriber odom_sub_;
       ros::Subscriber cmd_pose_sub_;
       ros::Subscriber ackrmann_cms_sub_;
+      ros::Subscriber lyapunov_sub_;
       
       //Solver Functions
       void initializeAcadoSolver();
@@ -65,6 +67,7 @@ class IBVSRandomNode: public MavGUI
       void CommandPoseCallback(const nav_msgs::OdometryConstPtr&);
       void AkrmCommandsCallback(const geometry_msgs::TwistConstPtr&);
       void ImageCallback(const sensor_msgs::ImageConstPtr&);
+      void LyapunovCallback(const std_msgs::Float32ConstPtr&);
       void resetSolver();
 
       //commands
