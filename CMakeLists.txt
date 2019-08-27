@@ -3,6 +3,7 @@ project(rvb_mpc)
 
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake_modules" )
+set(CMAKE_CXX_FLAGS "-std=c++0x")
 
 OPTION( GENERATE_ACADO_CPP
   "Build package with shared libraries."
