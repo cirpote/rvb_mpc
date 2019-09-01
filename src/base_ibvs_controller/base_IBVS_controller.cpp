@@ -10,37 +10,32 @@ void BaseibvsController::initializeControllerfromYAML(const std::string& yaml_fi
   std::cout << FBLU("Reading Input params from: ") << yaml_file << "\n";
 
   YAML::Node configuration = YAML::LoadFile(yaml_file);
-  std::vector<double> q_p, q_v, qf_p, qf_v,  
-                      velx_bnds, vely_bnds,
-                      obst1, obst2, obst3, 
-                      obst4, obst5, obst6;
+  std::vector<double> q_p, qf_p, vel_bnds, phi_bnds, obst1, obst2, obst3, obst4, obst5, obst6;
 
   
   // Path constraints factors assignment
   q_p = configuration["path_constraints"]["q_p"].as<std::vector<double>>();
-  q_v = configuration["path_constraints"]["q_v"].as<std::vector<double>>();
+  q_theta_ = configuration["path_constraints"]["q_theta"].as<double>();
   q_obst_ = configuration["path_constraints"]["q_obst"].as<double>();
 
   q_p_ << q_p.at(0), q_p.at(1);
-  q_v_ << q_v.at(0), q_v.at(1);
 
   // Terminal constraints factors assignment
   qf_p = configuration["terminal_constraints"]["qf_p"].as<std::vector<double>>();
-  qf_v = configuration["terminal_constraints"]["qf_v"].as<std::vector<double>>();
+  qf_theta_ = configuration["terminal_constraints"]["qf_theta"].as<double>();
   qf_p_ << qf_p.at(0), qf_p.at(1);
-  qf_v_ << qf_v.at(0), qf_v.at(1);
 
   l_ = configuration["vehicle_parameters"]["l"].as<double>();
   verbosity_ = configuration["general_params"]["verbosity"].as<int>();
 
   // Inputs Contraints
-  velx_bnds = configuration["boundary_constraints"]["velx_bounds"].as<std::vector<double>>();
-  vely_bnds = configuration["boundary_constraints"]["vely_bounds"].as<std::vector<double>>();
-  velx_bnds_ << velx_bnds.at(0), velx_bnds.at(1);
-  vely_bnds_ << vely_bnds.at(0), vely_bnds.at(1);
+  vel_bnds = configuration["boundary_constraints"]["vel_bounds"].as<std::vector<double>>();
+  phi_bnds = configuration["boundary_constraints"]["phi_bounds"].as<std::vector<double>>();
+  vel_bnds_ << vel_bnds.at(0), vel_bnds.at(1);
+  phi_bnds_ << phi_bnds.at(0), phi_bnds.at(1);
 
 
-  // // Obstacles
+  // Obstacles
   obst1 = configuration["obstacles"]["obst1"].as<std::vector<double>>();
   obst2 = configuration["obstacles"]["obst2"].as<std::vector<double>>();
   obst3 = configuration["obstacles"]["obst3"].as<std::vector<double>>();

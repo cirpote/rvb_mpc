@@ -10,7 +10,7 @@ int main( )
 {   
 
       /*  LINEARIZED CONTROLLER  */
-      USING_NAMESPACE_ACADO
+      /*USING_NAMESPACE_ACADO
 
       DifferentialState eps1;
       DifferentialState eps2;
@@ -99,7 +99,7 @@ int main( )
 
       mpc.printDimensionsQP( );
     
-      return EXIT_SUCCESS;
+      return EXIT_SUCCESS;*/
 
 
 
@@ -108,78 +108,84 @@ int main( )
       /*  STANDARD NON LINEAR CONTROLLER  */
       // USING_NAMESPACE_ACADO
 
-      // DifferentialState px;
-      // DifferentialState py;
-      // DifferentialState theta;
-      // DifferentialState d;
+      USING_NAMESPACE_ACADO
+
+      const bool CODE_GEN = true;
+
+      // System variables
+      DifferentialState     p_x, p_y, theta, dump;
+      Control               v, phi;
+      OnlineData xObst1, yObst1, xObst2, yObst2, xObst3, yObst3, xObst4, yObst4, xObst5, yObst5, xObst6, yObst6, l;
+      DifferentialEquation  f;
+      Function              h, hN;
+
+      // Parameters with exemplary values. These are set/overwritten at runtime.
+      const double t_start = 0.0;     // Initial time [s]
+      const double t_end = 10.0;       // Time horizon [s]
+      const double dt = 0.5;          // Discretization time [s]
+      const int N = round(t_end/dt);  // Number of nodes
+
+      // System Dynamics
+      f << dot(p_x) ==  v * cos(theta);
+      f << dot(p_y) ==  v * sin(theta);
+      f << dot(theta) ==  (v / l) * tan(phi);
+      f << dot(dump) == xObst1 + yObst1 + xObst2 + yObst2 + xObst3 + yObst3 +
+                        xObst4 + yObst4 + xObst5 + yObst5 + xObst6 + yObst6;
+
+      IntermediateState obstDist1 = ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1 ) * ( p_y - yObst1 );
+      IntermediateState obstDist2 = ( p_x - xObst2 ) * ( p_x - xObst2 ) + ( p_y - yObst2 ) * ( p_y - yObst2 );
+      IntermediateState obstDist3 = ( p_x - xObst3 ) * ( p_x - xObst3 ) + ( p_y - yObst3 ) * ( p_y - yObst3 );
+      IntermediateState obstDist4 = ( p_x - xObst4 ) * ( p_x - xObst4 ) + ( p_y - yObst4 ) * ( p_y - yObst4 );
+      IntermediateState obstDist5 = ( p_x - xObst5 ) * ( p_x - xObst5 ) + ( p_y - yObst5 ) * ( p_y - yObst5 );
+      IntermediateState obstDist6 = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6 ) * ( p_y - yObst6 );
 
 
+      h << p_x << p_y << theta << 1 / obstDist1 << 1 / obstDist2
+        << 1 / obstDist3 << 1 / obstDist4 << 1 / obstDist5 << 1 / obstDist6;
 
-      // Control vel;
-      // Control phi_cmd;
+      // End cost vector consists of all states (no inputs at last state).
+      hN << p_x << p_y << theta;
 
-      // OnlineData l;
-      // OnlineData xObst;
-      // OnlineData yObst;
+      BMatrix W = eye<bool>( h.getDim() );
+      BMatrix WN = eye<bool>( hN.getDim() );
 
-      // const double g = 9.8066;
-      // double PI = 3.1415926535897932;
-      // const double Ts = 0.2;
-      // const int N = 40;
+      OCP ocp(0, 10, 40);
+      ocp.minimizeLSQ( W, h); 
+      ocp.minimizeLSQEndTerm( WN, hN);
+      ocp.subjectTo( f );
 
-      // // System Dynamics
-      // DifferentialEquation f;
-      // f << dot(px) ==  vel * cos(theta);
-      // f << dot(py) ==  vel * sin(theta);
-      // f << dot(theta) == (vel / l) * tan(phi_cmd);
-      // f << dot(d) ==  2*( px - xObst )*px + 2*( py - yObst )*py;
+      // Add constraints
+      ocp.subjectTo(-1.1 <=    phi    <= 1.1);
+      ocp.subjectTo(-0.5 <=     v     <= 0.5);
+      ocp.subjectTo(1    <= obstDist1 <= 10000);
+      ocp.subjectTo(1    <= obstDist2 <= 10000);
+      /*ocp.subjectTo(1    <= obstDist3 <= 10000);
+      ocp.subjectTo(1    <= obstDist4 <= 10000);
+      ocp.subjectTo(1    <= obstDist5 <= 10000);
+      ocp.subjectTo(1    <= obstDist6 <= 10000);*/
 
-      // IntermediateState obstDist = ( px - xObst ) * ( px - xObst ) + ( py - yObst ) * ( py - yObst );
+      ocp.setNOD(13);
+      OCPexport mpc(ocp);
 
-      // // Cost: Sum(i=0, ..., N-1){h_i' * Q * h_i} + h_N' * Q_N * h_N
-      // Function h, hN;
-      // // Running cost vector consists of all states and inputs.
-      // h << px << py << theta << phi_cmd << vel << 1/obstDist;
-      // // End cost vector consists of all states (no inputs at last state).
-      // hN << px << py << theta;
+      mpc.set( HESSIAN_APPROXIMATION, GAUSS_NEWTON);
+      mpc.set( DISCRETIZATION_TYPE, MULTIPLE_SHOOTING);
+      mpc.set( LINEAR_ALGEBRA_SOLVER, GAUSS_LU);
+      mpc.set( LEVENBERG_MARQUARDT, 1e-8);
+      mpc.set( INTEGRATOR_TYPE, INT_RK78);
+      mpc.set( QP_SOLVER, QP_QPOASES);
+      mpc.set( CG_HARDCODE_CONSTRAINT_VALUES, NO);
+      mpc.set( HOTSTART_QP, NO);
+      mpc.set( FIX_INITIAL_STATE, BT_TRUE);
+      mpc.set( ABSOLUTE_TOLERANCE, 1e-2 ); 
+      mpc.set( INTEGRATOR_TOLERANCE, 1e-2 );
+      //mpc.set( INFEASIBLE_QP_HANDLING, IQH_RELAX_L2);
 
-      // BMatrix W = eye<bool>( h.getDim() );
-      // BMatrix WN = eye<bool>( hN.getDim() );
+      mpc.printOptionsList();
+
+      if (mpc.exportCode( "core" ) != SUCCESSFUL_RETURN)
+            exit( EXIT_FAILURE );
+
+      mpc.printDimensionsQP( );
     
-      // OCP ocp(0.0, N*Ts, N);
-
-      // ocp.minimizeLSQ( W, h); 
-      // ocp.minimizeLSQEndTerm( WN, hN);
-
-      // // Add constraints
-      // ocp.subjectTo(-.5 <= phi_cmd <= .5);
-      // ocp.subjectTo(-1.5 <= vel <= 1.5);
-
-      // //ocp.subjectTo(-1 <= phi_cmd <= 1);
-      // ocp.subjectTo(1 <= obstDist <= 10000);
-      // // ocp.setNOD(10);
-
-      // ocp.setModel(f);
-      // OCPexport mpc(ocp);
-
-      // mpc.set( HESSIAN_APPROXIMATION, GAUSS_NEWTON);
-      // mpc.set( DISCRETIZATION_TYPE, MULTIPLE_SHOOTING);
-      // mpc.set( SPARSE_QP_SOLUTION, FULL_CONDENSING_N2);
-      // mpc.set( IMPLICIT_INTEGRATOR_NUM_ITS, 2);
-      // mpc.set( LINEAR_ALGEBRA_SOLVER, GAUSS_LU);
-      // mpc.set( LEVENBERG_MARQUARDT, 1e-8);
-      // mpc.set( INTEGRATOR_TYPE, INT_RK78);
-      // mpc.set( NUM_INTEGRATOR_STEPS, N );
-      // mpc.set( QP_SOLVER, QP_QPOASES);
-      // mpc.set( CG_HARDCODE_CONSTRAINT_VALUES, NO);
-      // mpc.set( HOTSTART_QP, NO);
-      // mpc.set( FIX_INITIAL_STATE, BT_TRUE);
-
-      // mpc.printOptionsList();
-
-      // if (mpc.exportCode( "core" ) != SUCCESSFUL_RETURN)
-      //       exit( EXIT_FAILURE );
-
-      // mpc.printDimensionsQP( );
-      // return EXIT_SUCCESS;
+      return EXIT_SUCCESS;
 }

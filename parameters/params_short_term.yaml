@@ -5,18 +5,18 @@ vehicle_parameters:
 path_constraints:
 
   q_p:                    [100, 100]
-  q_v:                    [100, 100]
-  q_obst:                 0
+  q_theta:                100
+  q_obst:                 400
 
 terminal_constraints:
 
   qf_p:                   [1000, 1000]
-  qf_v:                   [1000, 1000]
+  qf_theta:               1000
 
 boundary_constraints:
 
-  velx_bounds:            [-.5, .5]   
-  vely_bounds:            [-.5, .5] 
+  vel_bounds:            [-.6, .6]   
+  phi_bounds:            [-1.1, 1.1] 
 
 ros_parameters:
 
@@ -28,17 +28,17 @@ ros_parameters:
 
 general_params:
 
-  verbosity:              1 # Verbosity_Level : 0,1,2
+  verbosity:              2 # Verbosity_Level : 0,1,2
 
 obstacles:
   
-  obst1:                  [1000, 1000]
-  obst2:                  [1000, 1000]
-  obst3:                  [1000, 1000]
-  obst4:                  [1000, 1000]
-  obst5:                  [1000, 1000]
-  obst6:                  [1000, 1000]
-  safety_dist:            0.5
+  obst1:                  [2, -2]
+  obst2:                  [5, -2]
+  obst3:                  [8, -2]
+  obst4:                  [2, -6.5]
+  obst5:                  [5, -6.5]
+  obst6:                  [8, -6.5]
+  safety_dist:            .5
 
 log_params:
 

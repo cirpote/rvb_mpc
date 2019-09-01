@@ -11,7 +11,6 @@ SherpaAckermannPlanner::SherpaAckermannPlanner(const std::string& yaml_file)
   state_.setZero();
   reference_.setZero();
   referenceN_.setZero();
-  acc_W = vel_W_prev = Eigen::Vector2d::Zero();
 }
 
 SherpaAckermannPlanner::~SherpaAckermannPlanner(){}
@@ -20,8 +19,8 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
 
   eigenOdometryFromMsg(odom_msg, &trajectory_point);  
 
-  std::cerr << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose() << 
-               " " << trajectory_point.orientation_W_B.w() << " " << trajectory_point.orientation_W_B.vec().transpose() << "\n";  
+  std::cerr << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose().head(2) << 
+               " " << utils::yawFromQuaternion(trajectory_point.orientation_W_B) << "\n";  
         
   return true;
 }
@@ -29,21 +28,18 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
 void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_msgs::JointTrajectory& trajectory_pts)
 {
     
-  Eigen::Vector3d euler_angles;
-  odometry.getEulerAngles(&euler_angles);
-
   /*  NON LINEAR CONTROLLER INITIAL STATE AND CONSTRAINTS  */
   for (size_t i = 0; i < ACADO_N; i++) {
-    reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W(0), //0,
-                                           trajectory_point.position_W(1), //0,
-                                           //0.f, 0.f, 
+    reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W(0), 
+                                           trajectory_point.position_W(1), 
+                                           utils::yawFromQuaternion(trajectory_point.orientation_W_B),
                                            0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
   }    
 
-  referenceN_ << trajectory_point.position_W(0), 0.f, trajectory_point.position_W(1), 0.f;
+  referenceN_ << trajectory_point.position_W(0), trajectory_point.position_W(1), utils::yawFromQuaternion(trajectory_point.orientation_W_B);
 
   Eigen::Matrix<double, ACADO_NX, 1> x_0;
-  x_0 << odometry.position_W(0), odometry.velocity_B(0), odometry.position_W(1), odometry.velocity_B(1), 0.f;
+  x_0 << odometry.position_W(0), odometry.position_W(1), utils::yawFromQuaternion(odometry.orientation_W_B), 0.f;
 
   Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(acadoVariables.x0)) = x_0;
   Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(acadoVariables.y)) = reference_.transpose();
@@ -65,10 +61,10 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_
   solve_time = chrono::duration_cast<chrono::microseconds>(end - start).count();
 
   if(verbosity_ == Verbosity_Level::VERBOSE){   
-    std::cout << FBLU("Short Term time elapsed: ") << solve_time << "microsecs\n";
+    std::cout << FBLU("Short Term time elapsed: ") << solve_time*1e-6 << " secs\n";
     std::cout << FBLU("Short Term N° Iteration Performed: ") << iter << "\n\n"; 
   } else if (verbosity_ == Verbosity_Level::FEMMINA_CAGACAZZI ) {
-    std::cout << FBLU("Short Term time of one real-time iteration: ") <<  solve_time << " microsecs\n";
+    std::cout << FBLU("Short Term time of one real-time iteration: ") <<  solve_time*1e-6 << " secs\n";
     std::cout << FBLU("Short Term N° Iteration Performed: ") << iter << "\n\n"; 
     std::cout << FBLU("Short Term Differential Variables: ") << "\n";
     printDifferentialVariables();
@@ -85,10 +81,9 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_
 
 void SherpaAckermannPlanner::getTrajectoryVector(trajectory_msgs::JointTrajectory& trajectory_pts){
   for (unsigned int i = 1; i < ACADO_N + 1; ++i) {
-    trajectory_pts.points[0].positions[ACADO_NX/2 * i - 2 ] = acadoVariables.x[i*ACADO_NX];
-    trajectory_pts.points[0].positions[ACADO_NX/2 * i - 2 + 1] = acadoVariables.x[i*ACADO_NX + 2];
-    trajectory_pts.points[0].velocities[ACADO_NX/2 * i - 2] = acadoVariables.x[i*ACADO_NX + 1];
-    trajectory_pts.points[0].velocities[ACADO_NX/2 * i - 2 + 1] = acadoVariables.x[i*ACADO_NX + 3];
+    trajectory_pts.points[0].positions[(ACADO_NX-1) * i + (ACADO_NX-1)] = acadoVariables.x[i*ACADO_NX];
+    trajectory_pts.points[0].positions[(ACADO_NX-1) * i + 1 + (ACADO_NX-1)] = acadoVariables.x[i*ACADO_NX + 1];
+    trajectory_pts.points[0].positions[(ACADO_NX-1) * i + 2 + (ACADO_NX-1)] = acadoVariables.x[i*ACADO_NX + 2];
   }
 }
 
@@ -121,18 +116,17 @@ bool SherpaAckermannPlanner::InitializeController()
 
   W_(0,0) = q_p_(0);
   W_(1,1) = q_p_(1);
-  W_(2,2) = 0;
-  W_(3,3) = 0;
-  W_(4,4) = 0;
-  W_(5,5) = 0;
-  W_(6,6) = 0;
-  W_(7,7) = 0;
+  W_(2,2) = q_theta_;
+  W_(3,3) = q_obst_;
+  W_(4,4) = q_obst_;
+  W_(5,5) = q_obst_;
+  W_(6,6) = q_obst_;
+  W_(7,7) = q_obst_;
+  W_(8,8) = q_obst_;
 
   WN_(0,0) = qf_p_(0);
-  WN_(1,1) = qf_v_(0);
-  WN_(2,2) = qf_p_(1);
-  WN_(3,3) = qf_v_(1);
-
+  WN_(1,1) = qf_p_(1);
+  WN_(2,2) = qf_theta_;
   
   std::cout << FBLU("Short Term controller W matrix: ") << "\n";    
   std::cout << W_.diagonal().transpose() << "\n" << "\n";
@@ -144,23 +138,23 @@ bool SherpaAckermannPlanner::InitializeController()
     
   for (size_t i = 0; i < ACADO_N; ++i) {
     
-    acadoVariables.lbAValues[ACADO_NU * i] = safety_distance_;       // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 1] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 2] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 3] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 4] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NU * i + 5] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.ubAValues[ACADO_NU * i] = 10000;                  // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 1] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 2] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 3] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 4] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NU * i + 5] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-
-    acadoVariables.lbValues[ACADO_NU * i] = velx_bnds_(0);        // min vel_x
-    acadoVariables.lbValues[ACADO_NU * i + 1] = vely_bnds_(0);    // min vel_y
-    acadoVariables.ubValues[ACADO_NU * i] = velx_bnds_(1);        // max vel_x
-    acadoVariables.ubValues[ACADO_NU * i + 1] = vely_bnds_(1);    // max vel_y              
+    acadoVariables.lbAValues[ACADO_NPAC * i] =     0.5;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NPAC * i + 1] = 0.5;   // 1st Obstacle min distance
+    /*acadoVariables.lbAValues[ACADO_NPAC * i + 2] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NPAC * i + 3] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NPAC * i + 4] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NPAC * i + 5] = safety_distance_;   // 1st Obstacle min distance*/
+    acadoVariables.ubAValues[ACADO_NPAC * i] =     1000.f;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000.f;              // 1st Obstacle max distance (needed by the algorithm)
+    /*acadoVariables.ubAValues[ACADO_NPAC * i + 2] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NPAC * i + 3] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NPAC * i + 4] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NPAC * i + 5] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+*/
+    acadoVariables.lbValues[ACADO_NU * i] = vel_bnds_(0);        // min vel_x
+    acadoVariables.lbValues[ACADO_NU * i + 1] = vel_bnds_(0);    // min vel_y
+    acadoVariables.ubValues[ACADO_NU * i] = phi_bnds_(1);        // max vel_x
+    acadoVariables.ubValues[ACADO_NU * i + 1] = phi_bnds_(1);    // max vel_y              
 
   }
 
@@ -176,7 +170,8 @@ bool SherpaAckermannPlanner::InitializeController()
                                                     obst3_(0), obst3_(1),     // 3st Obstacle x-y position
                                                     obst4_(0), obst4_(1),     // 4st Obstacle x-y position
                                                     obst5_(0), obst5_(1),     // 5st Obstacle x-y position
-                                                    obst6_(0), obst6_(1);     // 6st Obstacle x-y position
+                                                    obst6_(0), obst6_(1),     // 6st Obstacle x-y position
+                                                    l_;                       // vehicle lenght
   }
 
   std::cout << FBLU("Short Term controller Online Data matrix: ") << "\n"; 

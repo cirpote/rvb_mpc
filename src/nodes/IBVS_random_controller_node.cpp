@@ -17,8 +17,7 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   SHERPA_planner_.InitializeController();
 
   trajectory_msgs::JointTrajectoryPoint pt;
-  pt.positions.resize( ( ACADO_N )*2 );
-  pt.velocities.resize( ( ACADO_N )*2 );
+  pt.positions.resize( ( ACADO_N )*3 );
   trajectory_pts_.points.push_back(pt);
   trajectory_pts_.joint_names.push_back("sherpa_base_link");
 
