@@ -17,6 +17,9 @@
         <box size="0.2 0.2 2" />
       </geometry>
     </collision>
+      <velocity>0 0 0 0 0 0</velocity>
+      <acceleration>0 0 0 0 0 0</acceleration>
+      <wrench>0 0 0 0 0 0</wrench>
   </link>
   <gazebo reference="my_box">
     <material>Gazebo/Green</material>

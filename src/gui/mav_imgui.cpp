@@ -10,8 +10,8 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _des_pos_vec3f_w[1] = 0.f;
   _des_orientationf_w = 0.f;
 
-  _K_values[0] = 0.2;
-  _K_values[1] = 0.4;
+  _K_values[0] = 0.5;
+  _K_values[1] = 3.f;
   _K_values[2] = 3.5;
 
   _gui_ros_time = ros::Time::now();
@@ -235,6 +235,8 @@ void MavGUI::showGUI(bool *p_open) {
 
   ImGui::NextColumn();
   ImGui::Text("Control law gains");
+  ImGui::Text("0.2 0.4 3.5 Pose Regulation");
+  ImGui::Text("0.5 3 3.5 Traj. Tracking");
   ImGui::DragFloat3(" K1 K2 K3 ", _K_values, 0.01f, -20.0f, 200.0f);
   if (ImGui::Button("Send gains"))
     changeControlLawGains();

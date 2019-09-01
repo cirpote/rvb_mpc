@@ -149,7 +149,7 @@ int main( )
       BMatrix W = eye<bool>( h.getDim() );
       BMatrix WN = eye<bool>( hN.getDim() );
 
-      OCP ocp(0, 15, 60);
+      OCP ocp(0, 15, 30);
       ocp.minimizeLSQ( W, h); 
       ocp.minimizeLSQEndTerm( WN, hN);
       ocp.subjectTo( f );

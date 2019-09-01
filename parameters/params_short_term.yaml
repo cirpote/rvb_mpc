@@ -6,7 +6,7 @@ path_constraints:
 
   q_p:                    [100, 100]
   q_theta:                100
-  q_obst:                 200
+  q_obst:                 300
 
 terminal_constraints:
 
