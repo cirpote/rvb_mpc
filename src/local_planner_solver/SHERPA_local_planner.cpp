@@ -81,9 +81,9 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_
 
 void SherpaAckermannPlanner::getTrajectoryVector(trajectory_msgs::JointTrajectory& trajectory_pts){
   for (unsigned int i = 1; i < ACADO_N + 1; ++i) {
-    trajectory_pts.points[0].positions[(ACADO_NX-1) * i + (ACADO_NX-1)] = acadoVariables.x[i*ACADO_NX];
-    trajectory_pts.points[0].positions[(ACADO_NX-1) * i + 1 + (ACADO_NX-1)] = acadoVariables.x[i*ACADO_NX + 1];
-    trajectory_pts.points[0].positions[(ACADO_NX-1) * i + 2 + (ACADO_NX-1)] = acadoVariables.x[i*ACADO_NX + 2];
+    trajectory_pts.points[0].positions[(ACADO_NX-1) * (i-1) ] = acadoVariables.x[i*ACADO_NX];
+    trajectory_pts.points[0].positions[(ACADO_NX-1) * (i-1) + 1 ] = acadoVariables.x[i*ACADO_NX + 1];
+    trajectory_pts.points[0].positions[(ACADO_NX-1) * (i-1) + 2 ] = acadoVariables.x[i*ACADO_NX + 2];
   }
 }
 
@@ -138,19 +138,20 @@ bool SherpaAckermannPlanner::InitializeController()
     
   for (size_t i = 0; i < ACADO_N; ++i) {
     
-    acadoVariables.lbAValues[ACADO_NPAC * i] =     0.5;   // 1st Obstacle min distance
+    /*acadoVariables.lbAValues[ACADO_NPAC * i] =     0.5;   // 1st Obstacle min distance
     acadoVariables.lbAValues[ACADO_NPAC * i + 1] = 0.5;   // 1st Obstacle min distance
-    /*acadoVariables.lbAValues[ACADO_NPAC * i + 2] = safety_distance_;   // 1st Obstacle min distance
+    acadoVariables.lbAValues[ACADO_NPAC * i + 2] = safety_distance_;   // 1st Obstacle min distance
     acadoVariables.lbAValues[ACADO_NPAC * i + 3] = safety_distance_;   // 1st Obstacle min distance
     acadoVariables.lbAValues[ACADO_NPAC * i + 4] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NPAC * i + 5] = safety_distance_;   // 1st Obstacle min distance*/
+    acadoVariables.lbAValues[ACADO_NPAC * i + 5] = safety_distance_;   // 1st Obstacle min distance
     acadoVariables.ubAValues[ACADO_NPAC * i] =     1000.f;              // 1st Obstacle max distance (needed by the algorithm)
     acadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000.f;              // 1st Obstacle max distance (needed by the algorithm)
-    /*acadoVariables.ubAValues[ACADO_NPAC * i + 2] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
+    acadoVariables.ubAValues[ACADO_NPAC * i + 2] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
     acadoVariables.ubAValues[ACADO_NPAC * i + 3] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
     acadoVariables.ubAValues[ACADO_NPAC * i + 4] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
     acadoVariables.ubAValues[ACADO_NPAC * i + 5] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-*/
+    */
+
     acadoVariables.lbValues[ACADO_NU * i] = vel_bnds_(0);        // min vel_x
     acadoVariables.lbValues[ACADO_NU * i + 1] = vel_bnds_(0);    // min vel_y
     acadoVariables.ubValues[ACADO_NU * i] = phi_bnds_(1);        // max vel_x

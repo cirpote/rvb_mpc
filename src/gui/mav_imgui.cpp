@@ -18,76 +18,12 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
 
   _img_sub = _base_nh.subscribe("/camera_gui/camera/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
   _set_control_gains = _base_nh.serviceClient<rm3_ackermann_controller::SetKvalues>("/set_k");
+  _activate_controller = _base_nh.serviceClient<rm3_ackermann_controller::ActivateController>("/activate_controller");
 
   camera = std::make_shared<Camera>( glm::vec3(15.f, 20.f, -65.0f), glm::vec3(0.0f, 1.0f, 0.0f), 100.f );
   std::cout << FGRN("Camera Correctly Initialized\n\n");
 
   avatarImg = cv::Mat(cv::Size(640,480), CV_8UC3);
-
-}
-
-void MavGUI::init3DObjRendering(std::string&& package_path_str){
-
-  char vs_path[100], fs_path[100], model_path[100];
-
-  strcpy(vs_path, package_path_str.c_str());
-  strcat(vs_path, "/src/assimp_loader/assets/shaders/modelTextured.vs");
-
-  strcpy(fs_path, package_path_str.c_str());
-  strcat(fs_path, "/src/assimp_loader/assets/shaders/modelTextured.fs");
-
-  strcpy(model_path, package_path_str.c_str());
-  //strcat(model_path, "/src/assimp_loader/assets/siege_engine/siegeEngine.obj");
-  strcat(model_path, "/src/assimp_loader/assets/zeppelin/ZEPLIN_OBJ.obj");
-
-  shader =  std::make_shared<Shader>( vs_path, fs_path );
-  std::cout << FGRN("Shader Correctly Initialized\n\n");
-
-  model = std::make_shared<Model>(model_path);
-  std::cout << FGRN("Model Correctly Initialized\n\n");
-
-}
-
-void MavGUI::processAvatar(){
-
-    ImVec4 clear_color = ImColor(34, 43, 46);
-    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glViewport(0, 0, 640, 480);
-
-    // don't forget to enable shader before setting uniforms
-    shader->use();
-
-    // view/projection transformations
-    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)640 / (float)480, 0.1f, 250.0f);
-    glm::mat4 view = camera->GetViewMatrix();
-    shader->setMat4("projection", projection);
-    shader->setMat4("view", view);
-
-    // render the loaded model
-    glm::mat4 currmodel = glm::mat4(1.0f);
-
-
-    float angle = 2 * std::acos(_current_orientation.w());
-    float norm_fact = std::sqrt(1 - _current_orientation.w()*_current_orientation.w());
-    glm::vec3 rot_axis(_current_orientation.y() / norm_fact,
-                       _current_orientation.z() / norm_fact,
-                       _current_orientation.x() / norm_fact);
-
-
-    currmodel = glm::rotate(currmodel, angle, rot_axis);
-    currmodel = glm::translate(currmodel, glm::vec3(0.f, 0.f, 0.f)); // translate it down so it's at the center of the scene
-    currmodel = glm::scale(currmodel, glm::vec3(0.08f, 0.08f, 0.08f));	// it's a bit too big for our scene, so scale it down
-    shader->setMat4("model", currmodel);
-    model->Draw(*shader);
-
-    glReadPixels ( 0, 0, 640, 480, GL_BGR,
-                   GL_UNSIGNED_BYTE, ( GLubyte * ) avatarImg.data );
-
-    cv::flip(avatarImg, avatarImg, 0);
-    cv::cvtColor(avatarImg, avatarImg, CV_RGB2BGR);
-    cv::resize(avatarImg, avatarImg_res, cv::Size(avatarImg.cols/2, avatarImg.rows/2) );
 
 }
 
@@ -133,9 +69,27 @@ void MavGUI::activatePublisher(const std::string &cmd_publisher_name, const std:
   _waypoint_pub = _base_nh.advertise<geometry_msgs::Point>(waypoint_publisher_name, 1, this);
 }
 
+void MavGUI::activateController(){
+
+  rm3_ackermann_controller::ActivateController srvCall;
+  srvCall.request.is_active = true;
+  _activate_controller.call(srvCall);
+
+  std::cout << FBLU("MavGUI: ") << srvCall.response.result << "\n";
+
+}
+
+void MavGUI::disactivateController(){
+  
+  rm3_ackermann_controller::ActivateController srvCall;
+  srvCall.request.is_active = false;
+  _activate_controller.call(srvCall);
+
+  std::cout << FBLU("MavGUI: ") << srvCall.response.result << "\n";
+}
+
 void MavGUI::showGUI(bool *p_open) {
 
-  //processAvatar();
   ImGuiWindowFlags window_flags = 0;
   window_flags |= ImGuiWindowFlags_MenuBar;
  
@@ -285,7 +239,17 @@ void MavGUI::showGUI(bool *p_open) {
   if (ImGui::Button("Send gains"))
     changeControlLawGains();
 
+  
+  ImGui::Spacing();
+  ImGui::Text("Ackermann Controller");
+  if (ImGui::Button("Activate"))
+    activateController();
+  ImGui::SameLine();
+  if (ImGui::Button("Disactivate"))
+    disactivateController();
 }
+
+
 
 void MavGUI::changeControlLawGains(){
 

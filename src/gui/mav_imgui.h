@@ -30,6 +30,7 @@
 #include "../assimp_loader/model.h"
 
 #include <rm3_ackermann_controller/SetKvalues.h>
+#include <rm3_ackermann_controller/ActivateController.h>
 
 class MavGUI: public BaseGUI{
 public:
@@ -41,13 +42,11 @@ public:
     }
 
     void showGUI(bool* p_open);
-    void processAvatar();
-    void init3DObjRendering(std::string&& package_path_str);
 
 protected:
 
     // ROS service call
-    ros::ServiceClient _set_control_gains;
+    ros::ServiceClient _set_control_gains, _activate_controller;
     ros::Time _gui_ros_time;
 
     // ROS subscriber
@@ -60,6 +59,8 @@ protected:
     void sendWaypoint();
     void imageCb(const sensor_msgs::ImageConstPtr&);
     void activatePublisher(const std::string&, const std::string&);
+    void activateController();
+    void disactivateController();
     virtual void resetSolver() = 0;
     void changeControlLawGains();
 
