@@ -69,8 +69,8 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   if(!first_trajectory_cmd_)
     return;
 
-  if(!to_plan_)
-    return;
+  //if(!to_plan_)
+  //  return;
 
   SHERPA_planner_.calculateRollPitchYawRateThrustCommands(trajectory_pts_);
   trajectory_pts_.header.stamp. ros::Time::now();
@@ -78,6 +78,19 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
 
   to_plan_ = false;
   return;
+}
+
+void IBVSRandomNode::setDynamicObstacle(){
+
+  gazebo_msgs::SetModelState setmodelstate;
+  Eigen::Vector3d dyn_obst_position = Eigen::Vector3d(_dyn_obst_vec2f[0] + 10, _dyn_obst_vec2f[1] + 10, 0);
+  setmodelstate.request.model_state.model_name = "vertical_obst_7";
+  setmodelstate.request.model_state.pose.position = utils::fromEigenVectorToPoint(dyn_obst_position);
+  setmodelstate.request.model_state.pose.orientation = utils::fromEigenQuaternionrToQuaternion(Eigen::Quaterniond(1,0,0,0));
+  _set_model_state.call(setmodelstate);
+  SHERPA_planner_.obst7_ = Eigen::Vector2d(_dyn_obst_vec2f[0], _dyn_obst_vec2f[1]);
+  SHERPA_planner_.InitializeController();
+  std::cout << FGRN("vertical_obst_7 succesfully set to: ") << dyn_obst_position.transpose() << "\n";
 }
 
 static void error_callback(int error, const char* description)

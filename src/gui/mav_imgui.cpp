@@ -12,27 +12,29 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
 
   _K_values[0] = 0.5;
   _K_values[1] = 2.f;
-  _K_values[2] = 2.5;
+  _K_values[2] = 3.f;
+
+  _dyn_obst_vec2f[0] = 0.f;
+  _dyn_obst_vec2f[1] = 0.f;
 
   _gui_ros_time = ros::Time::now();
 
   _img_sub = _base_nh.subscribe("/camera_gui/camera/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
   _set_control_gains = _base_nh.serviceClient<rm3_ackermann_controller::SetKvalues>("/set_k");
   _activate_controller = _base_nh.serviceClient<rm3_ackermann_controller::ActivateController>("/activate_controller");
+  _set_model_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
 
   camera = std::make_shared<Camera>( glm::vec3(15.f, 20.f, -65.0f), glm::vec3(0.0f, 1.0f, 0.0f), 100.f );
   std::cout << FGRN("Camera Correctly Initialized\n\n");
-
 }
 
 void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
 
 
   cv_bridge::CvImagePtr cv_ptr;
-  cv_ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::MONO8);
+  cv_ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::RGB8);
 
-  currImg_ = cv_ptr->image.clone();
-  cv::cvtColor(currImg_, draw_image_, cv::COLOR_GRAY2BGR);
+  draw_image_ = cv_ptr->image.clone();
 
   float k = 476.70308;
   float c = 400.5;
@@ -246,7 +248,7 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::NextColumn();
   ImGui::Text("Control law gains");
   ImGui::Text("0.2 0.4 3.5 Pose Regulation");
-  ImGui::Text("0.5 2 2.5 Traj. Tracking");
+  ImGui::Text("0.5 2 3 Traj. Tracking");
   ImGui::DragFloat3(" K1 K2 K3 ", _K_values, 0.01f, -20.0f, 200.0f);
   if (ImGui::Button("Send gains"))
     changeControlLawGains();
@@ -259,6 +261,14 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::SameLine();
   if (ImGui::Button("Disactivate"))
     disactivateController();
+
+
+
+  ImGui::Spacing();
+  ImGui::Text("Dynamic Obstacle");
+  ImGui::DragFloat2(" x y ", _dyn_obst_vec2f, 0.01f, -20.0f, 20.0f);
+  if (ImGui::Button("set Dyn. Obstacle"))
+    setDynamicObstacle();  
 }
 
 

@@ -69,6 +69,7 @@ class IBVSRandomNode: public MavGUI
       void ImageCallback(const sensor_msgs::ImageConstPtr&);
       void LyapunovCallback(const std_msgs::Float32ConstPtr&);
       void resetSolver();
+      void setDynamicObstacle();
 
       //commands
       Eigen::Matrix<double,3,1>& ang_vel_ref;

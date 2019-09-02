@@ -24,6 +24,6 @@
   <gazebo reference="my_box">
     <material>Gazebo/Green</material>
     <static>true</static>
-    <turnGravityOff>true</turnGravityOff>
+    <turnGravityOff>false</turnGravityOff>
   </gazebo>
 </robot>

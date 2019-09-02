@@ -3,7 +3,6 @@
 #include <iostream>
 #include <fstream>
 #include <time.h>
-#include <gazebo_msgs/SetModelState.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
 #include <std_srvs/Empty.h>
@@ -33,6 +32,7 @@
 
 #include <rm3_ackermann_controller/SetKvalues.h>
 #include <rm3_ackermann_controller/ActivateController.h>
+#include <gazebo_msgs/SetModelState.h>
 
 class MavGUI: public BaseGUI{
 public:
@@ -48,7 +48,7 @@ public:
 protected:
 
     // ROS service call
-    ros::ServiceClient _set_control_gains, _activate_controller;
+    ros::ServiceClient _set_control_gains, _activate_controller, _set_model_state;
     ros::Time _gui_ros_time;
 
     // ROS subscriber
@@ -63,6 +63,7 @@ protected:
     void activatePublisher(const std::string&, const std::string&);
     void activateController();
     void disactivateController();
+    virtual void setDynamicObstacle() = 0;
     virtual void resetSolver() = 0;
     void changeControlLawGains();
 
@@ -72,6 +73,7 @@ protected:
     bool _sendingWaypoint = false;
     float _K_values[3];
     trajectory_msgs::JointTrajectory trajectory_pts_;
+    float _dyn_obst_vec2f[2];
 
     float _x_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _x_min = 0;
@@ -105,7 +107,6 @@ protected:
     Eigen::Vector3d curr_pos_, curr_att_, curr_lin_vel_, curr_ang_vel_; 
     Eigen::Quaterniond curr_q_;
 
-    cv::Mat currImg_;
     cv::Mat draw_image_, draw_image_res_;
     GLuint my_opengl_texture;
 
