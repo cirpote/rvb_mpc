@@ -33,7 +33,8 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_
     reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W(0), 
                                            trajectory_point.position_W(1), 
                                            utils::yawFromQuaternion(trajectory_point.orientation_W_B),
-                                           0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
+                                           0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f,
+                                           0.f;
   }    
 
   referenceN_ << trajectory_point.position_W(0), trajectory_point.position_W(1), utils::yawFromQuaternion(trajectory_point.orientation_W_B);
@@ -123,6 +124,8 @@ bool SherpaAckermannPlanner::InitializeController()
   W_(6,6) = q_obst_;
   W_(7,7) = q_obst_;
   W_(8,8) = q_obst_;
+  W_(9,9) = q_obst_;
+  W_(10,10) = 500;
 
   WN_(0,0) = qf_p_(0);
   WN_(1,1) = qf_p_(1);
@@ -137,20 +140,6 @@ bool SherpaAckermannPlanner::InitializeController()
   Eigen::Map<Eigen::Matrix<double, ACADO_NYN, ACADO_NYN>>(const_cast<double*>(acadoVariables.WN)) = WN_.transpose();
     
   for (size_t i = 0; i < ACADO_N; ++i) {
-    
-    /*acadoVariables.lbAValues[ACADO_NPAC * i] =     0.5;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NPAC * i + 1] = 0.5;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NPAC * i + 2] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NPAC * i + 3] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NPAC * i + 4] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.lbAValues[ACADO_NPAC * i + 5] = safety_distance_;   // 1st Obstacle min distance
-    acadoVariables.ubAValues[ACADO_NPAC * i] =     1000.f;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000.f;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NPAC * i + 2] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NPAC * i + 3] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NPAC * i + 4] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-    acadoVariables.ubAValues[ACADO_NPAC * i + 5] = 10000;              // 1st Obstacle max distance (needed by the algorithm)
-    */
 
     acadoVariables.lbValues[ACADO_NU * i] = vel_bnds_(0);        // min vel_x
     acadoVariables.lbValues[ACADO_NU * i + 1] = vel_bnds_(0);    // min vel_y
@@ -172,6 +161,7 @@ bool SherpaAckermannPlanner::InitializeController()
                                                     obst4_(0), obst4_(1),     // 4st Obstacle x-y position
                                                     obst5_(0), obst5_(1),     // 5st Obstacle x-y position
                                                     obst6_(0), obst6_(1),     // 6st Obstacle x-y position
+                                                    obst7_(0), obst7_(1),     // tst Obstacle x-y position
                                                     l_;                       // vehicle lenght
   }
 

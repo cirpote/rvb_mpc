@@ -44,19 +44,21 @@ acadoWorkspace.state[3] = acadoVariables.x[lRun1 * 4 + 3];
 
 acadoWorkspace.state[28] = acadoVariables.u[lRun1 * 2];
 acadoWorkspace.state[29] = acadoVariables.u[lRun1 * 2 + 1];
-acadoWorkspace.state[30] = acadoVariables.od[lRun1 * 13];
-acadoWorkspace.state[31] = acadoVariables.od[lRun1 * 13 + 1];
-acadoWorkspace.state[32] = acadoVariables.od[lRun1 * 13 + 2];
-acadoWorkspace.state[33] = acadoVariables.od[lRun1 * 13 + 3];
-acadoWorkspace.state[34] = acadoVariables.od[lRun1 * 13 + 4];
-acadoWorkspace.state[35] = acadoVariables.od[lRun1 * 13 + 5];
-acadoWorkspace.state[36] = acadoVariables.od[lRun1 * 13 + 6];
-acadoWorkspace.state[37] = acadoVariables.od[lRun1 * 13 + 7];
-acadoWorkspace.state[38] = acadoVariables.od[lRun1 * 13 + 8];
-acadoWorkspace.state[39] = acadoVariables.od[lRun1 * 13 + 9];
-acadoWorkspace.state[40] = acadoVariables.od[lRun1 * 13 + 10];
-acadoWorkspace.state[41] = acadoVariables.od[lRun1 * 13 + 11];
-acadoWorkspace.state[42] = acadoVariables.od[lRun1 * 13 + 12];
+acadoWorkspace.state[30] = acadoVariables.od[lRun1 * 15];
+acadoWorkspace.state[31] = acadoVariables.od[lRun1 * 15 + 1];
+acadoWorkspace.state[32] = acadoVariables.od[lRun1 * 15 + 2];
+acadoWorkspace.state[33] = acadoVariables.od[lRun1 * 15 + 3];
+acadoWorkspace.state[34] = acadoVariables.od[lRun1 * 15 + 4];
+acadoWorkspace.state[35] = acadoVariables.od[lRun1 * 15 + 5];
+acadoWorkspace.state[36] = acadoVariables.od[lRun1 * 15 + 6];
+acadoWorkspace.state[37] = acadoVariables.od[lRun1 * 15 + 7];
+acadoWorkspace.state[38] = acadoVariables.od[lRun1 * 15 + 8];
+acadoWorkspace.state[39] = acadoVariables.od[lRun1 * 15 + 9];
+acadoWorkspace.state[40] = acadoVariables.od[lRun1 * 15 + 10];
+acadoWorkspace.state[41] = acadoVariables.od[lRun1 * 15 + 11];
+acadoWorkspace.state[42] = acadoVariables.od[lRun1 * 15 + 12];
+acadoWorkspace.state[43] = acadoVariables.od[lRun1 * 15 + 13];
+acadoWorkspace.state[44] = acadoVariables.od[lRun1 * 15 + 14];
 
 ret = acado_integrate(acadoWorkspace.state, 1);
 
@@ -97,8 +99,9 @@ return ret;
 void acado_evaluateLSQ(const real_t* in, real_t* out)
 {
 const real_t* xd = in;
+const real_t* u = in + 4;
 const real_t* od = in + 6;
-/* Vector of auxiliary variables; number of elements: 30. */
+/* Vector of auxiliary variables; number of elements: 35. */
 real_t* a = acadoWorkspace.objAuxVar;
 
 /* Compute intermediate quantities: */
@@ -108,30 +111,35 @@ a[2] = (((xd[0]-od[4])*(xd[0]-od[4]))+((xd[1]-od[5])*(xd[1]-od[5])));
 a[3] = (((xd[0]-od[6])*(xd[0]-od[6]))+((xd[1]-od[7])*(xd[1]-od[7])));
 a[4] = (((xd[0]-od[8])*(xd[0]-od[8]))+((xd[1]-od[9])*(xd[1]-od[9])));
 a[5] = (((xd[0]-od[10])*(xd[0]-od[10]))+((xd[1]-od[11])*(xd[1]-od[11])));
-a[6] = ((xd[0]-od[0])+(xd[0]-od[0]));
-a[7] = ((real_t)(1.0000000000000000e+00)/a[0]);
-a[8] = (a[7]*a[7]);
-a[9] = ((xd[1]-od[1])+(xd[1]-od[1]));
-a[10] = ((xd[0]-od[2])+(xd[0]-od[2]));
-a[11] = ((real_t)(1.0000000000000000e+00)/a[1]);
-a[12] = (a[11]*a[11]);
-a[13] = ((xd[1]-od[3])+(xd[1]-od[3]));
-a[14] = ((xd[0]-od[4])+(xd[0]-od[4]));
-a[15] = ((real_t)(1.0000000000000000e+00)/a[2]);
-a[16] = (a[15]*a[15]);
-a[17] = ((xd[1]-od[5])+(xd[1]-od[5]));
-a[18] = ((xd[0]-od[6])+(xd[0]-od[6]));
-a[19] = ((real_t)(1.0000000000000000e+00)/a[3]);
-a[20] = (a[19]*a[19]);
-a[21] = ((xd[1]-od[7])+(xd[1]-od[7]));
-a[22] = ((xd[0]-od[8])+(xd[0]-od[8]));
-a[23] = ((real_t)(1.0000000000000000e+00)/a[4]);
-a[24] = (a[23]*a[23]);
-a[25] = ((xd[1]-od[9])+(xd[1]-od[9]));
-a[26] = ((xd[0]-od[10])+(xd[0]-od[10]));
-a[27] = ((real_t)(1.0000000000000000e+00)/a[5]);
-a[28] = (a[27]*a[27]);
-a[29] = ((xd[1]-od[11])+(xd[1]-od[11]));
+a[6] = (((xd[0]-od[12])*(xd[0]-od[12]))+((xd[1]-od[13])*(xd[1]-od[13])));
+a[7] = ((xd[0]-od[0])+(xd[0]-od[0]));
+a[8] = ((real_t)(1.0000000000000000e+00)/a[0]);
+a[9] = (a[8]*a[8]);
+a[10] = ((xd[1]-od[1])+(xd[1]-od[1]));
+a[11] = ((xd[0]-od[2])+(xd[0]-od[2]));
+a[12] = ((real_t)(1.0000000000000000e+00)/a[1]);
+a[13] = (a[12]*a[12]);
+a[14] = ((xd[1]-od[3])+(xd[1]-od[3]));
+a[15] = ((xd[0]-od[4])+(xd[0]-od[4]));
+a[16] = ((real_t)(1.0000000000000000e+00)/a[2]);
+a[17] = (a[16]*a[16]);
+a[18] = ((xd[1]-od[5])+(xd[1]-od[5]));
+a[19] = ((xd[0]-od[6])+(xd[0]-od[6]));
+a[20] = ((real_t)(1.0000000000000000e+00)/a[3]);
+a[21] = (a[20]*a[20]);
+a[22] = ((xd[1]-od[7])+(xd[1]-od[7]));
+a[23] = ((xd[0]-od[8])+(xd[0]-od[8]));
+a[24] = ((real_t)(1.0000000000000000e+00)/a[4]);
+a[25] = (a[24]*a[24]);
+a[26] = ((xd[1]-od[9])+(xd[1]-od[9]));
+a[27] = ((xd[0]-od[10])+(xd[0]-od[10]));
+a[28] = ((real_t)(1.0000000000000000e+00)/a[5]);
+a[29] = (a[28]*a[28]);
+a[30] = ((xd[1]-od[11])+(xd[1]-od[11]));
+a[31] = ((xd[0]-od[12])+(xd[0]-od[12]));
+a[32] = ((real_t)(1.0000000000000000e+00)/a[6]);
+a[33] = (a[32]*a[32]);
+a[34] = ((xd[1]-od[13])+(xd[1]-od[13]));
 
 /* Compute outputs: */
 out[0] = xd[0];
@@ -143,42 +151,52 @@ out[5] = ((real_t)(1.0000000000000000e+00)/a[2]);
 out[6] = ((real_t)(1.0000000000000000e+00)/a[3]);
 out[7] = ((real_t)(1.0000000000000000e+00)/a[4]);
 out[8] = ((real_t)(1.0000000000000000e+00)/a[5]);
-out[9] = (real_t)(1.0000000000000000e+00);
-out[10] = (real_t)(0.0000000000000000e+00);
-out[11] = (real_t)(0.0000000000000000e+00);
+out[9] = ((real_t)(1.0000000000000000e+00)/a[6]);
+out[10] = u[1];
+out[11] = (real_t)(1.0000000000000000e+00);
 out[12] = (real_t)(0.0000000000000000e+00);
 out[13] = (real_t)(0.0000000000000000e+00);
-out[14] = (real_t)(1.0000000000000000e+00);
+out[14] = (real_t)(0.0000000000000000e+00);
 out[15] = (real_t)(0.0000000000000000e+00);
-out[16] = (real_t)(0.0000000000000000e+00);
+out[16] = (real_t)(1.0000000000000000e+00);
 out[17] = (real_t)(0.0000000000000000e+00);
 out[18] = (real_t)(0.0000000000000000e+00);
-out[19] = (real_t)(1.0000000000000000e+00);
+out[19] = (real_t)(0.0000000000000000e+00);
 out[20] = (real_t)(0.0000000000000000e+00);
-out[21] = ((real_t)(0.0000000000000000e+00)-(a[6]*a[8]));
-out[22] = ((real_t)(0.0000000000000000e+00)-(a[9]*a[8]));
-out[23] = (real_t)(0.0000000000000000e+00);
-out[24] = (real_t)(0.0000000000000000e+00);
-out[25] = ((real_t)(0.0000000000000000e+00)-(a[10]*a[12]));
-out[26] = ((real_t)(0.0000000000000000e+00)-(a[13]*a[12]));
-out[27] = (real_t)(0.0000000000000000e+00);
-out[28] = (real_t)(0.0000000000000000e+00);
-out[29] = ((real_t)(0.0000000000000000e+00)-(a[14]*a[16]));
-out[30] = ((real_t)(0.0000000000000000e+00)-(a[17]*a[16]));
-out[31] = (real_t)(0.0000000000000000e+00);
-out[32] = (real_t)(0.0000000000000000e+00);
-out[33] = ((real_t)(0.0000000000000000e+00)-(a[18]*a[20]));
-out[34] = ((real_t)(0.0000000000000000e+00)-(a[21]*a[20]));
-out[35] = (real_t)(0.0000000000000000e+00);
-out[36] = (real_t)(0.0000000000000000e+00);
-out[37] = ((real_t)(0.0000000000000000e+00)-(a[22]*a[24]));
-out[38] = ((real_t)(0.0000000000000000e+00)-(a[25]*a[24]));
-out[39] = (real_t)(0.0000000000000000e+00);
-out[40] = (real_t)(0.0000000000000000e+00);
-out[41] = ((real_t)(0.0000000000000000e+00)-(a[26]*a[28]));
-out[42] = ((real_t)(0.0000000000000000e+00)-(a[29]*a[28]));
-out[43] = (real_t)(0.0000000000000000e+00);
-out[44] = (real_t)(0.0000000000000000e+00);
+out[21] = (real_t)(1.0000000000000000e+00);
+out[22] = (real_t)(0.0000000000000000e+00);
+out[23] = ((real_t)(0.0000000000000000e+00)-(a[7]*a[9]));
+out[24] = ((real_t)(0.0000000000000000e+00)-(a[10]*a[9]));
+out[25] = (real_t)(0.0000000000000000e+00);
+out[26] = (real_t)(0.0000000000000000e+00);
+out[27] = ((real_t)(0.0000000000000000e+00)-(a[11]*a[13]));
+out[28] = ((real_t)(0.0000000000000000e+00)-(a[14]*a[13]));
+out[29] = (real_t)(0.0000000000000000e+00);
+out[30] = (real_t)(0.0000000000000000e+00);
+out[31] = ((real_t)(0.0000000000000000e+00)-(a[15]*a[17]));
+out[32] = ((real_t)(0.0000000000000000e+00)-(a[18]*a[17]));
+out[33] = (real_t)(0.0000000000000000e+00);
+out[34] = (real_t)(0.0000000000000000e+00);
+out[35] = ((real_t)(0.0000000000000000e+00)-(a[19]*a[21]));
+out[36] = ((real_t)(0.0000000000000000e+00)-(a[22]*a[21]));
+out[37] = (real_t)(0.0000000000000000e+00);
+out[38] = (real_t)(0.0000000000000000e+00);
+out[39] = ((real_t)(0.0000000000000000e+00)-(a[23]*a[25]));
+out[40] = ((real_t)(0.0000000000000000e+00)-(a[26]*a[25]));
+out[41] = (real_t)(0.0000000000000000e+00);
+out[42] = (real_t)(0.0000000000000000e+00);
+out[43] = ((real_t)(0.0000000000000000e+00)-(a[27]*a[29]));
+out[44] = ((real_t)(0.0000000000000000e+00)-(a[30]*a[29]));
+out[45] = (real_t)(0.0000000000000000e+00);
+out[46] = (real_t)(0.0000000000000000e+00);
+out[47] = ((real_t)(0.0000000000000000e+00)-(a[31]*a[33]));
+out[48] = ((real_t)(0.0000000000000000e+00)-(a[34]*a[33]));
+out[49] = (real_t)(0.0000000000000000e+00);
+out[50] = (real_t)(0.0000000000000000e+00);
+out[51] = (real_t)(0.0000000000000000e+00);
+out[52] = (real_t)(0.0000000000000000e+00);
+out[53] = (real_t)(0.0000000000000000e+00);
+out[54] = (real_t)(0.0000000000000000e+00);
 }
 
 void acado_evaluateLSQEndTerm(const real_t* in, real_t* out)
@@ -193,58 +211,109 @@ out[2] = xd[2];
 
 void acado_setObjQ1Q2( real_t* const tmpFx, real_t* const tmpObjS, real_t* const tmpQ1, real_t* const tmpQ2 )
 {
-tmpQ2[0] = + tmpFx[0]*tmpObjS[0] + tmpFx[4]*tmpObjS[9] + tmpFx[8]*tmpObjS[18] + tmpFx[12]*tmpObjS[27] + tmpFx[16]*tmpObjS[36] + tmpFx[20]*tmpObjS[45] + tmpFx[24]*tmpObjS[54] + tmpFx[28]*tmpObjS[63] + tmpFx[32]*tmpObjS[72];
-tmpQ2[1] = + tmpFx[0]*tmpObjS[1] + tmpFx[4]*tmpObjS[10] + tmpFx[8]*tmpObjS[19] + tmpFx[12]*tmpObjS[28] + tmpFx[16]*tmpObjS[37] + tmpFx[20]*tmpObjS[46] + tmpFx[24]*tmpObjS[55] + tmpFx[28]*tmpObjS[64] + tmpFx[32]*tmpObjS[73];
-tmpQ2[2] = + tmpFx[0]*tmpObjS[2] + tmpFx[4]*tmpObjS[11] + tmpFx[8]*tmpObjS[20] + tmpFx[12]*tmpObjS[29] + tmpFx[16]*tmpObjS[38] + tmpFx[20]*tmpObjS[47] + tmpFx[24]*tmpObjS[56] + tmpFx[28]*tmpObjS[65] + tmpFx[32]*tmpObjS[74];
-tmpQ2[3] = + tmpFx[0]*tmpObjS[3] + tmpFx[4]*tmpObjS[12] + tmpFx[8]*tmpObjS[21] + tmpFx[12]*tmpObjS[30] + tmpFx[16]*tmpObjS[39] + tmpFx[20]*tmpObjS[48] + tmpFx[24]*tmpObjS[57] + tmpFx[28]*tmpObjS[66] + tmpFx[32]*tmpObjS[75];
-tmpQ2[4] = + tmpFx[0]*tmpObjS[4] + tmpFx[4]*tmpObjS[13] + tmpFx[8]*tmpObjS[22] + tmpFx[12]*tmpObjS[31] + tmpFx[16]*tmpObjS[40] + tmpFx[20]*tmpObjS[49] + tmpFx[24]*tmpObjS[58] + tmpFx[28]*tmpObjS[67] + tmpFx[32]*tmpObjS[76];
-tmpQ2[5] = + tmpFx[0]*tmpObjS[5] + tmpFx[4]*tmpObjS[14] + tmpFx[8]*tmpObjS[23] + tmpFx[12]*tmpObjS[32] + tmpFx[16]*tmpObjS[41] + tmpFx[20]*tmpObjS[50] + tmpFx[24]*tmpObjS[59] + tmpFx[28]*tmpObjS[68] + tmpFx[32]*tmpObjS[77];
-tmpQ2[6] = + tmpFx[0]*tmpObjS[6] + tmpFx[4]*tmpObjS[15] + tmpFx[8]*tmpObjS[24] + tmpFx[12]*tmpObjS[33] + tmpFx[16]*tmpObjS[42] + tmpFx[20]*tmpObjS[51] + tmpFx[24]*tmpObjS[60] + tmpFx[28]*tmpObjS[69] + tmpFx[32]*tmpObjS[78];
-tmpQ2[7] = + tmpFx[0]*tmpObjS[7] + tmpFx[4]*tmpObjS[16] + tmpFx[8]*tmpObjS[25] + tmpFx[12]*tmpObjS[34] + tmpFx[16]*tmpObjS[43] + tmpFx[20]*tmpObjS[52] + tmpFx[24]*tmpObjS[61] + tmpFx[28]*tmpObjS[70] + tmpFx[32]*tmpObjS[79];
-tmpQ2[8] = + tmpFx[0]*tmpObjS[8] + tmpFx[4]*tmpObjS[17] + tmpFx[8]*tmpObjS[26] + tmpFx[12]*tmpObjS[35] + tmpFx[16]*tmpObjS[44] + tmpFx[20]*tmpObjS[53] + tmpFx[24]*tmpObjS[62] + tmpFx[28]*tmpObjS[71] + tmpFx[32]*tmpObjS[80];
-tmpQ2[9] = + tmpFx[1]*tmpObjS[0] + tmpFx[5]*tmpObjS[9] + tmpFx[9]*tmpObjS[18] + tmpFx[13]*tmpObjS[27] + tmpFx[17]*tmpObjS[36] + tmpFx[21]*tmpObjS[45] + tmpFx[25]*tmpObjS[54] + tmpFx[29]*tmpObjS[63] + tmpFx[33]*tmpObjS[72];
-tmpQ2[10] = + tmpFx[1]*tmpObjS[1] + tmpFx[5]*tmpObjS[10] + tmpFx[9]*tmpObjS[19] + tmpFx[13]*tmpObjS[28] + tmpFx[17]*tmpObjS[37] + tmpFx[21]*tmpObjS[46] + tmpFx[25]*tmpObjS[55] + tmpFx[29]*tmpObjS[64] + tmpFx[33]*tmpObjS[73];
-tmpQ2[11] = + tmpFx[1]*tmpObjS[2] + tmpFx[5]*tmpObjS[11] + tmpFx[9]*tmpObjS[20] + tmpFx[13]*tmpObjS[29] + tmpFx[17]*tmpObjS[38] + tmpFx[21]*tmpObjS[47] + tmpFx[25]*tmpObjS[56] + tmpFx[29]*tmpObjS[65] + tmpFx[33]*tmpObjS[74];
-tmpQ2[12] = + tmpFx[1]*tmpObjS[3] + tmpFx[5]*tmpObjS[12] + tmpFx[9]*tmpObjS[21] + tmpFx[13]*tmpObjS[30] + tmpFx[17]*tmpObjS[39] + tmpFx[21]*tmpObjS[48] + tmpFx[25]*tmpObjS[57] + tmpFx[29]*tmpObjS[66] + tmpFx[33]*tmpObjS[75];
-tmpQ2[13] = + tmpFx[1]*tmpObjS[4] + tmpFx[5]*tmpObjS[13] + tmpFx[9]*tmpObjS[22] + tmpFx[13]*tmpObjS[31] + tmpFx[17]*tmpObjS[40] + tmpFx[21]*tmpObjS[49] + tmpFx[25]*tmpObjS[58] + tmpFx[29]*tmpObjS[67] + tmpFx[33]*tmpObjS[76];
-tmpQ2[14] = + tmpFx[1]*tmpObjS[5] + tmpFx[5]*tmpObjS[14] + tmpFx[9]*tmpObjS[23] + tmpFx[13]*tmpObjS[32] + tmpFx[17]*tmpObjS[41] + tmpFx[21]*tmpObjS[50] + tmpFx[25]*tmpObjS[59] + tmpFx[29]*tmpObjS[68] + tmpFx[33]*tmpObjS[77];
-tmpQ2[15] = + tmpFx[1]*tmpObjS[6] + tmpFx[5]*tmpObjS[15] + tmpFx[9]*tmpObjS[24] + tmpFx[13]*tmpObjS[33] + tmpFx[17]*tmpObjS[42] + tmpFx[21]*tmpObjS[51] + tmpFx[25]*tmpObjS[60] + tmpFx[29]*tmpObjS[69] + tmpFx[33]*tmpObjS[78];
-tmpQ2[16] = + tmpFx[1]*tmpObjS[7] + tmpFx[5]*tmpObjS[16] + tmpFx[9]*tmpObjS[25] + tmpFx[13]*tmpObjS[34] + tmpFx[17]*tmpObjS[43] + tmpFx[21]*tmpObjS[52] + tmpFx[25]*tmpObjS[61] + tmpFx[29]*tmpObjS[70] + tmpFx[33]*tmpObjS[79];
-tmpQ2[17] = + tmpFx[1]*tmpObjS[8] + tmpFx[5]*tmpObjS[17] + tmpFx[9]*tmpObjS[26] + tmpFx[13]*tmpObjS[35] + tmpFx[17]*tmpObjS[44] + tmpFx[21]*tmpObjS[53] + tmpFx[25]*tmpObjS[62] + tmpFx[29]*tmpObjS[71] + tmpFx[33]*tmpObjS[80];
-tmpQ2[18] = + tmpFx[2]*tmpObjS[0] + tmpFx[6]*tmpObjS[9] + tmpFx[10]*tmpObjS[18] + tmpFx[14]*tmpObjS[27] + tmpFx[18]*tmpObjS[36] + tmpFx[22]*tmpObjS[45] + tmpFx[26]*tmpObjS[54] + tmpFx[30]*tmpObjS[63] + tmpFx[34]*tmpObjS[72];
-tmpQ2[19] = + tmpFx[2]*tmpObjS[1] + tmpFx[6]*tmpObjS[10] + tmpFx[10]*tmpObjS[19] + tmpFx[14]*tmpObjS[28] + tmpFx[18]*tmpObjS[37] + tmpFx[22]*tmpObjS[46] + tmpFx[26]*tmpObjS[55] + tmpFx[30]*tmpObjS[64] + tmpFx[34]*tmpObjS[73];
-tmpQ2[20] = + tmpFx[2]*tmpObjS[2] + tmpFx[6]*tmpObjS[11] + tmpFx[10]*tmpObjS[20] + tmpFx[14]*tmpObjS[29] + tmpFx[18]*tmpObjS[38] + tmpFx[22]*tmpObjS[47] + tmpFx[26]*tmpObjS[56] + tmpFx[30]*tmpObjS[65] + tmpFx[34]*tmpObjS[74];
-tmpQ2[21] = + tmpFx[2]*tmpObjS[3] + tmpFx[6]*tmpObjS[12] + tmpFx[10]*tmpObjS[21] + tmpFx[14]*tmpObjS[30] + tmpFx[18]*tmpObjS[39] + tmpFx[22]*tmpObjS[48] + tmpFx[26]*tmpObjS[57] + tmpFx[30]*tmpObjS[66] + tmpFx[34]*tmpObjS[75];
-tmpQ2[22] = + tmpFx[2]*tmpObjS[4] + tmpFx[6]*tmpObjS[13] + tmpFx[10]*tmpObjS[22] + tmpFx[14]*tmpObjS[31] + tmpFx[18]*tmpObjS[40] + tmpFx[22]*tmpObjS[49] + tmpFx[26]*tmpObjS[58] + tmpFx[30]*tmpObjS[67] + tmpFx[34]*tmpObjS[76];
-tmpQ2[23] = + tmpFx[2]*tmpObjS[5] + tmpFx[6]*tmpObjS[14] + tmpFx[10]*tmpObjS[23] + tmpFx[14]*tmpObjS[32] + tmpFx[18]*tmpObjS[41] + tmpFx[22]*tmpObjS[50] + tmpFx[26]*tmpObjS[59] + tmpFx[30]*tmpObjS[68] + tmpFx[34]*tmpObjS[77];
-tmpQ2[24] = + tmpFx[2]*tmpObjS[6] + tmpFx[6]*tmpObjS[15] + tmpFx[10]*tmpObjS[24] + tmpFx[14]*tmpObjS[33] + tmpFx[18]*tmpObjS[42] + tmpFx[22]*tmpObjS[51] + tmpFx[26]*tmpObjS[60] + tmpFx[30]*tmpObjS[69] + tmpFx[34]*tmpObjS[78];
-tmpQ2[25] = + tmpFx[2]*tmpObjS[7] + tmpFx[6]*tmpObjS[16] + tmpFx[10]*tmpObjS[25] + tmpFx[14]*tmpObjS[34] + tmpFx[18]*tmpObjS[43] + tmpFx[22]*tmpObjS[52] + tmpFx[26]*tmpObjS[61] + tmpFx[30]*tmpObjS[70] + tmpFx[34]*tmpObjS[79];
-tmpQ2[26] = + tmpFx[2]*tmpObjS[8] + tmpFx[6]*tmpObjS[17] + tmpFx[10]*tmpObjS[26] + tmpFx[14]*tmpObjS[35] + tmpFx[18]*tmpObjS[44] + tmpFx[22]*tmpObjS[53] + tmpFx[26]*tmpObjS[62] + tmpFx[30]*tmpObjS[71] + tmpFx[34]*tmpObjS[80];
-tmpQ2[27] = + tmpFx[3]*tmpObjS[0] + tmpFx[7]*tmpObjS[9] + tmpFx[11]*tmpObjS[18] + tmpFx[15]*tmpObjS[27] + tmpFx[19]*tmpObjS[36] + tmpFx[23]*tmpObjS[45] + tmpFx[27]*tmpObjS[54] + tmpFx[31]*tmpObjS[63] + tmpFx[35]*tmpObjS[72];
-tmpQ2[28] = + tmpFx[3]*tmpObjS[1] + tmpFx[7]*tmpObjS[10] + tmpFx[11]*tmpObjS[19] + tmpFx[15]*tmpObjS[28] + tmpFx[19]*tmpObjS[37] + tmpFx[23]*tmpObjS[46] + tmpFx[27]*tmpObjS[55] + tmpFx[31]*tmpObjS[64] + tmpFx[35]*tmpObjS[73];
-tmpQ2[29] = + tmpFx[3]*tmpObjS[2] + tmpFx[7]*tmpObjS[11] + tmpFx[11]*tmpObjS[20] + tmpFx[15]*tmpObjS[29] + tmpFx[19]*tmpObjS[38] + tmpFx[23]*tmpObjS[47] + tmpFx[27]*tmpObjS[56] + tmpFx[31]*tmpObjS[65] + tmpFx[35]*tmpObjS[74];
-tmpQ2[30] = + tmpFx[3]*tmpObjS[3] + tmpFx[7]*tmpObjS[12] + tmpFx[11]*tmpObjS[21] + tmpFx[15]*tmpObjS[30] + tmpFx[19]*tmpObjS[39] + tmpFx[23]*tmpObjS[48] + tmpFx[27]*tmpObjS[57] + tmpFx[31]*tmpObjS[66] + tmpFx[35]*tmpObjS[75];
-tmpQ2[31] = + tmpFx[3]*tmpObjS[4] + tmpFx[7]*tmpObjS[13] + tmpFx[11]*tmpObjS[22] + tmpFx[15]*tmpObjS[31] + tmpFx[19]*tmpObjS[40] + tmpFx[23]*tmpObjS[49] + tmpFx[27]*tmpObjS[58] + tmpFx[31]*tmpObjS[67] + tmpFx[35]*tmpObjS[76];
-tmpQ2[32] = + tmpFx[3]*tmpObjS[5] + tmpFx[7]*tmpObjS[14] + tmpFx[11]*tmpObjS[23] + tmpFx[15]*tmpObjS[32] + tmpFx[19]*tmpObjS[41] + tmpFx[23]*tmpObjS[50] + tmpFx[27]*tmpObjS[59] + tmpFx[31]*tmpObjS[68] + tmpFx[35]*tmpObjS[77];
-tmpQ2[33] = + tmpFx[3]*tmpObjS[6] + tmpFx[7]*tmpObjS[15] + tmpFx[11]*tmpObjS[24] + tmpFx[15]*tmpObjS[33] + tmpFx[19]*tmpObjS[42] + tmpFx[23]*tmpObjS[51] + tmpFx[27]*tmpObjS[60] + tmpFx[31]*tmpObjS[69] + tmpFx[35]*tmpObjS[78];
-tmpQ2[34] = + tmpFx[3]*tmpObjS[7] + tmpFx[7]*tmpObjS[16] + tmpFx[11]*tmpObjS[25] + tmpFx[15]*tmpObjS[34] + tmpFx[19]*tmpObjS[43] + tmpFx[23]*tmpObjS[52] + tmpFx[27]*tmpObjS[61] + tmpFx[31]*tmpObjS[70] + tmpFx[35]*tmpObjS[79];
-tmpQ2[35] = + tmpFx[3]*tmpObjS[8] + tmpFx[7]*tmpObjS[17] + tmpFx[11]*tmpObjS[26] + tmpFx[15]*tmpObjS[35] + tmpFx[19]*tmpObjS[44] + tmpFx[23]*tmpObjS[53] + tmpFx[27]*tmpObjS[62] + tmpFx[31]*tmpObjS[71] + tmpFx[35]*tmpObjS[80];
-tmpQ1[0] = + tmpQ2[0]*tmpFx[0] + tmpQ2[1]*tmpFx[4] + tmpQ2[2]*tmpFx[8] + tmpQ2[3]*tmpFx[12] + tmpQ2[4]*tmpFx[16] + tmpQ2[5]*tmpFx[20] + tmpQ2[6]*tmpFx[24] + tmpQ2[7]*tmpFx[28] + tmpQ2[8]*tmpFx[32];
-tmpQ1[1] = + tmpQ2[0]*tmpFx[1] + tmpQ2[1]*tmpFx[5] + tmpQ2[2]*tmpFx[9] + tmpQ2[3]*tmpFx[13] + tmpQ2[4]*tmpFx[17] + tmpQ2[5]*tmpFx[21] + tmpQ2[6]*tmpFx[25] + tmpQ2[7]*tmpFx[29] + tmpQ2[8]*tmpFx[33];
-tmpQ1[2] = + tmpQ2[0]*tmpFx[2] + tmpQ2[1]*tmpFx[6] + tmpQ2[2]*tmpFx[10] + tmpQ2[3]*tmpFx[14] + tmpQ2[4]*tmpFx[18] + tmpQ2[5]*tmpFx[22] + tmpQ2[6]*tmpFx[26] + tmpQ2[7]*tmpFx[30] + tmpQ2[8]*tmpFx[34];
-tmpQ1[3] = + tmpQ2[0]*tmpFx[3] + tmpQ2[1]*tmpFx[7] + tmpQ2[2]*tmpFx[11] + tmpQ2[3]*tmpFx[15] + tmpQ2[4]*tmpFx[19] + tmpQ2[5]*tmpFx[23] + tmpQ2[6]*tmpFx[27] + tmpQ2[7]*tmpFx[31] + tmpQ2[8]*tmpFx[35];
-tmpQ1[4] = + tmpQ2[9]*tmpFx[0] + tmpQ2[10]*tmpFx[4] + tmpQ2[11]*tmpFx[8] + tmpQ2[12]*tmpFx[12] + tmpQ2[13]*tmpFx[16] + tmpQ2[14]*tmpFx[20] + tmpQ2[15]*tmpFx[24] + tmpQ2[16]*tmpFx[28] + tmpQ2[17]*tmpFx[32];
-tmpQ1[5] = + tmpQ2[9]*tmpFx[1] + tmpQ2[10]*tmpFx[5] + tmpQ2[11]*tmpFx[9] + tmpQ2[12]*tmpFx[13] + tmpQ2[13]*tmpFx[17] + tmpQ2[14]*tmpFx[21] + tmpQ2[15]*tmpFx[25] + tmpQ2[16]*tmpFx[29] + tmpQ2[17]*tmpFx[33];
-tmpQ1[6] = + tmpQ2[9]*tmpFx[2] + tmpQ2[10]*tmpFx[6] + tmpQ2[11]*tmpFx[10] + tmpQ2[12]*tmpFx[14] + tmpQ2[13]*tmpFx[18] + tmpQ2[14]*tmpFx[22] + tmpQ2[15]*tmpFx[26] + tmpQ2[16]*tmpFx[30] + tmpQ2[17]*tmpFx[34];
-tmpQ1[7] = + tmpQ2[9]*tmpFx[3] + tmpQ2[10]*tmpFx[7] + tmpQ2[11]*tmpFx[11] + tmpQ2[12]*tmpFx[15] + tmpQ2[13]*tmpFx[19] + tmpQ2[14]*tmpFx[23] + tmpQ2[15]*tmpFx[27] + tmpQ2[16]*tmpFx[31] + tmpQ2[17]*tmpFx[35];
-tmpQ1[8] = + tmpQ2[18]*tmpFx[0] + tmpQ2[19]*tmpFx[4] + tmpQ2[20]*tmpFx[8] + tmpQ2[21]*tmpFx[12] + tmpQ2[22]*tmpFx[16] + tmpQ2[23]*tmpFx[20] + tmpQ2[24]*tmpFx[24] + tmpQ2[25]*tmpFx[28] + tmpQ2[26]*tmpFx[32];
-tmpQ1[9] = + tmpQ2[18]*tmpFx[1] + tmpQ2[19]*tmpFx[5] + tmpQ2[20]*tmpFx[9] + tmpQ2[21]*tmpFx[13] + tmpQ2[22]*tmpFx[17] + tmpQ2[23]*tmpFx[21] + tmpQ2[24]*tmpFx[25] + tmpQ2[25]*tmpFx[29] + tmpQ2[26]*tmpFx[33];
-tmpQ1[10] = + tmpQ2[18]*tmpFx[2] + tmpQ2[19]*tmpFx[6] + tmpQ2[20]*tmpFx[10] + tmpQ2[21]*tmpFx[14] + tmpQ2[22]*tmpFx[18] + tmpQ2[23]*tmpFx[22] + tmpQ2[24]*tmpFx[26] + tmpQ2[25]*tmpFx[30] + tmpQ2[26]*tmpFx[34];
-tmpQ1[11] = + tmpQ2[18]*tmpFx[3] + tmpQ2[19]*tmpFx[7] + tmpQ2[20]*tmpFx[11] + tmpQ2[21]*tmpFx[15] + tmpQ2[22]*tmpFx[19] + tmpQ2[23]*tmpFx[23] + tmpQ2[24]*tmpFx[27] + tmpQ2[25]*tmpFx[31] + tmpQ2[26]*tmpFx[35];
-tmpQ1[12] = + tmpQ2[27]*tmpFx[0] + tmpQ2[28]*tmpFx[4] + tmpQ2[29]*tmpFx[8] + tmpQ2[30]*tmpFx[12] + tmpQ2[31]*tmpFx[16] + tmpQ2[32]*tmpFx[20] + tmpQ2[33]*tmpFx[24] + tmpQ2[34]*tmpFx[28] + tmpQ2[35]*tmpFx[32];
-tmpQ1[13] = + tmpQ2[27]*tmpFx[1] + tmpQ2[28]*tmpFx[5] + tmpQ2[29]*tmpFx[9] + tmpQ2[30]*tmpFx[13] + tmpQ2[31]*tmpFx[17] + tmpQ2[32]*tmpFx[21] + tmpQ2[33]*tmpFx[25] + tmpQ2[34]*tmpFx[29] + tmpQ2[35]*tmpFx[33];
-tmpQ1[14] = + tmpQ2[27]*tmpFx[2] + tmpQ2[28]*tmpFx[6] + tmpQ2[29]*tmpFx[10] + tmpQ2[30]*tmpFx[14] + tmpQ2[31]*tmpFx[18] + tmpQ2[32]*tmpFx[22] + tmpQ2[33]*tmpFx[26] + tmpQ2[34]*tmpFx[30] + tmpQ2[35]*tmpFx[34];
-tmpQ1[15] = + tmpQ2[27]*tmpFx[3] + tmpQ2[28]*tmpFx[7] + tmpQ2[29]*tmpFx[11] + tmpQ2[30]*tmpFx[15] + tmpQ2[31]*tmpFx[19] + tmpQ2[32]*tmpFx[23] + tmpQ2[33]*tmpFx[27] + tmpQ2[34]*tmpFx[31] + tmpQ2[35]*tmpFx[35];
+tmpQ2[0] = + tmpFx[0]*tmpObjS[0] + tmpFx[4]*tmpObjS[11] + tmpFx[8]*tmpObjS[22] + tmpFx[12]*tmpObjS[33] + tmpFx[16]*tmpObjS[44] + tmpFx[20]*tmpObjS[55] + tmpFx[24]*tmpObjS[66] + tmpFx[28]*tmpObjS[77] + tmpFx[32]*tmpObjS[88] + tmpFx[36]*tmpObjS[99] + tmpFx[40]*tmpObjS[110];
+tmpQ2[1] = + tmpFx[0]*tmpObjS[1] + tmpFx[4]*tmpObjS[12] + tmpFx[8]*tmpObjS[23] + tmpFx[12]*tmpObjS[34] + tmpFx[16]*tmpObjS[45] + tmpFx[20]*tmpObjS[56] + tmpFx[24]*tmpObjS[67] + tmpFx[28]*tmpObjS[78] + tmpFx[32]*tmpObjS[89] + tmpFx[36]*tmpObjS[100] + tmpFx[40]*tmpObjS[111];
+tmpQ2[2] = + tmpFx[0]*tmpObjS[2] + tmpFx[4]*tmpObjS[13] + tmpFx[8]*tmpObjS[24] + tmpFx[12]*tmpObjS[35] + tmpFx[16]*tmpObjS[46] + tmpFx[20]*tmpObjS[57] + tmpFx[24]*tmpObjS[68] + tmpFx[28]*tmpObjS[79] + tmpFx[32]*tmpObjS[90] + tmpFx[36]*tmpObjS[101] + tmpFx[40]*tmpObjS[112];
+tmpQ2[3] = + tmpFx[0]*tmpObjS[3] + tmpFx[4]*tmpObjS[14] + tmpFx[8]*tmpObjS[25] + tmpFx[12]*tmpObjS[36] + tmpFx[16]*tmpObjS[47] + tmpFx[20]*tmpObjS[58] + tmpFx[24]*tmpObjS[69] + tmpFx[28]*tmpObjS[80] + tmpFx[32]*tmpObjS[91] + tmpFx[36]*tmpObjS[102] + tmpFx[40]*tmpObjS[113];
+tmpQ2[4] = + tmpFx[0]*tmpObjS[4] + tmpFx[4]*tmpObjS[15] + tmpFx[8]*tmpObjS[26] + tmpFx[12]*tmpObjS[37] + tmpFx[16]*tmpObjS[48] + tmpFx[20]*tmpObjS[59] + tmpFx[24]*tmpObjS[70] + tmpFx[28]*tmpObjS[81] + tmpFx[32]*tmpObjS[92] + tmpFx[36]*tmpObjS[103] + tmpFx[40]*tmpObjS[114];
+tmpQ2[5] = + tmpFx[0]*tmpObjS[5] + tmpFx[4]*tmpObjS[16] + tmpFx[8]*tmpObjS[27] + tmpFx[12]*tmpObjS[38] + tmpFx[16]*tmpObjS[49] + tmpFx[20]*tmpObjS[60] + tmpFx[24]*tmpObjS[71] + tmpFx[28]*tmpObjS[82] + tmpFx[32]*tmpObjS[93] + tmpFx[36]*tmpObjS[104] + tmpFx[40]*tmpObjS[115];
+tmpQ2[6] = + tmpFx[0]*tmpObjS[6] + tmpFx[4]*tmpObjS[17] + tmpFx[8]*tmpObjS[28] + tmpFx[12]*tmpObjS[39] + tmpFx[16]*tmpObjS[50] + tmpFx[20]*tmpObjS[61] + tmpFx[24]*tmpObjS[72] + tmpFx[28]*tmpObjS[83] + tmpFx[32]*tmpObjS[94] + tmpFx[36]*tmpObjS[105] + tmpFx[40]*tmpObjS[116];
+tmpQ2[7] = + tmpFx[0]*tmpObjS[7] + tmpFx[4]*tmpObjS[18] + tmpFx[8]*tmpObjS[29] + tmpFx[12]*tmpObjS[40] + tmpFx[16]*tmpObjS[51] + tmpFx[20]*tmpObjS[62] + tmpFx[24]*tmpObjS[73] + tmpFx[28]*tmpObjS[84] + tmpFx[32]*tmpObjS[95] + tmpFx[36]*tmpObjS[106] + tmpFx[40]*tmpObjS[117];
+tmpQ2[8] = + tmpFx[0]*tmpObjS[8] + tmpFx[4]*tmpObjS[19] + tmpFx[8]*tmpObjS[30] + tmpFx[12]*tmpObjS[41] + tmpFx[16]*tmpObjS[52] + tmpFx[20]*tmpObjS[63] + tmpFx[24]*tmpObjS[74] + tmpFx[28]*tmpObjS[85] + tmpFx[32]*tmpObjS[96] + tmpFx[36]*tmpObjS[107] + tmpFx[40]*tmpObjS[118];
+tmpQ2[9] = + tmpFx[0]*tmpObjS[9] + tmpFx[4]*tmpObjS[20] + tmpFx[8]*tmpObjS[31] + tmpFx[12]*tmpObjS[42] + tmpFx[16]*tmpObjS[53] + tmpFx[20]*tmpObjS[64] + tmpFx[24]*tmpObjS[75] + tmpFx[28]*tmpObjS[86] + tmpFx[32]*tmpObjS[97] + tmpFx[36]*tmpObjS[108] + tmpFx[40]*tmpObjS[119];
+tmpQ2[10] = + tmpFx[0]*tmpObjS[10] + tmpFx[4]*tmpObjS[21] + tmpFx[8]*tmpObjS[32] + tmpFx[12]*tmpObjS[43] + tmpFx[16]*tmpObjS[54] + tmpFx[20]*tmpObjS[65] + tmpFx[24]*tmpObjS[76] + tmpFx[28]*tmpObjS[87] + tmpFx[32]*tmpObjS[98] + tmpFx[36]*tmpObjS[109] + tmpFx[40]*tmpObjS[120];
+tmpQ2[11] = + tmpFx[1]*tmpObjS[0] + tmpFx[5]*tmpObjS[11] + tmpFx[9]*tmpObjS[22] + tmpFx[13]*tmpObjS[33] + tmpFx[17]*tmpObjS[44] + tmpFx[21]*tmpObjS[55] + tmpFx[25]*tmpObjS[66] + tmpFx[29]*tmpObjS[77] + tmpFx[33]*tmpObjS[88] + tmpFx[37]*tmpObjS[99] + tmpFx[41]*tmpObjS[110];
+tmpQ2[12] = + tmpFx[1]*tmpObjS[1] + tmpFx[5]*tmpObjS[12] + tmpFx[9]*tmpObjS[23] + tmpFx[13]*tmpObjS[34] + tmpFx[17]*tmpObjS[45] + tmpFx[21]*tmpObjS[56] + tmpFx[25]*tmpObjS[67] + tmpFx[29]*tmpObjS[78] + tmpFx[33]*tmpObjS[89] + tmpFx[37]*tmpObjS[100] + tmpFx[41]*tmpObjS[111];
+tmpQ2[13] = + tmpFx[1]*tmpObjS[2] + tmpFx[5]*tmpObjS[13] + tmpFx[9]*tmpObjS[24] + tmpFx[13]*tmpObjS[35] + tmpFx[17]*tmpObjS[46] + tmpFx[21]*tmpObjS[57] + tmpFx[25]*tmpObjS[68] + tmpFx[29]*tmpObjS[79] + tmpFx[33]*tmpObjS[90] + tmpFx[37]*tmpObjS[101] + tmpFx[41]*tmpObjS[112];
+tmpQ2[14] = + tmpFx[1]*tmpObjS[3] + tmpFx[5]*tmpObjS[14] + tmpFx[9]*tmpObjS[25] + tmpFx[13]*tmpObjS[36] + tmpFx[17]*tmpObjS[47] + tmpFx[21]*tmpObjS[58] + tmpFx[25]*tmpObjS[69] + tmpFx[29]*tmpObjS[80] + tmpFx[33]*tmpObjS[91] + tmpFx[37]*tmpObjS[102] + tmpFx[41]*tmpObjS[113];
+tmpQ2[15] = + tmpFx[1]*tmpObjS[4] + tmpFx[5]*tmpObjS[15] + tmpFx[9]*tmpObjS[26] + tmpFx[13]*tmpObjS[37] + tmpFx[17]*tmpObjS[48] + tmpFx[21]*tmpObjS[59] + tmpFx[25]*tmpObjS[70] + tmpFx[29]*tmpObjS[81] + tmpFx[33]*tmpObjS[92] + tmpFx[37]*tmpObjS[103] + tmpFx[41]*tmpObjS[114];
+tmpQ2[16] = + tmpFx[1]*tmpObjS[5] + tmpFx[5]*tmpObjS[16] + tmpFx[9]*tmpObjS[27] + tmpFx[13]*tmpObjS[38] + tmpFx[17]*tmpObjS[49] + tmpFx[21]*tmpObjS[60] + tmpFx[25]*tmpObjS[71] + tmpFx[29]*tmpObjS[82] + tmpFx[33]*tmpObjS[93] + tmpFx[37]*tmpObjS[104] + tmpFx[41]*tmpObjS[115];
+tmpQ2[17] = + tmpFx[1]*tmpObjS[6] + tmpFx[5]*tmpObjS[17] + tmpFx[9]*tmpObjS[28] + tmpFx[13]*tmpObjS[39] + tmpFx[17]*tmpObjS[50] + tmpFx[21]*tmpObjS[61] + tmpFx[25]*tmpObjS[72] + tmpFx[29]*tmpObjS[83] + tmpFx[33]*tmpObjS[94] + tmpFx[37]*tmpObjS[105] + tmpFx[41]*tmpObjS[116];
+tmpQ2[18] = + tmpFx[1]*tmpObjS[7] + tmpFx[5]*tmpObjS[18] + tmpFx[9]*tmpObjS[29] + tmpFx[13]*tmpObjS[40] + tmpFx[17]*tmpObjS[51] + tmpFx[21]*tmpObjS[62] + tmpFx[25]*tmpObjS[73] + tmpFx[29]*tmpObjS[84] + tmpFx[33]*tmpObjS[95] + tmpFx[37]*tmpObjS[106] + tmpFx[41]*tmpObjS[117];
+tmpQ2[19] = + tmpFx[1]*tmpObjS[8] + tmpFx[5]*tmpObjS[19] + tmpFx[9]*tmpObjS[30] + tmpFx[13]*tmpObjS[41] + tmpFx[17]*tmpObjS[52] + tmpFx[21]*tmpObjS[63] + tmpFx[25]*tmpObjS[74] + tmpFx[29]*tmpObjS[85] + tmpFx[33]*tmpObjS[96] + tmpFx[37]*tmpObjS[107] + tmpFx[41]*tmpObjS[118];
+tmpQ2[20] = + tmpFx[1]*tmpObjS[9] + tmpFx[5]*tmpObjS[20] + tmpFx[9]*tmpObjS[31] + tmpFx[13]*tmpObjS[42] + tmpFx[17]*tmpObjS[53] + tmpFx[21]*tmpObjS[64] + tmpFx[25]*tmpObjS[75] + tmpFx[29]*tmpObjS[86] + tmpFx[33]*tmpObjS[97] + tmpFx[37]*tmpObjS[108] + tmpFx[41]*tmpObjS[119];
+tmpQ2[21] = + tmpFx[1]*tmpObjS[10] + tmpFx[5]*tmpObjS[21] + tmpFx[9]*tmpObjS[32] + tmpFx[13]*tmpObjS[43] + tmpFx[17]*tmpObjS[54] + tmpFx[21]*tmpObjS[65] + tmpFx[25]*tmpObjS[76] + tmpFx[29]*tmpObjS[87] + tmpFx[33]*tmpObjS[98] + tmpFx[37]*tmpObjS[109] + tmpFx[41]*tmpObjS[120];
+tmpQ2[22] = + tmpFx[2]*tmpObjS[0] + tmpFx[6]*tmpObjS[11] + tmpFx[10]*tmpObjS[22] + tmpFx[14]*tmpObjS[33] + tmpFx[18]*tmpObjS[44] + tmpFx[22]*tmpObjS[55] + tmpFx[26]*tmpObjS[66] + tmpFx[30]*tmpObjS[77] + tmpFx[34]*tmpObjS[88] + tmpFx[38]*tmpObjS[99] + tmpFx[42]*tmpObjS[110];
+tmpQ2[23] = + tmpFx[2]*tmpObjS[1] + tmpFx[6]*tmpObjS[12] + tmpFx[10]*tmpObjS[23] + tmpFx[14]*tmpObjS[34] + tmpFx[18]*tmpObjS[45] + tmpFx[22]*tmpObjS[56] + tmpFx[26]*tmpObjS[67] + tmpFx[30]*tmpObjS[78] + tmpFx[34]*tmpObjS[89] + tmpFx[38]*tmpObjS[100] + tmpFx[42]*tmpObjS[111];
+tmpQ2[24] = + tmpFx[2]*tmpObjS[2] + tmpFx[6]*tmpObjS[13] + tmpFx[10]*tmpObjS[24] + tmpFx[14]*tmpObjS[35] + tmpFx[18]*tmpObjS[46] + tmpFx[22]*tmpObjS[57] + tmpFx[26]*tmpObjS[68] + tmpFx[30]*tmpObjS[79] + tmpFx[34]*tmpObjS[90] + tmpFx[38]*tmpObjS[101] + tmpFx[42]*tmpObjS[112];
+tmpQ2[25] = + tmpFx[2]*tmpObjS[3] + tmpFx[6]*tmpObjS[14] + tmpFx[10]*tmpObjS[25] + tmpFx[14]*tmpObjS[36] + tmpFx[18]*tmpObjS[47] + tmpFx[22]*tmpObjS[58] + tmpFx[26]*tmpObjS[69] + tmpFx[30]*tmpObjS[80] + tmpFx[34]*tmpObjS[91] + tmpFx[38]*tmpObjS[102] + tmpFx[42]*tmpObjS[113];
+tmpQ2[26] = + tmpFx[2]*tmpObjS[4] + tmpFx[6]*tmpObjS[15] + tmpFx[10]*tmpObjS[26] + tmpFx[14]*tmpObjS[37] + tmpFx[18]*tmpObjS[48] + tmpFx[22]*tmpObjS[59] + tmpFx[26]*tmpObjS[70] + tmpFx[30]*tmpObjS[81] + tmpFx[34]*tmpObjS[92] + tmpFx[38]*tmpObjS[103] + tmpFx[42]*tmpObjS[114];
+tmpQ2[27] = + tmpFx[2]*tmpObjS[5] + tmpFx[6]*tmpObjS[16] + tmpFx[10]*tmpObjS[27] + tmpFx[14]*tmpObjS[38] + tmpFx[18]*tmpObjS[49] + tmpFx[22]*tmpObjS[60] + tmpFx[26]*tmpObjS[71] + tmpFx[30]*tmpObjS[82] + tmpFx[34]*tmpObjS[93] + tmpFx[38]*tmpObjS[104] + tmpFx[42]*tmpObjS[115];
+tmpQ2[28] = + tmpFx[2]*tmpObjS[6] + tmpFx[6]*tmpObjS[17] + tmpFx[10]*tmpObjS[28] + tmpFx[14]*tmpObjS[39] + tmpFx[18]*tmpObjS[50] + tmpFx[22]*tmpObjS[61] + tmpFx[26]*tmpObjS[72] + tmpFx[30]*tmpObjS[83] + tmpFx[34]*tmpObjS[94] + tmpFx[38]*tmpObjS[105] + tmpFx[42]*tmpObjS[116];
+tmpQ2[29] = + tmpFx[2]*tmpObjS[7] + tmpFx[6]*tmpObjS[18] + tmpFx[10]*tmpObjS[29] + tmpFx[14]*tmpObjS[40] + tmpFx[18]*tmpObjS[51] + tmpFx[22]*tmpObjS[62] + tmpFx[26]*tmpObjS[73] + tmpFx[30]*tmpObjS[84] + tmpFx[34]*tmpObjS[95] + tmpFx[38]*tmpObjS[106] + tmpFx[42]*tmpObjS[117];
+tmpQ2[30] = + tmpFx[2]*tmpObjS[8] + tmpFx[6]*tmpObjS[19] + tmpFx[10]*tmpObjS[30] + tmpFx[14]*tmpObjS[41] + tmpFx[18]*tmpObjS[52] + tmpFx[22]*tmpObjS[63] + tmpFx[26]*tmpObjS[74] + tmpFx[30]*tmpObjS[85] + tmpFx[34]*tmpObjS[96] + tmpFx[38]*tmpObjS[107] + tmpFx[42]*tmpObjS[118];
+tmpQ2[31] = + tmpFx[2]*tmpObjS[9] + tmpFx[6]*tmpObjS[20] + tmpFx[10]*tmpObjS[31] + tmpFx[14]*tmpObjS[42] + tmpFx[18]*tmpObjS[53] + tmpFx[22]*tmpObjS[64] + tmpFx[26]*tmpObjS[75] + tmpFx[30]*tmpObjS[86] + tmpFx[34]*tmpObjS[97] + tmpFx[38]*tmpObjS[108] + tmpFx[42]*tmpObjS[119];
+tmpQ2[32] = + tmpFx[2]*tmpObjS[10] + tmpFx[6]*tmpObjS[21] + tmpFx[10]*tmpObjS[32] + tmpFx[14]*tmpObjS[43] + tmpFx[18]*tmpObjS[54] + tmpFx[22]*tmpObjS[65] + tmpFx[26]*tmpObjS[76] + tmpFx[30]*tmpObjS[87] + tmpFx[34]*tmpObjS[98] + tmpFx[38]*tmpObjS[109] + tmpFx[42]*tmpObjS[120];
+tmpQ2[33] = + tmpFx[3]*tmpObjS[0] + tmpFx[7]*tmpObjS[11] + tmpFx[11]*tmpObjS[22] + tmpFx[15]*tmpObjS[33] + tmpFx[19]*tmpObjS[44] + tmpFx[23]*tmpObjS[55] + tmpFx[27]*tmpObjS[66] + tmpFx[31]*tmpObjS[77] + tmpFx[35]*tmpObjS[88] + tmpFx[39]*tmpObjS[99] + tmpFx[43]*tmpObjS[110];
+tmpQ2[34] = + tmpFx[3]*tmpObjS[1] + tmpFx[7]*tmpObjS[12] + tmpFx[11]*tmpObjS[23] + tmpFx[15]*tmpObjS[34] + tmpFx[19]*tmpObjS[45] + tmpFx[23]*tmpObjS[56] + tmpFx[27]*tmpObjS[67] + tmpFx[31]*tmpObjS[78] + tmpFx[35]*tmpObjS[89] + tmpFx[39]*tmpObjS[100] + tmpFx[43]*tmpObjS[111];
+tmpQ2[35] = + tmpFx[3]*tmpObjS[2] + tmpFx[7]*tmpObjS[13] + tmpFx[11]*tmpObjS[24] + tmpFx[15]*tmpObjS[35] + tmpFx[19]*tmpObjS[46] + tmpFx[23]*tmpObjS[57] + tmpFx[27]*tmpObjS[68] + tmpFx[31]*tmpObjS[79] + tmpFx[35]*tmpObjS[90] + tmpFx[39]*tmpObjS[101] + tmpFx[43]*tmpObjS[112];
+tmpQ2[36] = + tmpFx[3]*tmpObjS[3] + tmpFx[7]*tmpObjS[14] + tmpFx[11]*tmpObjS[25] + tmpFx[15]*tmpObjS[36] + tmpFx[19]*tmpObjS[47] + tmpFx[23]*tmpObjS[58] + tmpFx[27]*tmpObjS[69] + tmpFx[31]*tmpObjS[80] + tmpFx[35]*tmpObjS[91] + tmpFx[39]*tmpObjS[102] + tmpFx[43]*tmpObjS[113];
+tmpQ2[37] = + tmpFx[3]*tmpObjS[4] + tmpFx[7]*tmpObjS[15] + tmpFx[11]*tmpObjS[26] + tmpFx[15]*tmpObjS[37] + tmpFx[19]*tmpObjS[48] + tmpFx[23]*tmpObjS[59] + tmpFx[27]*tmpObjS[70] + tmpFx[31]*tmpObjS[81] + tmpFx[35]*tmpObjS[92] + tmpFx[39]*tmpObjS[103] + tmpFx[43]*tmpObjS[114];
+tmpQ2[38] = + tmpFx[3]*tmpObjS[5] + tmpFx[7]*tmpObjS[16] + tmpFx[11]*tmpObjS[27] + tmpFx[15]*tmpObjS[38] + tmpFx[19]*tmpObjS[49] + tmpFx[23]*tmpObjS[60] + tmpFx[27]*tmpObjS[71] + tmpFx[31]*tmpObjS[82] + tmpFx[35]*tmpObjS[93] + tmpFx[39]*tmpObjS[104] + tmpFx[43]*tmpObjS[115];
+tmpQ2[39] = + tmpFx[3]*tmpObjS[6] + tmpFx[7]*tmpObjS[17] + tmpFx[11]*tmpObjS[28] + tmpFx[15]*tmpObjS[39] + tmpFx[19]*tmpObjS[50] + tmpFx[23]*tmpObjS[61] + tmpFx[27]*tmpObjS[72] + tmpFx[31]*tmpObjS[83] + tmpFx[35]*tmpObjS[94] + tmpFx[39]*tmpObjS[105] + tmpFx[43]*tmpObjS[116];
+tmpQ2[40] = + tmpFx[3]*tmpObjS[7] + tmpFx[7]*tmpObjS[18] + tmpFx[11]*tmpObjS[29] + tmpFx[15]*tmpObjS[40] + tmpFx[19]*tmpObjS[51] + tmpFx[23]*tmpObjS[62] + tmpFx[27]*tmpObjS[73] + tmpFx[31]*tmpObjS[84] + tmpFx[35]*tmpObjS[95] + tmpFx[39]*tmpObjS[106] + tmpFx[43]*tmpObjS[117];
+tmpQ2[41] = + tmpFx[3]*tmpObjS[8] + tmpFx[7]*tmpObjS[19] + tmpFx[11]*tmpObjS[30] + tmpFx[15]*tmpObjS[41] + tmpFx[19]*tmpObjS[52] + tmpFx[23]*tmpObjS[63] + tmpFx[27]*tmpObjS[74] + tmpFx[31]*tmpObjS[85] + tmpFx[35]*tmpObjS[96] + tmpFx[39]*tmpObjS[107] + tmpFx[43]*tmpObjS[118];
+tmpQ2[42] = + tmpFx[3]*tmpObjS[9] + tmpFx[7]*tmpObjS[20] + tmpFx[11]*tmpObjS[31] + tmpFx[15]*tmpObjS[42] + tmpFx[19]*tmpObjS[53] + tmpFx[23]*tmpObjS[64] + tmpFx[27]*tmpObjS[75] + tmpFx[31]*tmpObjS[86] + tmpFx[35]*tmpObjS[97] + tmpFx[39]*tmpObjS[108] + tmpFx[43]*tmpObjS[119];
+tmpQ2[43] = + tmpFx[3]*tmpObjS[10] + tmpFx[7]*tmpObjS[21] + tmpFx[11]*tmpObjS[32] + tmpFx[15]*tmpObjS[43] + tmpFx[19]*tmpObjS[54] + tmpFx[23]*tmpObjS[65] + tmpFx[27]*tmpObjS[76] + tmpFx[31]*tmpObjS[87] + tmpFx[35]*tmpObjS[98] + tmpFx[39]*tmpObjS[109] + tmpFx[43]*tmpObjS[120];
+tmpQ1[0] = + tmpQ2[0]*tmpFx[0] + tmpQ2[1]*tmpFx[4] + tmpQ2[2]*tmpFx[8] + tmpQ2[3]*tmpFx[12] + tmpQ2[4]*tmpFx[16] + tmpQ2[5]*tmpFx[20] + tmpQ2[6]*tmpFx[24] + tmpQ2[7]*tmpFx[28] + tmpQ2[8]*tmpFx[32] + tmpQ2[9]*tmpFx[36] + tmpQ2[10]*tmpFx[40];
+tmpQ1[1] = + tmpQ2[0]*tmpFx[1] + tmpQ2[1]*tmpFx[5] + tmpQ2[2]*tmpFx[9] + tmpQ2[3]*tmpFx[13] + tmpQ2[4]*tmpFx[17] + tmpQ2[5]*tmpFx[21] + tmpQ2[6]*tmpFx[25] + tmpQ2[7]*tmpFx[29] + tmpQ2[8]*tmpFx[33] + tmpQ2[9]*tmpFx[37] + tmpQ2[10]*tmpFx[41];
+tmpQ1[2] = + tmpQ2[0]*tmpFx[2] + tmpQ2[1]*tmpFx[6] + tmpQ2[2]*tmpFx[10] + tmpQ2[3]*tmpFx[14] + tmpQ2[4]*tmpFx[18] + tmpQ2[5]*tmpFx[22] + tmpQ2[6]*tmpFx[26] + tmpQ2[7]*tmpFx[30] + tmpQ2[8]*tmpFx[34] + tmpQ2[9]*tmpFx[38] + tmpQ2[10]*tmpFx[42];
+tmpQ1[3] = + tmpQ2[0]*tmpFx[3] + tmpQ2[1]*tmpFx[7] + tmpQ2[2]*tmpFx[11] + tmpQ2[3]*tmpFx[15] + tmpQ2[4]*tmpFx[19] + tmpQ2[5]*tmpFx[23] + tmpQ2[6]*tmpFx[27] + tmpQ2[7]*tmpFx[31] + tmpQ2[8]*tmpFx[35] + tmpQ2[9]*tmpFx[39] + tmpQ2[10]*tmpFx[43];
+tmpQ1[4] = + tmpQ2[11]*tmpFx[0] + tmpQ2[12]*tmpFx[4] + tmpQ2[13]*tmpFx[8] + tmpQ2[14]*tmpFx[12] + tmpQ2[15]*tmpFx[16] + tmpQ2[16]*tmpFx[20] + tmpQ2[17]*tmpFx[24] + tmpQ2[18]*tmpFx[28] + tmpQ2[19]*tmpFx[32] + tmpQ2[20]*tmpFx[36] + tmpQ2[21]*tmpFx[40];
+tmpQ1[5] = + tmpQ2[11]*tmpFx[1] + tmpQ2[12]*tmpFx[5] + tmpQ2[13]*tmpFx[9] + tmpQ2[14]*tmpFx[13] + tmpQ2[15]*tmpFx[17] + tmpQ2[16]*tmpFx[21] + tmpQ2[17]*tmpFx[25] + tmpQ2[18]*tmpFx[29] + tmpQ2[19]*tmpFx[33] + tmpQ2[20]*tmpFx[37] + tmpQ2[21]*tmpFx[41];
+tmpQ1[6] = + tmpQ2[11]*tmpFx[2] + tmpQ2[12]*tmpFx[6] + tmpQ2[13]*tmpFx[10] + tmpQ2[14]*tmpFx[14] + tmpQ2[15]*tmpFx[18] + tmpQ2[16]*tmpFx[22] + tmpQ2[17]*tmpFx[26] + tmpQ2[18]*tmpFx[30] + tmpQ2[19]*tmpFx[34] + tmpQ2[20]*tmpFx[38] + tmpQ2[21]*tmpFx[42];
+tmpQ1[7] = + tmpQ2[11]*tmpFx[3] + tmpQ2[12]*tmpFx[7] + tmpQ2[13]*tmpFx[11] + tmpQ2[14]*tmpFx[15] + tmpQ2[15]*tmpFx[19] + tmpQ2[16]*tmpFx[23] + tmpQ2[17]*tmpFx[27] + tmpQ2[18]*tmpFx[31] + tmpQ2[19]*tmpFx[35] + tmpQ2[20]*tmpFx[39] + tmpQ2[21]*tmpFx[43];
+tmpQ1[8] = + tmpQ2[22]*tmpFx[0] + tmpQ2[23]*tmpFx[4] + tmpQ2[24]*tmpFx[8] + tmpQ2[25]*tmpFx[12] + tmpQ2[26]*tmpFx[16] + tmpQ2[27]*tmpFx[20] + tmpQ2[28]*tmpFx[24] + tmpQ2[29]*tmpFx[28] + tmpQ2[30]*tmpFx[32] + tmpQ2[31]*tmpFx[36] + tmpQ2[32]*tmpFx[40];
+tmpQ1[9] = + tmpQ2[22]*tmpFx[1] + tmpQ2[23]*tmpFx[5] + tmpQ2[24]*tmpFx[9] + tmpQ2[25]*tmpFx[13] + tmpQ2[26]*tmpFx[17] + tmpQ2[27]*tmpFx[21] + tmpQ2[28]*tmpFx[25] + tmpQ2[29]*tmpFx[29] + tmpQ2[30]*tmpFx[33] + tmpQ2[31]*tmpFx[37] + tmpQ2[32]*tmpFx[41];
+tmpQ1[10] = + tmpQ2[22]*tmpFx[2] + tmpQ2[23]*tmpFx[6] + tmpQ2[24]*tmpFx[10] + tmpQ2[25]*tmpFx[14] + tmpQ2[26]*tmpFx[18] + tmpQ2[27]*tmpFx[22] + tmpQ2[28]*tmpFx[26] + tmpQ2[29]*tmpFx[30] + tmpQ2[30]*tmpFx[34] + tmpQ2[31]*tmpFx[38] + tmpQ2[32]*tmpFx[42];
+tmpQ1[11] = + tmpQ2[22]*tmpFx[3] + tmpQ2[23]*tmpFx[7] + tmpQ2[24]*tmpFx[11] + tmpQ2[25]*tmpFx[15] + tmpQ2[26]*tmpFx[19] + tmpQ2[27]*tmpFx[23] + tmpQ2[28]*tmpFx[27] + tmpQ2[29]*tmpFx[31] + tmpQ2[30]*tmpFx[35] + tmpQ2[31]*tmpFx[39] + tmpQ2[32]*tmpFx[43];
+tmpQ1[12] = + tmpQ2[33]*tmpFx[0] + tmpQ2[34]*tmpFx[4] + tmpQ2[35]*tmpFx[8] + tmpQ2[36]*tmpFx[12] + tmpQ2[37]*tmpFx[16] + tmpQ2[38]*tmpFx[20] + tmpQ2[39]*tmpFx[24] + tmpQ2[40]*tmpFx[28] + tmpQ2[41]*tmpFx[32] + tmpQ2[42]*tmpFx[36] + tmpQ2[43]*tmpFx[40];
+tmpQ1[13] = + tmpQ2[33]*tmpFx[1] + tmpQ2[34]*tmpFx[5] + tmpQ2[35]*tmpFx[9] + tmpQ2[36]*tmpFx[13] + tmpQ2[37]*tmpFx[17] + tmpQ2[38]*tmpFx[21] + tmpQ2[39]*tmpFx[25] + tmpQ2[40]*tmpFx[29] + tmpQ2[41]*tmpFx[33] + tmpQ2[42]*tmpFx[37] + tmpQ2[43]*tmpFx[41];
+tmpQ1[14] = + tmpQ2[33]*tmpFx[2] + tmpQ2[34]*tmpFx[6] + tmpQ2[35]*tmpFx[10] + tmpQ2[36]*tmpFx[14] + tmpQ2[37]*tmpFx[18] + tmpQ2[38]*tmpFx[22] + tmpQ2[39]*tmpFx[26] + tmpQ2[40]*tmpFx[30] + tmpQ2[41]*tmpFx[34] + tmpQ2[42]*tmpFx[38] + tmpQ2[43]*tmpFx[42];
+tmpQ1[15] = + tmpQ2[33]*tmpFx[3] + tmpQ2[34]*tmpFx[7] + tmpQ2[35]*tmpFx[11] + tmpQ2[36]*tmpFx[15] + tmpQ2[37]*tmpFx[19] + tmpQ2[38]*tmpFx[23] + tmpQ2[39]*tmpFx[27] + tmpQ2[40]*tmpFx[31] + tmpQ2[41]*tmpFx[35] + tmpQ2[42]*tmpFx[39] + tmpQ2[43]*tmpFx[43];
+}
+
+void acado_setObjR1R2( real_t* const tmpObjS, real_t* const tmpR1, real_t* const tmpR2 )
+{
+tmpR2[0] = 0.0;
+;
+tmpR2[1] = 0.0;
+;
+tmpR2[2] = 0.0;
+;
+tmpR2[3] = 0.0;
+;
+tmpR2[4] = 0.0;
+;
+tmpR2[5] = 0.0;
+;
+tmpR2[6] = 0.0;
+;
+tmpR2[7] = 0.0;
+;
+tmpR2[8] = 0.0;
+;
+tmpR2[9] = 0.0;
+;
+tmpR2[10] = 0.0;
+;
+tmpR2[11] = +tmpObjS[110];
+tmpR2[12] = +tmpObjS[111];
+tmpR2[13] = +tmpObjS[112];
+tmpR2[14] = +tmpObjS[113];
+tmpR2[15] = +tmpObjS[114];
+tmpR2[16] = +tmpObjS[115];
+tmpR2[17] = +tmpObjS[116];
+tmpR2[18] = +tmpObjS[117];
+tmpR2[19] = +tmpObjS[118];
+tmpR2[20] = +tmpObjS[119];
+tmpR2[21] = +tmpObjS[120];
+tmpR1[0] = 0.0;
+;
+tmpR1[1] = + tmpR2[10];
+tmpR1[2] = 0.0;
+;
+tmpR1[3] = + tmpR2[21];
 }
 
 void acado_setObjQN1QN2( real_t* const tmpObjSEndTerm, real_t* const tmpQN1, real_t* const tmpQN2 )
@@ -297,51 +366,59 @@ acadoWorkspace.objValueIn[2] = acadoVariables.x[runObj * 4 + 2];
 acadoWorkspace.objValueIn[3] = acadoVariables.x[runObj * 4 + 3];
 acadoWorkspace.objValueIn[4] = acadoVariables.u[runObj * 2];
 acadoWorkspace.objValueIn[5] = acadoVariables.u[runObj * 2 + 1];
-acadoWorkspace.objValueIn[6] = acadoVariables.od[runObj * 13];
-acadoWorkspace.objValueIn[7] = acadoVariables.od[runObj * 13 + 1];
-acadoWorkspace.objValueIn[8] = acadoVariables.od[runObj * 13 + 2];
-acadoWorkspace.objValueIn[9] = acadoVariables.od[runObj * 13 + 3];
-acadoWorkspace.objValueIn[10] = acadoVariables.od[runObj * 13 + 4];
-acadoWorkspace.objValueIn[11] = acadoVariables.od[runObj * 13 + 5];
-acadoWorkspace.objValueIn[12] = acadoVariables.od[runObj * 13 + 6];
-acadoWorkspace.objValueIn[13] = acadoVariables.od[runObj * 13 + 7];
-acadoWorkspace.objValueIn[14] = acadoVariables.od[runObj * 13 + 8];
-acadoWorkspace.objValueIn[15] = acadoVariables.od[runObj * 13 + 9];
-acadoWorkspace.objValueIn[16] = acadoVariables.od[runObj * 13 + 10];
-acadoWorkspace.objValueIn[17] = acadoVariables.od[runObj * 13 + 11];
-acadoWorkspace.objValueIn[18] = acadoVariables.od[runObj * 13 + 12];
+acadoWorkspace.objValueIn[6] = acadoVariables.od[runObj * 15];
+acadoWorkspace.objValueIn[7] = acadoVariables.od[runObj * 15 + 1];
+acadoWorkspace.objValueIn[8] = acadoVariables.od[runObj * 15 + 2];
+acadoWorkspace.objValueIn[9] = acadoVariables.od[runObj * 15 + 3];
+acadoWorkspace.objValueIn[10] = acadoVariables.od[runObj * 15 + 4];
+acadoWorkspace.objValueIn[11] = acadoVariables.od[runObj * 15 + 5];
+acadoWorkspace.objValueIn[12] = acadoVariables.od[runObj * 15 + 6];
+acadoWorkspace.objValueIn[13] = acadoVariables.od[runObj * 15 + 7];
+acadoWorkspace.objValueIn[14] = acadoVariables.od[runObj * 15 + 8];
+acadoWorkspace.objValueIn[15] = acadoVariables.od[runObj * 15 + 9];
+acadoWorkspace.objValueIn[16] = acadoVariables.od[runObj * 15 + 10];
+acadoWorkspace.objValueIn[17] = acadoVariables.od[runObj * 15 + 11];
+acadoWorkspace.objValueIn[18] = acadoVariables.od[runObj * 15 + 12];
+acadoWorkspace.objValueIn[19] = acadoVariables.od[runObj * 15 + 13];
+acadoWorkspace.objValueIn[20] = acadoVariables.od[runObj * 15 + 14];
 
 acado_evaluateLSQ( acadoWorkspace.objValueIn, acadoWorkspace.objValueOut );
-acadoWorkspace.Dy[runObj * 9] = acadoWorkspace.objValueOut[0];
-acadoWorkspace.Dy[runObj * 9 + 1] = acadoWorkspace.objValueOut[1];
-acadoWorkspace.Dy[runObj * 9 + 2] = acadoWorkspace.objValueOut[2];
-acadoWorkspace.Dy[runObj * 9 + 3] = acadoWorkspace.objValueOut[3];
-acadoWorkspace.Dy[runObj * 9 + 4] = acadoWorkspace.objValueOut[4];
-acadoWorkspace.Dy[runObj * 9 + 5] = acadoWorkspace.objValueOut[5];
-acadoWorkspace.Dy[runObj * 9 + 6] = acadoWorkspace.objValueOut[6];
-acadoWorkspace.Dy[runObj * 9 + 7] = acadoWorkspace.objValueOut[7];
-acadoWorkspace.Dy[runObj * 9 + 8] = acadoWorkspace.objValueOut[8];
+acadoWorkspace.Dy[runObj * 11] = acadoWorkspace.objValueOut[0];
+acadoWorkspace.Dy[runObj * 11 + 1] = acadoWorkspace.objValueOut[1];
+acadoWorkspace.Dy[runObj * 11 + 2] = acadoWorkspace.objValueOut[2];
+acadoWorkspace.Dy[runObj * 11 + 3] = acadoWorkspace.objValueOut[3];
+acadoWorkspace.Dy[runObj * 11 + 4] = acadoWorkspace.objValueOut[4];
+acadoWorkspace.Dy[runObj * 11 + 5] = acadoWorkspace.objValueOut[5];
+acadoWorkspace.Dy[runObj * 11 + 6] = acadoWorkspace.objValueOut[6];
+acadoWorkspace.Dy[runObj * 11 + 7] = acadoWorkspace.objValueOut[7];
+acadoWorkspace.Dy[runObj * 11 + 8] = acadoWorkspace.objValueOut[8];
+acadoWorkspace.Dy[runObj * 11 + 9] = acadoWorkspace.objValueOut[9];
+acadoWorkspace.Dy[runObj * 11 + 10] = acadoWorkspace.objValueOut[10];
 
-acado_setObjQ1Q2( &(acadoWorkspace.objValueOut[ 9 ]), acadoVariables.W, &(acadoWorkspace.Q1[ runObj * 16 ]), &(acadoWorkspace.Q2[ runObj * 36 ]) );
+acado_setObjQ1Q2( &(acadoWorkspace.objValueOut[ 11 ]), acadoVariables.W, &(acadoWorkspace.Q1[ runObj * 16 ]), &(acadoWorkspace.Q2[ runObj * 44 ]) );
+
+acado_setObjR1R2( acadoVariables.W, &(acadoWorkspace.R1[ runObj * 4 ]), &(acadoWorkspace.R2[ runObj * 22 ]) );
 
 }
 acadoWorkspace.objValueIn[0] = acadoVariables.x[120];
 acadoWorkspace.objValueIn[1] = acadoVariables.x[121];
 acadoWorkspace.objValueIn[2] = acadoVariables.x[122];
 acadoWorkspace.objValueIn[3] = acadoVariables.x[123];
-acadoWorkspace.objValueIn[4] = acadoVariables.od[390];
-acadoWorkspace.objValueIn[5] = acadoVariables.od[391];
-acadoWorkspace.objValueIn[6] = acadoVariables.od[392];
-acadoWorkspace.objValueIn[7] = acadoVariables.od[393];
-acadoWorkspace.objValueIn[8] = acadoVariables.od[394];
-acadoWorkspace.objValueIn[9] = acadoVariables.od[395];
-acadoWorkspace.objValueIn[10] = acadoVariables.od[396];
-acadoWorkspace.objValueIn[11] = acadoVariables.od[397];
-acadoWorkspace.objValueIn[12] = acadoVariables.od[398];
-acadoWorkspace.objValueIn[13] = acadoVariables.od[399];
-acadoWorkspace.objValueIn[14] = acadoVariables.od[400];
-acadoWorkspace.objValueIn[15] = acadoVariables.od[401];
-acadoWorkspace.objValueIn[16] = acadoVariables.od[402];
+acadoWorkspace.objValueIn[4] = acadoVariables.od[450];
+acadoWorkspace.objValueIn[5] = acadoVariables.od[451];
+acadoWorkspace.objValueIn[6] = acadoVariables.od[452];
+acadoWorkspace.objValueIn[7] = acadoVariables.od[453];
+acadoWorkspace.objValueIn[8] = acadoVariables.od[454];
+acadoWorkspace.objValueIn[9] = acadoVariables.od[455];
+acadoWorkspace.objValueIn[10] = acadoVariables.od[456];
+acadoWorkspace.objValueIn[11] = acadoVariables.od[457];
+acadoWorkspace.objValueIn[12] = acadoVariables.od[458];
+acadoWorkspace.objValueIn[13] = acadoVariables.od[459];
+acadoWorkspace.objValueIn[14] = acadoVariables.od[460];
+acadoWorkspace.objValueIn[15] = acadoVariables.od[461];
+acadoWorkspace.objValueIn[16] = acadoVariables.od[462];
+acadoWorkspace.objValueIn[17] = acadoVariables.od[463];
+acadoWorkspace.objValueIn[18] = acadoVariables.od[464];
 acado_evaluateLSQEndTerm( acadoWorkspace.objValueIn, acadoWorkspace.objValueOut );
 
 acadoWorkspace.DyN[0] = acadoWorkspace.objValueOut[0];
@@ -432,12 +509,12 @@ acadoWorkspace.H[(iRow * 120 + 60) + (iCol * 2)] += + Gu1[1]*Gu2[0] + Gu1[3]*Gu2
 acadoWorkspace.H[(iRow * 120 + 60) + (iCol * 2 + 1)] += + Gu1[1]*Gu2[1] + Gu1[3]*Gu2[3] + Gu1[5]*Gu2[5] + Gu1[7]*Gu2[7];
 }
 
-void acado_setBlockH11_R1( int iRow, int iCol )
+void acado_setBlockH11_R1( int iRow, int iCol, real_t* const R11 )
 {
-acadoWorkspace.H[(iRow * 120) + (iCol * 2)] = + (real_t)1.0000000000000000e-08;
-acadoWorkspace.H[(iRow * 120) + (iCol * 2 + 1)] = 0.0;
-acadoWorkspace.H[(iRow * 120 + 60) + (iCol * 2)] = 0.0;
-acadoWorkspace.H[(iRow * 120 + 60) + (iCol * 2 + 1)] = + (real_t)1.0000000000000000e-08;
+acadoWorkspace.H[(iRow * 120) + (iCol * 2)] = R11[0] + (real_t)1.0000000000000000e-08;
+acadoWorkspace.H[(iRow * 120) + (iCol * 2 + 1)] = R11[1];
+acadoWorkspace.H[(iRow * 120 + 60) + (iCol * 2)] = R11[2];
+acadoWorkspace.H[(iRow * 120 + 60) + (iCol * 2 + 1)] = R11[3] + (real_t)1.0000000000000000e-08;
 }
 
 void acado_zeroBlockH11( int iRow, int iCol )
@@ -472,20 +549,18 @@ dNew[2] = + acadoWorkspace.QN1[8]*dOld[0] + acadoWorkspace.QN1[9]*dOld[1] + acad
 dNew[3] = + acadoWorkspace.QN1[12]*dOld[0] + acadoWorkspace.QN1[13]*dOld[1] + acadoWorkspace.QN1[14]*dOld[2] + acadoWorkspace.QN1[15]*dOld[3];
 }
 
-void acado_multRDy( real_t* const Dy1, real_t* const RDy1 )
+void acado_multRDy( real_t* const R2, real_t* const Dy1, real_t* const RDy1 )
 {
-RDy1[0] = 0.0;
-;
-RDy1[1] = 0.0;
-;
+RDy1[0] = + R2[0]*Dy1[0] + R2[1]*Dy1[1] + R2[2]*Dy1[2] + R2[3]*Dy1[3] + R2[4]*Dy1[4] + R2[5]*Dy1[5] + R2[6]*Dy1[6] + R2[7]*Dy1[7] + R2[8]*Dy1[8] + R2[9]*Dy1[9] + R2[10]*Dy1[10];
+RDy1[1] = + R2[11]*Dy1[0] + R2[12]*Dy1[1] + R2[13]*Dy1[2] + R2[14]*Dy1[3] + R2[15]*Dy1[4] + R2[16]*Dy1[5] + R2[17]*Dy1[6] + R2[18]*Dy1[7] + R2[19]*Dy1[8] + R2[20]*Dy1[9] + R2[21]*Dy1[10];
 }
 
 void acado_multQDy( real_t* const Q2, real_t* const Dy1, real_t* const QDy1 )
 {
-QDy1[0] = + Q2[0]*Dy1[0] + Q2[1]*Dy1[1] + Q2[2]*Dy1[2] + Q2[3]*Dy1[3] + Q2[4]*Dy1[4] + Q2[5]*Dy1[5] + Q2[6]*Dy1[6] + Q2[7]*Dy1[7] + Q2[8]*Dy1[8];
-QDy1[1] = + Q2[9]*Dy1[0] + Q2[10]*Dy1[1] + Q2[11]*Dy1[2] + Q2[12]*Dy1[3] + Q2[13]*Dy1[4] + Q2[14]*Dy1[5] + Q2[15]*Dy1[6] + Q2[16]*Dy1[7] + Q2[17]*Dy1[8];
-QDy1[2] = + Q2[18]*Dy1[0] + Q2[19]*Dy1[1] + Q2[20]*Dy1[2] + Q2[21]*Dy1[3] + Q2[22]*Dy1[4] + Q2[23]*Dy1[5] + Q2[24]*Dy1[6] + Q2[25]*Dy1[7] + Q2[26]*Dy1[8];
-QDy1[3] = + Q2[27]*Dy1[0] + Q2[28]*Dy1[1] + Q2[29]*Dy1[2] + Q2[30]*Dy1[3] + Q2[31]*Dy1[4] + Q2[32]*Dy1[5] + Q2[33]*Dy1[6] + Q2[34]*Dy1[7] + Q2[35]*Dy1[8];
+QDy1[0] = + Q2[0]*Dy1[0] + Q2[1]*Dy1[1] + Q2[2]*Dy1[2] + Q2[3]*Dy1[3] + Q2[4]*Dy1[4] + Q2[5]*Dy1[5] + Q2[6]*Dy1[6] + Q2[7]*Dy1[7] + Q2[8]*Dy1[8] + Q2[9]*Dy1[9] + Q2[10]*Dy1[10];
+QDy1[1] = + Q2[11]*Dy1[0] + Q2[12]*Dy1[1] + Q2[13]*Dy1[2] + Q2[14]*Dy1[3] + Q2[15]*Dy1[4] + Q2[16]*Dy1[5] + Q2[17]*Dy1[6] + Q2[18]*Dy1[7] + Q2[19]*Dy1[8] + Q2[20]*Dy1[9] + Q2[21]*Dy1[10];
+QDy1[2] = + Q2[22]*Dy1[0] + Q2[23]*Dy1[1] + Q2[24]*Dy1[2] + Q2[25]*Dy1[3] + Q2[26]*Dy1[4] + Q2[27]*Dy1[5] + Q2[28]*Dy1[6] + Q2[29]*Dy1[7] + Q2[30]*Dy1[8] + Q2[31]*Dy1[9] + Q2[32]*Dy1[10];
+QDy1[3] = + Q2[33]*Dy1[0] + Q2[34]*Dy1[1] + Q2[35]*Dy1[2] + Q2[36]*Dy1[3] + Q2[37]*Dy1[4] + Q2[38]*Dy1[5] + Q2[39]*Dy1[6] + Q2[40]*Dy1[7] + Q2[41]*Dy1[8] + Q2[42]*Dy1[9] + Q2[43]*Dy1[10];
 }
 
 void acado_multEQDy( real_t* const E1, real_t* const QDy1, real_t* const U1 )
@@ -577,7 +652,7 @@ acado_multQETGx( &(acadoWorkspace.QE[ lRun3 * 8 ]), &(acadoWorkspace.evGx[ lRun2
 
 for (lRun1 = 0; lRun1 < 30; ++lRun1)
 {
-acado_setBlockH11_R1( lRun1, lRun1 );
+acado_setBlockH11_R1( lRun1, lRun1, &(acadoWorkspace.R1[ lRun1 * 4 ]) );
 lRun2 = lRun1;
 for (lRun3 = lRun1; lRun3 < 30; ++lRun3)
 {
@@ -656,74 +731,74 @@ acadoWorkspace.Dx0[1] = acadoVariables.x0[1] - acadoVariables.x[1];
 acadoWorkspace.Dx0[2] = acadoVariables.x0[2] - acadoVariables.x[2];
 acadoWorkspace.Dx0[3] = acadoVariables.x0[3] - acadoVariables.x[3];
 
-for (lRun2 = 0; lRun2 < 270; ++lRun2)
+for (lRun2 = 0; lRun2 < 330; ++lRun2)
 acadoWorkspace.Dy[lRun2] -= acadoVariables.y[lRun2];
 
 acadoWorkspace.DyN[0] -= acadoVariables.yN[0];
 acadoWorkspace.DyN[1] -= acadoVariables.yN[1];
 acadoWorkspace.DyN[2] -= acadoVariables.yN[2];
 
-acado_multRDy( acadoWorkspace.Dy, acadoWorkspace.g );
-acado_multRDy( &(acadoWorkspace.Dy[ 9 ]), &(acadoWorkspace.g[ 2 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 18 ]), &(acadoWorkspace.g[ 4 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 27 ]), &(acadoWorkspace.g[ 6 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 36 ]), &(acadoWorkspace.g[ 8 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 45 ]), &(acadoWorkspace.g[ 10 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 54 ]), &(acadoWorkspace.g[ 12 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 63 ]), &(acadoWorkspace.g[ 14 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 72 ]), &(acadoWorkspace.g[ 16 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 81 ]), &(acadoWorkspace.g[ 18 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 90 ]), &(acadoWorkspace.g[ 20 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 99 ]), &(acadoWorkspace.g[ 22 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 108 ]), &(acadoWorkspace.g[ 24 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 117 ]), &(acadoWorkspace.g[ 26 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 126 ]), &(acadoWorkspace.g[ 28 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 135 ]), &(acadoWorkspace.g[ 30 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 144 ]), &(acadoWorkspace.g[ 32 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 153 ]), &(acadoWorkspace.g[ 34 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 162 ]), &(acadoWorkspace.g[ 36 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 171 ]), &(acadoWorkspace.g[ 38 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 180 ]), &(acadoWorkspace.g[ 40 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 189 ]), &(acadoWorkspace.g[ 42 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 198 ]), &(acadoWorkspace.g[ 44 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 207 ]), &(acadoWorkspace.g[ 46 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 216 ]), &(acadoWorkspace.g[ 48 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 225 ]), &(acadoWorkspace.g[ 50 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 234 ]), &(acadoWorkspace.g[ 52 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 243 ]), &(acadoWorkspace.g[ 54 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 252 ]), &(acadoWorkspace.g[ 56 ]) );
-acado_multRDy( &(acadoWorkspace.Dy[ 261 ]), &(acadoWorkspace.g[ 58 ]) );
+acado_multRDy( acadoWorkspace.R2, acadoWorkspace.Dy, acadoWorkspace.g );
+acado_multRDy( &(acadoWorkspace.R2[ 22 ]), &(acadoWorkspace.Dy[ 11 ]), &(acadoWorkspace.g[ 2 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 44 ]), &(acadoWorkspace.Dy[ 22 ]), &(acadoWorkspace.g[ 4 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 66 ]), &(acadoWorkspace.Dy[ 33 ]), &(acadoWorkspace.g[ 6 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 88 ]), &(acadoWorkspace.Dy[ 44 ]), &(acadoWorkspace.g[ 8 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 110 ]), &(acadoWorkspace.Dy[ 55 ]), &(acadoWorkspace.g[ 10 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 132 ]), &(acadoWorkspace.Dy[ 66 ]), &(acadoWorkspace.g[ 12 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 154 ]), &(acadoWorkspace.Dy[ 77 ]), &(acadoWorkspace.g[ 14 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 176 ]), &(acadoWorkspace.Dy[ 88 ]), &(acadoWorkspace.g[ 16 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 198 ]), &(acadoWorkspace.Dy[ 99 ]), &(acadoWorkspace.g[ 18 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 220 ]), &(acadoWorkspace.Dy[ 110 ]), &(acadoWorkspace.g[ 20 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 242 ]), &(acadoWorkspace.Dy[ 121 ]), &(acadoWorkspace.g[ 22 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 264 ]), &(acadoWorkspace.Dy[ 132 ]), &(acadoWorkspace.g[ 24 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 286 ]), &(acadoWorkspace.Dy[ 143 ]), &(acadoWorkspace.g[ 26 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 308 ]), &(acadoWorkspace.Dy[ 154 ]), &(acadoWorkspace.g[ 28 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 330 ]), &(acadoWorkspace.Dy[ 165 ]), &(acadoWorkspace.g[ 30 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 352 ]), &(acadoWorkspace.Dy[ 176 ]), &(acadoWorkspace.g[ 32 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 374 ]), &(acadoWorkspace.Dy[ 187 ]), &(acadoWorkspace.g[ 34 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 396 ]), &(acadoWorkspace.Dy[ 198 ]), &(acadoWorkspace.g[ 36 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 418 ]), &(acadoWorkspace.Dy[ 209 ]), &(acadoWorkspace.g[ 38 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 440 ]), &(acadoWorkspace.Dy[ 220 ]), &(acadoWorkspace.g[ 40 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 462 ]), &(acadoWorkspace.Dy[ 231 ]), &(acadoWorkspace.g[ 42 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 484 ]), &(acadoWorkspace.Dy[ 242 ]), &(acadoWorkspace.g[ 44 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 506 ]), &(acadoWorkspace.Dy[ 253 ]), &(acadoWorkspace.g[ 46 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 528 ]), &(acadoWorkspace.Dy[ 264 ]), &(acadoWorkspace.g[ 48 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 550 ]), &(acadoWorkspace.Dy[ 275 ]), &(acadoWorkspace.g[ 50 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 572 ]), &(acadoWorkspace.Dy[ 286 ]), &(acadoWorkspace.g[ 52 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 594 ]), &(acadoWorkspace.Dy[ 297 ]), &(acadoWorkspace.g[ 54 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 616 ]), &(acadoWorkspace.Dy[ 308 ]), &(acadoWorkspace.g[ 56 ]) );
+acado_multRDy( &(acadoWorkspace.R2[ 638 ]), &(acadoWorkspace.Dy[ 319 ]), &(acadoWorkspace.g[ 58 ]) );
 
 acado_multQDy( acadoWorkspace.Q2, acadoWorkspace.Dy, acadoWorkspace.QDy );
-acado_multQDy( &(acadoWorkspace.Q2[ 36 ]), &(acadoWorkspace.Dy[ 9 ]), &(acadoWorkspace.QDy[ 4 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 72 ]), &(acadoWorkspace.Dy[ 18 ]), &(acadoWorkspace.QDy[ 8 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 108 ]), &(acadoWorkspace.Dy[ 27 ]), &(acadoWorkspace.QDy[ 12 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 144 ]), &(acadoWorkspace.Dy[ 36 ]), &(acadoWorkspace.QDy[ 16 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 180 ]), &(acadoWorkspace.Dy[ 45 ]), &(acadoWorkspace.QDy[ 20 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 216 ]), &(acadoWorkspace.Dy[ 54 ]), &(acadoWorkspace.QDy[ 24 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 252 ]), &(acadoWorkspace.Dy[ 63 ]), &(acadoWorkspace.QDy[ 28 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 288 ]), &(acadoWorkspace.Dy[ 72 ]), &(acadoWorkspace.QDy[ 32 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 324 ]), &(acadoWorkspace.Dy[ 81 ]), &(acadoWorkspace.QDy[ 36 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 360 ]), &(acadoWorkspace.Dy[ 90 ]), &(acadoWorkspace.QDy[ 40 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 396 ]), &(acadoWorkspace.Dy[ 99 ]), &(acadoWorkspace.QDy[ 44 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 432 ]), &(acadoWorkspace.Dy[ 108 ]), &(acadoWorkspace.QDy[ 48 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 468 ]), &(acadoWorkspace.Dy[ 117 ]), &(acadoWorkspace.QDy[ 52 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 504 ]), &(acadoWorkspace.Dy[ 126 ]), &(acadoWorkspace.QDy[ 56 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 540 ]), &(acadoWorkspace.Dy[ 135 ]), &(acadoWorkspace.QDy[ 60 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 576 ]), &(acadoWorkspace.Dy[ 144 ]), &(acadoWorkspace.QDy[ 64 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 612 ]), &(acadoWorkspace.Dy[ 153 ]), &(acadoWorkspace.QDy[ 68 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 648 ]), &(acadoWorkspace.Dy[ 162 ]), &(acadoWorkspace.QDy[ 72 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 684 ]), &(acadoWorkspace.Dy[ 171 ]), &(acadoWorkspace.QDy[ 76 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 720 ]), &(acadoWorkspace.Dy[ 180 ]), &(acadoWorkspace.QDy[ 80 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 756 ]), &(acadoWorkspace.Dy[ 189 ]), &(acadoWorkspace.QDy[ 84 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 792 ]), &(acadoWorkspace.Dy[ 198 ]), &(acadoWorkspace.QDy[ 88 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 828 ]), &(acadoWorkspace.Dy[ 207 ]), &(acadoWorkspace.QDy[ 92 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 864 ]), &(acadoWorkspace.Dy[ 216 ]), &(acadoWorkspace.QDy[ 96 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 900 ]), &(acadoWorkspace.Dy[ 225 ]), &(acadoWorkspace.QDy[ 100 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 936 ]), &(acadoWorkspace.Dy[ 234 ]), &(acadoWorkspace.QDy[ 104 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 972 ]), &(acadoWorkspace.Dy[ 243 ]), &(acadoWorkspace.QDy[ 108 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 1008 ]), &(acadoWorkspace.Dy[ 252 ]), &(acadoWorkspace.QDy[ 112 ]) );
-acado_multQDy( &(acadoWorkspace.Q2[ 1044 ]), &(acadoWorkspace.Dy[ 261 ]), &(acadoWorkspace.QDy[ 116 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 44 ]), &(acadoWorkspace.Dy[ 11 ]), &(acadoWorkspace.QDy[ 4 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 88 ]), &(acadoWorkspace.Dy[ 22 ]), &(acadoWorkspace.QDy[ 8 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 132 ]), &(acadoWorkspace.Dy[ 33 ]), &(acadoWorkspace.QDy[ 12 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 176 ]), &(acadoWorkspace.Dy[ 44 ]), &(acadoWorkspace.QDy[ 16 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 220 ]), &(acadoWorkspace.Dy[ 55 ]), &(acadoWorkspace.QDy[ 20 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 264 ]), &(acadoWorkspace.Dy[ 66 ]), &(acadoWorkspace.QDy[ 24 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 308 ]), &(acadoWorkspace.Dy[ 77 ]), &(acadoWorkspace.QDy[ 28 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 352 ]), &(acadoWorkspace.Dy[ 88 ]), &(acadoWorkspace.QDy[ 32 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 396 ]), &(acadoWorkspace.Dy[ 99 ]), &(acadoWorkspace.QDy[ 36 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 440 ]), &(acadoWorkspace.Dy[ 110 ]), &(acadoWorkspace.QDy[ 40 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 484 ]), &(acadoWorkspace.Dy[ 121 ]), &(acadoWorkspace.QDy[ 44 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 528 ]), &(acadoWorkspace.Dy[ 132 ]), &(acadoWorkspace.QDy[ 48 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 572 ]), &(acadoWorkspace.Dy[ 143 ]), &(acadoWorkspace.QDy[ 52 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 616 ]), &(acadoWorkspace.Dy[ 154 ]), &(acadoWorkspace.QDy[ 56 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 660 ]), &(acadoWorkspace.Dy[ 165 ]), &(acadoWorkspace.QDy[ 60 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 704 ]), &(acadoWorkspace.Dy[ 176 ]), &(acadoWorkspace.QDy[ 64 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 748 ]), &(acadoWorkspace.Dy[ 187 ]), &(acadoWorkspace.QDy[ 68 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 792 ]), &(acadoWorkspace.Dy[ 198 ]), &(acadoWorkspace.QDy[ 72 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 836 ]), &(acadoWorkspace.Dy[ 209 ]), &(acadoWorkspace.QDy[ 76 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 880 ]), &(acadoWorkspace.Dy[ 220 ]), &(acadoWorkspace.QDy[ 80 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 924 ]), &(acadoWorkspace.Dy[ 231 ]), &(acadoWorkspace.QDy[ 84 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 968 ]), &(acadoWorkspace.Dy[ 242 ]), &(acadoWorkspace.QDy[ 88 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 1012 ]), &(acadoWorkspace.Dy[ 253 ]), &(acadoWorkspace.QDy[ 92 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 1056 ]), &(acadoWorkspace.Dy[ 264 ]), &(acadoWorkspace.QDy[ 96 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 1100 ]), &(acadoWorkspace.Dy[ 275 ]), &(acadoWorkspace.QDy[ 100 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 1144 ]), &(acadoWorkspace.Dy[ 286 ]), &(acadoWorkspace.QDy[ 104 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 1188 ]), &(acadoWorkspace.Dy[ 297 ]), &(acadoWorkspace.QDy[ 108 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 1232 ]), &(acadoWorkspace.Dy[ 308 ]), &(acadoWorkspace.QDy[ 112 ]) );
+acado_multQDy( &(acadoWorkspace.Q2[ 1276 ]), &(acadoWorkspace.Dy[ 319 ]), &(acadoWorkspace.QDy[ 116 ]) );
 
 acadoWorkspace.QDy[120] = + acadoWorkspace.QN2[0]*acadoWorkspace.DyN[0] + acadoWorkspace.QN2[1]*acadoWorkspace.DyN[1] + acadoWorkspace.QN2[2]*acadoWorkspace.DyN[2];
 acadoWorkspace.QDy[121] = + acadoWorkspace.QN2[3]*acadoWorkspace.DyN[0] + acadoWorkspace.QN2[4]*acadoWorkspace.DyN[1] + acadoWorkspace.QN2[5]*acadoWorkspace.DyN[2];
@@ -1412,19 +1487,21 @@ acadoWorkspace.state[2] = acadoVariables.x[index * 4 + 2];
 acadoWorkspace.state[3] = acadoVariables.x[index * 4 + 3];
 acadoWorkspace.state[28] = acadoVariables.u[index * 2];
 acadoWorkspace.state[29] = acadoVariables.u[index * 2 + 1];
-acadoWorkspace.state[30] = acadoVariables.od[index * 13];
-acadoWorkspace.state[31] = acadoVariables.od[index * 13 + 1];
-acadoWorkspace.state[32] = acadoVariables.od[index * 13 + 2];
-acadoWorkspace.state[33] = acadoVariables.od[index * 13 + 3];
-acadoWorkspace.state[34] = acadoVariables.od[index * 13 + 4];
-acadoWorkspace.state[35] = acadoVariables.od[index * 13 + 5];
-acadoWorkspace.state[36] = acadoVariables.od[index * 13 + 6];
-acadoWorkspace.state[37] = acadoVariables.od[index * 13 + 7];
-acadoWorkspace.state[38] = acadoVariables.od[index * 13 + 8];
-acadoWorkspace.state[39] = acadoVariables.od[index * 13 + 9];
-acadoWorkspace.state[40] = acadoVariables.od[index * 13 + 10];
-acadoWorkspace.state[41] = acadoVariables.od[index * 13 + 11];
-acadoWorkspace.state[42] = acadoVariables.od[index * 13 + 12];
+acadoWorkspace.state[30] = acadoVariables.od[index * 15];
+acadoWorkspace.state[31] = acadoVariables.od[index * 15 + 1];
+acadoWorkspace.state[32] = acadoVariables.od[index * 15 + 2];
+acadoWorkspace.state[33] = acadoVariables.od[index * 15 + 3];
+acadoWorkspace.state[34] = acadoVariables.od[index * 15 + 4];
+acadoWorkspace.state[35] = acadoVariables.od[index * 15 + 5];
+acadoWorkspace.state[36] = acadoVariables.od[index * 15 + 6];
+acadoWorkspace.state[37] = acadoVariables.od[index * 15 + 7];
+acadoWorkspace.state[38] = acadoVariables.od[index * 15 + 8];
+acadoWorkspace.state[39] = acadoVariables.od[index * 15 + 9];
+acadoWorkspace.state[40] = acadoVariables.od[index * 15 + 10];
+acadoWorkspace.state[41] = acadoVariables.od[index * 15 + 11];
+acadoWorkspace.state[42] = acadoVariables.od[index * 15 + 12];
+acadoWorkspace.state[43] = acadoVariables.od[index * 15 + 13];
+acadoWorkspace.state[44] = acadoVariables.od[index * 15 + 14];
 
 acado_integrate(acadoWorkspace.state, index == 0);
 
@@ -1469,19 +1546,21 @@ else
 acadoWorkspace.state[28] = acadoVariables.u[58];
 acadoWorkspace.state[29] = acadoVariables.u[59];
 }
-acadoWorkspace.state[30] = acadoVariables.od[390];
-acadoWorkspace.state[31] = acadoVariables.od[391];
-acadoWorkspace.state[32] = acadoVariables.od[392];
-acadoWorkspace.state[33] = acadoVariables.od[393];
-acadoWorkspace.state[34] = acadoVariables.od[394];
-acadoWorkspace.state[35] = acadoVariables.od[395];
-acadoWorkspace.state[36] = acadoVariables.od[396];
-acadoWorkspace.state[37] = acadoVariables.od[397];
-acadoWorkspace.state[38] = acadoVariables.od[398];
-acadoWorkspace.state[39] = acadoVariables.od[399];
-acadoWorkspace.state[40] = acadoVariables.od[400];
-acadoWorkspace.state[41] = acadoVariables.od[401];
-acadoWorkspace.state[42] = acadoVariables.od[402];
+acadoWorkspace.state[30] = acadoVariables.od[450];
+acadoWorkspace.state[31] = acadoVariables.od[451];
+acadoWorkspace.state[32] = acadoVariables.od[452];
+acadoWorkspace.state[33] = acadoVariables.od[453];
+acadoWorkspace.state[34] = acadoVariables.od[454];
+acadoWorkspace.state[35] = acadoVariables.od[455];
+acadoWorkspace.state[36] = acadoVariables.od[456];
+acadoWorkspace.state[37] = acadoVariables.od[457];
+acadoWorkspace.state[38] = acadoVariables.od[458];
+acadoWorkspace.state[39] = acadoVariables.od[459];
+acadoWorkspace.state[40] = acadoVariables.od[460];
+acadoWorkspace.state[41] = acadoVariables.od[461];
+acadoWorkspace.state[42] = acadoVariables.od[462];
+acadoWorkspace.state[43] = acadoVariables.od[463];
+acadoWorkspace.state[44] = acadoVariables.od[464];
 
 acado_integrate(acadoWorkspace.state, 1);
 
@@ -1533,8 +1612,8 @@ real_t acado_getObjective(  )
 real_t objVal;
 
 int lRun1;
-/** Row vector of size: 9 */
-real_t tmpDy[ 9 ];
+/** Row vector of size: 11 */
+real_t tmpDy[ 11 ];
 
 /** Row vector of size: 3 */
 real_t tmpDyN[ 3 ];
@@ -1547,48 +1626,54 @@ acadoWorkspace.objValueIn[2] = acadoVariables.x[lRun1 * 4 + 2];
 acadoWorkspace.objValueIn[3] = acadoVariables.x[lRun1 * 4 + 3];
 acadoWorkspace.objValueIn[4] = acadoVariables.u[lRun1 * 2];
 acadoWorkspace.objValueIn[5] = acadoVariables.u[lRun1 * 2 + 1];
-acadoWorkspace.objValueIn[6] = acadoVariables.od[lRun1 * 13];
-acadoWorkspace.objValueIn[7] = acadoVariables.od[lRun1 * 13 + 1];
-acadoWorkspace.objValueIn[8] = acadoVariables.od[lRun1 * 13 + 2];
-acadoWorkspace.objValueIn[9] = acadoVariables.od[lRun1 * 13 + 3];
-acadoWorkspace.objValueIn[10] = acadoVariables.od[lRun1 * 13 + 4];
-acadoWorkspace.objValueIn[11] = acadoVariables.od[lRun1 * 13 + 5];
-acadoWorkspace.objValueIn[12] = acadoVariables.od[lRun1 * 13 + 6];
-acadoWorkspace.objValueIn[13] = acadoVariables.od[lRun1 * 13 + 7];
-acadoWorkspace.objValueIn[14] = acadoVariables.od[lRun1 * 13 + 8];
-acadoWorkspace.objValueIn[15] = acadoVariables.od[lRun1 * 13 + 9];
-acadoWorkspace.objValueIn[16] = acadoVariables.od[lRun1 * 13 + 10];
-acadoWorkspace.objValueIn[17] = acadoVariables.od[lRun1 * 13 + 11];
-acadoWorkspace.objValueIn[18] = acadoVariables.od[lRun1 * 13 + 12];
+acadoWorkspace.objValueIn[6] = acadoVariables.od[lRun1 * 15];
+acadoWorkspace.objValueIn[7] = acadoVariables.od[lRun1 * 15 + 1];
+acadoWorkspace.objValueIn[8] = acadoVariables.od[lRun1 * 15 + 2];
+acadoWorkspace.objValueIn[9] = acadoVariables.od[lRun1 * 15 + 3];
+acadoWorkspace.objValueIn[10] = acadoVariables.od[lRun1 * 15 + 4];
+acadoWorkspace.objValueIn[11] = acadoVariables.od[lRun1 * 15 + 5];
+acadoWorkspace.objValueIn[12] = acadoVariables.od[lRun1 * 15 + 6];
+acadoWorkspace.objValueIn[13] = acadoVariables.od[lRun1 * 15 + 7];
+acadoWorkspace.objValueIn[14] = acadoVariables.od[lRun1 * 15 + 8];
+acadoWorkspace.objValueIn[15] = acadoVariables.od[lRun1 * 15 + 9];
+acadoWorkspace.objValueIn[16] = acadoVariables.od[lRun1 * 15 + 10];
+acadoWorkspace.objValueIn[17] = acadoVariables.od[lRun1 * 15 + 11];
+acadoWorkspace.objValueIn[18] = acadoVariables.od[lRun1 * 15 + 12];
+acadoWorkspace.objValueIn[19] = acadoVariables.od[lRun1 * 15 + 13];
+acadoWorkspace.objValueIn[20] = acadoVariables.od[lRun1 * 15 + 14];
 
 acado_evaluateLSQ( acadoWorkspace.objValueIn, acadoWorkspace.objValueOut );
-acadoWorkspace.Dy[lRun1 * 9] = acadoWorkspace.objValueOut[0] - acadoVariables.y[lRun1 * 9];
-acadoWorkspace.Dy[lRun1 * 9 + 1] = acadoWorkspace.objValueOut[1] - acadoVariables.y[lRun1 * 9 + 1];
-acadoWorkspace.Dy[lRun1 * 9 + 2] = acadoWorkspace.objValueOut[2] - acadoVariables.y[lRun1 * 9 + 2];
-acadoWorkspace.Dy[lRun1 * 9 + 3] = acadoWorkspace.objValueOut[3] - acadoVariables.y[lRun1 * 9 + 3];
-acadoWorkspace.Dy[lRun1 * 9 + 4] = acadoWorkspace.objValueOut[4] - acadoVariables.y[lRun1 * 9 + 4];
-acadoWorkspace.Dy[lRun1 * 9 + 5] = acadoWorkspace.objValueOut[5] - acadoVariables.y[lRun1 * 9 + 5];
-acadoWorkspace.Dy[lRun1 * 9 + 6] = acadoWorkspace.objValueOut[6] - acadoVariables.y[lRun1 * 9 + 6];
-acadoWorkspace.Dy[lRun1 * 9 + 7] = acadoWorkspace.objValueOut[7] - acadoVariables.y[lRun1 * 9 + 7];
-acadoWorkspace.Dy[lRun1 * 9 + 8] = acadoWorkspace.objValueOut[8] - acadoVariables.y[lRun1 * 9 + 8];
+acadoWorkspace.Dy[lRun1 * 11] = acadoWorkspace.objValueOut[0] - acadoVariables.y[lRun1 * 11];
+acadoWorkspace.Dy[lRun1 * 11 + 1] = acadoWorkspace.objValueOut[1] - acadoVariables.y[lRun1 * 11 + 1];
+acadoWorkspace.Dy[lRun1 * 11 + 2] = acadoWorkspace.objValueOut[2] - acadoVariables.y[lRun1 * 11 + 2];
+acadoWorkspace.Dy[lRun1 * 11 + 3] = acadoWorkspace.objValueOut[3] - acadoVariables.y[lRun1 * 11 + 3];
+acadoWorkspace.Dy[lRun1 * 11 + 4] = acadoWorkspace.objValueOut[4] - acadoVariables.y[lRun1 * 11 + 4];
+acadoWorkspace.Dy[lRun1 * 11 + 5] = acadoWorkspace.objValueOut[5] - acadoVariables.y[lRun1 * 11 + 5];
+acadoWorkspace.Dy[lRun1 * 11 + 6] = acadoWorkspace.objValueOut[6] - acadoVariables.y[lRun1 * 11 + 6];
+acadoWorkspace.Dy[lRun1 * 11 + 7] = acadoWorkspace.objValueOut[7] - acadoVariables.y[lRun1 * 11 + 7];
+acadoWorkspace.Dy[lRun1 * 11 + 8] = acadoWorkspace.objValueOut[8] - acadoVariables.y[lRun1 * 11 + 8];
+acadoWorkspace.Dy[lRun1 * 11 + 9] = acadoWorkspace.objValueOut[9] - acadoVariables.y[lRun1 * 11 + 9];
+acadoWorkspace.Dy[lRun1 * 11 + 10] = acadoWorkspace.objValueOut[10] - acadoVariables.y[lRun1 * 11 + 10];
 }
 acadoWorkspace.objValueIn[0] = acadoVariables.x[120];
 acadoWorkspace.objValueIn[1] = acadoVariables.x[121];
 acadoWorkspace.objValueIn[2] = acadoVariables.x[122];
 acadoWorkspace.objValueIn[3] = acadoVariables.x[123];
-acadoWorkspace.objValueIn[4] = acadoVariables.od[390];
-acadoWorkspace.objValueIn[5] = acadoVariables.od[391];
-acadoWorkspace.objValueIn[6] = acadoVariables.od[392];
-acadoWorkspace.objValueIn[7] = acadoVariables.od[393];
-acadoWorkspace.objValueIn[8] = acadoVariables.od[394];
-acadoWorkspace.objValueIn[9] = acadoVariables.od[395];
-acadoWorkspace.objValueIn[10] = acadoVariables.od[396];
-acadoWorkspace.objValueIn[11] = acadoVariables.od[397];
-acadoWorkspace.objValueIn[12] = acadoVariables.od[398];
-acadoWorkspace.objValueIn[13] = acadoVariables.od[399];
-acadoWorkspace.objValueIn[14] = acadoVariables.od[400];
-acadoWorkspace.objValueIn[15] = acadoVariables.od[401];
-acadoWorkspace.objValueIn[16] = acadoVariables.od[402];
+acadoWorkspace.objValueIn[4] = acadoVariables.od[450];
+acadoWorkspace.objValueIn[5] = acadoVariables.od[451];
+acadoWorkspace.objValueIn[6] = acadoVariables.od[452];
+acadoWorkspace.objValueIn[7] = acadoVariables.od[453];
+acadoWorkspace.objValueIn[8] = acadoVariables.od[454];
+acadoWorkspace.objValueIn[9] = acadoVariables.od[455];
+acadoWorkspace.objValueIn[10] = acadoVariables.od[456];
+acadoWorkspace.objValueIn[11] = acadoVariables.od[457];
+acadoWorkspace.objValueIn[12] = acadoVariables.od[458];
+acadoWorkspace.objValueIn[13] = acadoVariables.od[459];
+acadoWorkspace.objValueIn[14] = acadoVariables.od[460];
+acadoWorkspace.objValueIn[15] = acadoVariables.od[461];
+acadoWorkspace.objValueIn[16] = acadoVariables.od[462];
+acadoWorkspace.objValueIn[17] = acadoVariables.od[463];
+acadoWorkspace.objValueIn[18] = acadoVariables.od[464];
 acado_evaluateLSQEndTerm( acadoWorkspace.objValueIn, acadoWorkspace.objValueOut );
 acadoWorkspace.DyN[0] = acadoWorkspace.objValueOut[0] - acadoVariables.yN[0];
 acadoWorkspace.DyN[1] = acadoWorkspace.objValueOut[1] - acadoVariables.yN[1];
@@ -1596,16 +1681,18 @@ acadoWorkspace.DyN[2] = acadoWorkspace.objValueOut[2] - acadoVariables.yN[2];
 objVal = 0.0000000000000000e+00;
 for (lRun1 = 0; lRun1 < 30; ++lRun1)
 {
-tmpDy[0] = + acadoWorkspace.Dy[lRun1 * 9]*acadoVariables.W[0];
-tmpDy[1] = + acadoWorkspace.Dy[lRun1 * 9 + 1]*acadoVariables.W[10];
-tmpDy[2] = + acadoWorkspace.Dy[lRun1 * 9 + 2]*acadoVariables.W[20];
-tmpDy[3] = + acadoWorkspace.Dy[lRun1 * 9 + 3]*acadoVariables.W[30];
-tmpDy[4] = + acadoWorkspace.Dy[lRun1 * 9 + 4]*acadoVariables.W[40];
-tmpDy[5] = + acadoWorkspace.Dy[lRun1 * 9 + 5]*acadoVariables.W[50];
-tmpDy[6] = + acadoWorkspace.Dy[lRun1 * 9 + 6]*acadoVariables.W[60];
-tmpDy[7] = + acadoWorkspace.Dy[lRun1 * 9 + 7]*acadoVariables.W[70];
-tmpDy[8] = + acadoWorkspace.Dy[lRun1 * 9 + 8]*acadoVariables.W[80];
-objVal += + acadoWorkspace.Dy[lRun1 * 9]*tmpDy[0] + acadoWorkspace.Dy[lRun1 * 9 + 1]*tmpDy[1] + acadoWorkspace.Dy[lRun1 * 9 + 2]*tmpDy[2] + acadoWorkspace.Dy[lRun1 * 9 + 3]*tmpDy[3] + acadoWorkspace.Dy[lRun1 * 9 + 4]*tmpDy[4] + acadoWorkspace.Dy[lRun1 * 9 + 5]*tmpDy[5] + acadoWorkspace.Dy[lRun1 * 9 + 6]*tmpDy[6] + acadoWorkspace.Dy[lRun1 * 9 + 7]*tmpDy[7] + acadoWorkspace.Dy[lRun1 * 9 + 8]*tmpDy[8];
+tmpDy[0] = + acadoWorkspace.Dy[lRun1 * 11]*acadoVariables.W[0];
+tmpDy[1] = + acadoWorkspace.Dy[lRun1 * 11 + 1]*acadoVariables.W[12];
+tmpDy[2] = + acadoWorkspace.Dy[lRun1 * 11 + 2]*acadoVariables.W[24];
+tmpDy[3] = + acadoWorkspace.Dy[lRun1 * 11 + 3]*acadoVariables.W[36];
+tmpDy[4] = + acadoWorkspace.Dy[lRun1 * 11 + 4]*acadoVariables.W[48];
+tmpDy[5] = + acadoWorkspace.Dy[lRun1 * 11 + 5]*acadoVariables.W[60];
+tmpDy[6] = + acadoWorkspace.Dy[lRun1 * 11 + 6]*acadoVariables.W[72];
+tmpDy[7] = + acadoWorkspace.Dy[lRun1 * 11 + 7]*acadoVariables.W[84];
+tmpDy[8] = + acadoWorkspace.Dy[lRun1 * 11 + 8]*acadoVariables.W[96];
+tmpDy[9] = + acadoWorkspace.Dy[lRun1 * 11 + 9]*acadoVariables.W[108];
+tmpDy[10] = + acadoWorkspace.Dy[lRun1 * 11 + 10]*acadoVariables.W[120];
+objVal += + acadoWorkspace.Dy[lRun1 * 11]*tmpDy[0] + acadoWorkspace.Dy[lRun1 * 11 + 1]*tmpDy[1] + acadoWorkspace.Dy[lRun1 * 11 + 2]*tmpDy[2] + acadoWorkspace.Dy[lRun1 * 11 + 3]*tmpDy[3] + acadoWorkspace.Dy[lRun1 * 11 + 4]*tmpDy[4] + acadoWorkspace.Dy[lRun1 * 11 + 5]*tmpDy[5] + acadoWorkspace.Dy[lRun1 * 11 + 6]*tmpDy[6] + acadoWorkspace.Dy[lRun1 * 11 + 7]*tmpDy[7] + acadoWorkspace.Dy[lRun1 * 11 + 8]*tmpDy[8] + acadoWorkspace.Dy[lRun1 * 11 + 9]*tmpDy[9] + acadoWorkspace.Dy[lRun1 * 11 + 10]*tmpDy[10];
 }
 
 tmpDyN[0] = + acadoWorkspace.DyN[0]*acadoVariables.WN[0];

@@ -43,7 +43,7 @@ class BaseibvsController
       Eigen::Vector2d vel_bnds_, phi_bnds_;
 
       // obstacle params
-      Eigen::Vector2d obst1_, obst2_, obst3_, obst4_, obst5_, obst6_;
+      Eigen::Vector2d obst1_, obst2_, obst3_, obst4_, obst5_, obst6_, obst7_;
       double safety_distance_;
 
       //constant by parameters

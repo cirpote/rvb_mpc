@@ -115,7 +115,7 @@ int main( )
       // System variables
       DifferentialState     p_x, p_y, theta, dump;
       Control               v, phi;
-      OnlineData xObst1, yObst1, xObst2, yObst2, xObst3, yObst3, xObst4, yObst4, xObst5, yObst5, xObst6, yObst6, l;
+      OnlineData xObst1, yObst1, xObst2, yObst2, xObst3, yObst3, xObst4, yObst4, xObst5, yObst5, xObst6, yObst6, xObst7, yObst7, l;
       DifferentialEquation  f;
       Function              h, hN;
 
@@ -130,7 +130,8 @@ int main( )
       f << dot(p_y) ==  v * sin(theta);
       f << dot(theta) ==  (v / l) * tan(phi);
       f << dot(dump) == xObst1 + yObst1 + xObst2 + yObst2 + xObst3 + yObst3 +
-                        xObst4 + yObst4 + xObst5 + yObst5 + xObst6 + yObst6;
+                        xObst4 + yObst4 + xObst5 + yObst5 + xObst6 + yObst6 +
+                        xObst7 + yObst7;
 
       IntermediateState obstDist1 = ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1 ) * ( p_y - yObst1 );
       IntermediateState obstDist2 = ( p_x - xObst2 ) * ( p_x - xObst2 ) + ( p_y - yObst2 ) * ( p_y - yObst2 );
@@ -138,10 +139,11 @@ int main( )
       IntermediateState obstDist4 = ( p_x - xObst4 ) * ( p_x - xObst4 ) + ( p_y - yObst4 ) * ( p_y - yObst4 );
       IntermediateState obstDist5 = ( p_x - xObst5 ) * ( p_x - xObst5 ) + ( p_y - yObst5 ) * ( p_y - yObst5 );
       IntermediateState obstDist6 = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6 ) * ( p_y - yObst6 );
-
+      IntermediateState obstDist7 = ( p_x - xObst7 ) * ( p_x - xObst7 ) + ( p_y - yObst7 ) * ( p_y - yObst7 );
 
       h << p_x << p_y << theta << 1 / obstDist1 << 1 / obstDist2
-        << 1 / obstDist3 << 1 / obstDist4 << 1 / obstDist5 << 1 / obstDist6;
+        << 1 / obstDist3 << 1 / obstDist4 << 1 / obstDist5 << 1 / obstDist6 
+        << 1 / obstDist7 << phi;
 
       // End cost vector consists of all states (no inputs at last state).
       hN << p_x << p_y << theta;
@@ -157,14 +159,8 @@ int main( )
       // Add constraints
       ocp.subjectTo(-1.1 <=    phi    <= 1.1);
       ocp.subjectTo(-0.5 <=     v     <= 0.5);
-      /*ocp.subjectTo(1    <= obstDist1 <= 10000);
-      ocp.subjectTo(1    <= obstDist2 <= 10000);
-      ocp.subjectTo(1    <= obstDist3 <= 10000);
-      ocp.subjectTo(1    <= obstDist4 <= 10000);
-      ocp.subjectTo(1    <= obstDist5 <= 10000);
-      ocp.subjectTo(1    <= obstDist6 <= 10000);*/
 
-      ocp.setNOD(13);
+      ocp.setNOD(15);
       OCPexport mpc(ocp);
 
       mpc.set( HESSIAN_APPROXIMATION, GAUSS_NEWTON);
@@ -178,7 +174,6 @@ int main( )
       mpc.set( FIX_INITIAL_STATE, BT_TRUE);
       mpc.set( ABSOLUTE_TOLERANCE, 1e-2 ); 
       mpc.set( INTEGRATOR_TOLERANCE, 1e-2 );
-      //mpc.set( INFEASIBLE_QP_HANDLING, IQH_RELAX_L2);
 
       mpc.printOptionsList();
 

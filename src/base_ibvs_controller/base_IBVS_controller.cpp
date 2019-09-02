@@ -1,6 +1,6 @@
 #include "base_IBVS_controller.h"
 
-BaseibvsController::BaseibvsController(const std::string& yaml_file) {
+BaseibvsController::BaseibvsController(const std::string& yaml_file) : obst7_(1000.f,1000.f) {
 
     initializeControllerfromYAML(yaml_file);
 }

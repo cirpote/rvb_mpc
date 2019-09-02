@@ -46,7 +46,7 @@ void IBVSRandomNode::CommandPoseCallback(const nav_msgs::OdometryConstPtr& cmd_p
   SHERPA_planner_.setCommandPose(*cmd_pose_msg);
   
   if(first_trajectory_cmd_){
-    new_comand = true;
+    to_plan_ = true;
     return;
   }
 
@@ -69,10 +69,14 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   if(!first_trajectory_cmd_)
     return;
 
+  //if(!to_plan_)
+  //  return;
+
   SHERPA_planner_.calculateRollPitchYawRateThrustCommands(trajectory_pts_);
   trajectory_pts_.header.stamp. ros::Time::now();
   trajectory_pts_pub_.publish(trajectory_pts_);
 
+  to_plan_ = false;
   return;
 }
 

@@ -74,6 +74,6 @@ class IBVSRandomNode: public MavGUI
       Eigen::Matrix<double,3,1>& ang_vel_ref;
 
       //Random things
-      bool new_comand = false;
+      bool to_plan_ = false;
 
 };

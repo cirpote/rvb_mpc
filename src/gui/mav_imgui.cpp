@@ -23,8 +23,6 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   camera = std::make_shared<Camera>( glm::vec3(15.f, 20.f, -65.0f), glm::vec3(0.0f, 1.0f, 0.0f), 100.f );
   std::cout << FGRN("Camera Correctly Initialized\n\n");
 
-  avatarImg = cv::Mat(cv::Size(640,480), CV_8UC3);
-
 }
 
 void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
@@ -244,15 +242,6 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Text("Augmented Current Image");
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, draw_image_res_.cols, draw_image_res_.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, draw_image_res_.data);
   ImGui::Image((void*)(intptr_t)my_opengl_texture, ImVec2(draw_image_res_.cols, draw_image_res_.rows));
-
-  // Turn the RGB pixel data into an OpenGL texture:
-  glGenTextures(1, &my_avatar_texture);
-  glBindTexture(GL_TEXTURE_2D, my_avatar_texture);
-  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S , GL_REPEAT );
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
   ImGui::NextColumn();
   ImGui::Text("Control law gains");

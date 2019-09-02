@@ -46,14 +46,14 @@ a[13] = (xd[24]*a[3]);
 a[14] = (xd[25]*a[3]);
 a[15] = (xd[24]*a[8]);
 a[16] = (xd[25]*a[8]);
-a[17] = ((real_t)(1.0000000000000000e+00)/od[12]);
+a[17] = ((real_t)(1.0000000000000000e+00)/od[14]);
 a[18] = ((real_t)(1.0000000000000000e+00)/(pow((cos(u[1])),2)));
 
 /* Compute outputs: */
 out[0] = (u[0]*a[0]);
 out[1] = (u[0]*a[1]);
-out[2] = ((u[0]/od[12])*a[2]);
-out[3] = (((((((((((od[0]+od[1])+od[2])+od[3])+od[4])+od[5])+od[6])+od[7])+od[8])+od[9])+od[10])+od[11]);
+out[2] = ((u[0]/od[14])*a[2]);
+out[3] = (((((((((((((od[0]+od[1])+od[2])+od[3])+od[4])+od[5])+od[6])+od[7])+od[8])+od[9])+od[10])+od[11])+od[12])+od[13]);
 out[4] = (u[0]*a[4]);
 out[5] = (u[0]*a[5]);
 out[6] = (u[0]*a[6]);
@@ -75,7 +75,7 @@ out[21] = (u[0]*a[14]);
 out[22] = ((u[0]*a[15])+a[1]);
 out[23] = (u[0]*a[16]);
 out[24] = (a[17]*a[2]);
-out[25] = ((u[0]/od[12])*a[18]);
+out[25] = ((u[0]/od[14])*a[18]);
 out[26] = (real_t)(0.0000000000000000e+00);
 out[27] = (real_t)(0.0000000000000000e+00);
 }
@@ -126,6 +126,8 @@ acadoWorkspace.rk_xxx[39] = rk_eta[39];
 acadoWorkspace.rk_xxx[40] = rk_eta[40];
 acadoWorkspace.rk_xxx[41] = rk_eta[41];
 acadoWorkspace.rk_xxx[42] = rk_eta[42];
+acadoWorkspace.rk_xxx[43] = rk_eta[43];
+acadoWorkspace.rk_xxx[44] = rk_eta[44];
 
 for (run1 = 0; run1 < 1; ++run1)
 {

@@ -108,7 +108,6 @@ protected:
     cv::Mat currImg_;
     cv::Mat draw_image_, draw_image_res_;
     GLuint my_opengl_texture;
-    GLuint my_avatar_texture;
 
 protected:
 
@@ -119,6 +118,6 @@ protected:
     std::shared_ptr<Camera> camera;
     std::shared_ptr<Shader> shader;
     std::shared_ptr<Model> model;
-    cv::Mat avatarImg, avatarImg_res;
+    cv::Mat avatarImg_res;
 
 };
