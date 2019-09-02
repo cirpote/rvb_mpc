@@ -1,0 +1,29 @@
+<robot name="simple_box">
+  <link name="my_box">
+    <inertial>
+      <origin xyz="100 -6.5 0" />
+      <mass value="1.0" />
+      <inertia  ixx="1.0" ixy="0.0"  ixz="0.0"  iyy="1.0"  iyz="0.0"  izz="1.0" />
+    </inertial>
+    <visual>
+      <origin xyz="100 -6.5 0"/>
+      <geometry>
+        <box size="0.2 0.2 2" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="100 -6.5 0"/>
+      <geometry>
+        <box size="0.2 0.2 2" />
+      </geometry>
+    </collision>
+      <velocity>0 0 0 0 -0 0</velocity>
+      <acceleration>0 0 0 0 -0 0</acceleration>
+      <wrench>0 0 0 0 -0 0</wrench>
+  </link>
+  <gazebo reference="my_box">
+    <material>Gazebo/Green</material>
+    <static>true</static>
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+</robot>

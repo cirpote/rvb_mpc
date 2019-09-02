@@ -69,8 +69,8 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   if(!first_trajectory_cmd_)
     return;
 
-  //if(!to_plan_)
-  //  return;
+  if(!to_plan_)
+    return;
 
   SHERPA_planner_.calculateRollPitchYawRateThrustCommands(trajectory_pts_);
   trajectory_pts_.header.stamp. ros::Time::now();
