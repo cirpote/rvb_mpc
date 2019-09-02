@@ -28,7 +28,7 @@ public:
       void printControlVariables();
       void getTrajectoryVector(trajectory_msgs::JointTrajectory&);
 
-      const int NUM_STEPS = 30; /* Number of real-time iterations. */
+      const int NUM_STEPS = 10; /* Number of real-time iterations. */
       const float KKT_THRESHOLD = 1e-5; /* Threshold as termination criterion. */
 
       // solver matrices

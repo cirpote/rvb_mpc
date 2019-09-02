@@ -71,7 +71,6 @@ class IBVSRandomNode: public MavGUI
       void resetSolver();
 
       //commands
-      trajectory_msgs::JointTrajectory trajectory_pts_;
       Eigen::Matrix<double,3,1>& ang_vel_ref;
 
       //Random things

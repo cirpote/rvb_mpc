@@ -6,12 +6,12 @@ path_constraints:
 
   q_p:                    [100, 100]
   q_theta:                100
-  q_obst:                 300
+  q_obst:                 150
 
 terminal_constraints:
 
-  qf_p:                   [1000, 1000]
-  qf_theta:               1000
+  qf_p:                   [2000, 2000]
+  qf_theta:               2000
 
 boundary_constraints:
 

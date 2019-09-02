@@ -4,6 +4,8 @@
 #include <fstream>
 #include <time.h>
 #include <gazebo_msgs/SetModelState.h>
+#include <trajectory_msgs/JointTrajectory.h>
+#include <trajectory_msgs/JointTrajectoryPoint.h>
 #include <std_srvs/Empty.h>
 
 #include <image_transport/image_transport.h>
@@ -69,7 +71,7 @@ protected:
     float _des_orientationf_t, _des_orientationf_w;
     bool _sendingWaypoint = false;
     float _K_values[3];
-
+    trajectory_msgs::JointTrajectory trajectory_pts_;
 
     float _x_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _x_min = 0;

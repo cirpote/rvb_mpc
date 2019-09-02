@@ -11,8 +11,8 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _des_orientationf_w = 0.f;
 
   _K_values[0] = 0.5;
-  _K_values[1] = 3.f;
-  _K_values[2] = 3.5;
+  _K_values[1] = 2.f;
+  _K_values[2] = 2.5;
 
   _gui_ros_time = ros::Time::now();
 
@@ -36,7 +36,28 @@ void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
   currImg_ = cv_ptr->image.clone();
   cv::cvtColor(currImg_, draw_image_, cv::COLOR_GRAY2BGR);
 
+  float k = 476.70308;
+  float c = 400.5;
+  int size = 800;
+
+  int N = trajectory_pts_.points[0].positions.size()/3;
+  std::vector<Eigen::Vector2f> pt( N, Eigen::Vector2f(0,0) );
+
+  for(unsigned int iter = 0; iter < N; ++iter){
+    pt[iter] = Eigen::Vector2f( - trajectory_pts_.points[0].positions[iter * 3 + 1], - trajectory_pts_.points[0].positions[iter * 3] ) - 
+               Eigen::Vector2f( - _current_odom_position(1), - _current_odom_position(0));
+
+    pt[iter] = k*pt[iter]/10 + Eigen::Vector2f(c,c); 
+
+    cv::circle(draw_image_, cv::Point2i(pt[iter](0), pt[iter](1)), 5, cv::Scalar(255,0,0), 3);
+  }
+
+  for(unsigned int iter = 0; iter < N - 1; ++iter)
+    cv::line(draw_image_, cv::Point2i(pt[iter](0), pt[iter](1)), cv::Point2i(pt[iter+1](0), pt[iter+1](1)), cv::Scalar(0,0,255),3);
+
   cv::resize(draw_image_, draw_image_res_, cv::Size( draw_image_.cols/2, draw_image_.rows/2) );
+
+
 
 }
 
@@ -236,7 +257,7 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::NextColumn();
   ImGui::Text("Control law gains");
   ImGui::Text("0.2 0.4 3.5 Pose Regulation");
-  ImGui::Text("0.5 3 3.5 Traj. Tracking");
+  ImGui::Text("0.5 2 2.5 Traj. Tracking");
   ImGui::DragFloat3(" K1 K2 K3 ", _K_values, 0.01f, -20.0f, 200.0f);
   if (ImGui::Button("Send gains"))
     changeControlLawGains();
