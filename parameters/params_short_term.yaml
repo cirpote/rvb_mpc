@@ -16,7 +16,7 @@ terminal_constraints:
 boundary_constraints:
 
   vel_bounds:            [-.5, .5]   
-  phi_bounds:            [-0.9, 0.9] 
+  phi_bounds:            [-.8, .8] 
 
 ros_parameters:
 

@@ -32,7 +32,7 @@ void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
 
 
   cv_bridge::CvImagePtr cv_ptr;
-  cv_ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::RGB8);
+  cv_ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::BGR8);
 
   draw_image_ = cv_ptr->image.clone();
 
@@ -47,7 +47,7 @@ void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
     pt[iter] = Eigen::Vector2f( - trajectory_pts_.points[0].positions[iter * 3 + 1], - trajectory_pts_.points[0].positions[iter * 3] ) - 
                Eigen::Vector2f( - _current_odom_position(1), - _current_odom_position(0));
 
-    pt[iter] = k*pt[iter]/10 + Eigen::Vector2f(c,c); 
+    pt[iter] = k*pt[iter]/15 + Eigen::Vector2f(c,c); 
 
     cv::circle(draw_image_, cv::Point2i(pt[iter](0), pt[iter](1)), 5, cv::Scalar(255,0,0), 3);
   }
@@ -55,9 +55,11 @@ void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
   for(unsigned int iter = 0; iter < N - 1; ++iter)
     cv::line(draw_image_, cv::Point2i(pt[iter](0), pt[iter](1)), cv::Point2i(pt[iter+1](0), pt[iter+1](1)), cv::Scalar(0,0,255),3);
 
+  //cv::imshow("ciao", draw_image_);
+  //cv::waitKey(10);
+
   cv::resize(draw_image_, draw_image_res_, cv::Size( draw_image_.cols/2, draw_image_.rows/2) );
-
-
+  cv::cvtColor(draw_image_res_, draw_image_res_, cv::COLOR_BGR2RGB);
 
 }
 
