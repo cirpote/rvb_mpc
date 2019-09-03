@@ -45,6 +45,8 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
 
   _img_sub = _base_nh.subscribe("/firefly/vi_sensor/right/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
   _set_mode_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
+  _vis_pub = _base_nh.advertise<visualization_msgs::Marker>( "/visualization_marker", 1 );
+  _path_pub = _base_nh.advertise<nav_msgs::Path>( "/path", 1);
 
   m_tagDetector = NULL;
   m_tagCodes = new AprilTags::TagCodes(AprilTags::tagCodes36h11);
@@ -56,7 +58,8 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   std::cout << FGRN("Camera Correctly Initialized\n\n");
 
   avatarImg = cv::Mat(cv::Size(640,480), CV_8UC3);
-
+  
+  
 }
 
 void MavGUI::init3DObjRendering(std::string&& package_path_str){
@@ -417,6 +420,118 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Text("UAV Avatar");
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, avatarImg_res.cols, avatarImg_res.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, avatarImg_res.data);
   ImGui::Image((void*)(intptr_t)my_avatar_texture, ImVec2(avatarImg_res.cols, avatarImg_res.rows));
+
+  visualization_msgs::Marker marker;
+  marker.header.frame_id = "world";
+  marker.header.stamp = ros::Time();
+  marker.ns = "horizontal_obst_1";
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::CUBE;
+  marker.action = visualization_msgs::Marker::ADD;
+  marker.lifetime = ros::Duration();
+  marker.pose.position.x = 1.5;
+  marker.pose.position.y = 0.f;
+  marker.pose.position.z = 2.6;
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
+  marker.scale.x = 0.15;
+  marker.scale.y = 3;
+  marker.scale.z = 0.15;
+  marker.color.a = 1.0; 
+  marker.color.r = 1.0;
+  marker.color.g = 0.0;
+  marker.color.b = 0.0;
+  _vis_pub.publish( marker );
+
+  marker.header.stamp = ros::Time();
+  marker.ns = "horizontal_obst_2";
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::CUBE;
+  marker.action = visualization_msgs::Marker::ADD;
+  marker.lifetime = ros::Duration();
+  marker.pose.position.x = 1.5;
+  marker.pose.position.y = 0.f;
+  marker.pose.position.z = 3.7;
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
+  marker.scale.x = 0.15;
+  marker.scale.y = 3;
+  marker.scale.z = 0.15;
+  marker.color.a = 1.0; 
+  marker.color.r = 1.0;
+  marker.color.g = 1.0;
+  marker.color.b = 0.0;
+  _vis_pub.publish( marker );
+
+  marker.header.stamp = ros::Time();
+  marker.ns = "vertical_obst_1";
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::CUBE;
+  marker.action = visualization_msgs::Marker::ADD;
+  marker.lifetime = ros::Duration();
+  marker.pose.position.x = 1.f;
+  marker.pose.position.y = 0.45;
+  marker.pose.position.z = 2.f;
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
+  marker.scale.x = 0.15;
+  marker.scale.y = 0.15;
+  marker.scale.z = 4.f;
+  marker.color.a = 1.0; 
+  marker.color.r = 0.0;
+  marker.color.g = 1.0;
+  marker.color.b = 0.0;
+  _vis_pub.publish( marker );
+
+  marker.header.stamp = ros::Time();
+  marker.ns = "vertical_obst_2";
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::CUBE;
+  marker.action = visualization_msgs::Marker::ADD;
+  marker.lifetime = ros::Duration();
+  marker.pose.position.x = 2.f;
+  marker.pose.position.y = -.45;
+  marker.pose.position.z = 2.f;
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
+  marker.scale.x = 0.15;
+  marker.scale.y = 0.15;
+  marker.scale.z = 4.f;
+  marker.color.a = 1.0; 
+  marker.color.r = 0.0;
+  marker.color.g = 0.0;
+  marker.color.b = 1.0;
+  _vis_pub.publish( marker );
+
+  marker.header.stamp = ros::Time();
+  marker.ns = "dynamic_obstacle";
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::CUBE;
+  marker.action = visualization_msgs::Marker::ADD;
+  marker.lifetime = ros::Duration();
+  marker.pose.position.x = dynObst_->getPose()(0);
+  marker.pose.position.y = dynObst_->getPose()(1);
+  marker.pose.position.z = dynObst_->getPose()(2);
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
+  marker.scale.x = 0.2;
+  marker.scale.y = 0.2;
+  marker.scale.z = 0.2;
+  marker.color.a = 1.0; 
+  marker.color.r = 0.5;
+  marker.color.g = 0.0;
+  marker.color.b = 1.0;
+  _vis_pub.publish( marker );
 
 }
 

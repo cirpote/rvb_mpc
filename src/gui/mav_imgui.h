@@ -36,6 +36,8 @@
 #include "../assimp_loader/shader.h"
 #include "../assimp_loader/camera.h"
 #include "../assimp_loader/model.h"
+#include <visualization_msgs/Marker.h>
+#include <nav_msgs/Path.h>
 
 class MavGUI: public BaseGUI{
 public:
@@ -60,7 +62,7 @@ protected:
     ros::Subscriber _img_sub;
 
     //ROS publisher
-    ros::Publisher _cmd_pub;
+    ros::Publisher _cmd_pub, _vis_pub, _path_pub;
 
     void updateFinalState();
     void imageCb(const sensor_msgs::ImageConstPtr&);

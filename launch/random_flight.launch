@@ -57,5 +57,7 @@
           args="$(find rvb_mpc)/parameters/params_short_term.yaml $(find rvb_mpc)/parameters/mavGuiParams.yaml $(arg random_waypoint_generation) $(arg random_spawn_dyn_obj)">
     </node>
 
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find rvb_mpc)/parameters/display.rviz" />
+
 </launch>
 

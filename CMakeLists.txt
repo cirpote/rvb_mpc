@@ -20,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
   roslib
+  visualization_msgs
 )
 
 find_package(yaml-cpp REQUIRED)

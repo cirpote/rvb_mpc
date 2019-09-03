@@ -113,6 +113,22 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
 
   stnl_controller.calculateRollPitchYawRateThrustCommands(command_roll_pitch_yaw_thrust_st_);
 
+  nav_msgs::Path path;
+  path.header.frame_id = "/world";
+  for(unsigned int iter = 0; iter < ACADO_N; ++iter){
+    geometry_msgs::PoseStamped curr_pt;
+    curr_pt.pose.position.x = acadoVariables.x[iter * ACADO_NX];
+    curr_pt.pose.position.y = acadoVariables.x[iter * ACADO_NX + 1];
+    curr_pt.pose.position.z = acadoVariables.x[iter * ACADO_NX + 2];
+    curr_pt.pose.orientation.w = 1;
+    curr_pt.pose.orientation.x = 0;
+    curr_pt.pose.orientation.y = 0;
+    curr_pt.pose.orientation.z = 0;
+    curr_pt.header.frame_id = "/world";
+    path.poses.push_back(curr_pt);
+  }
+  _path_pub.publish(path);
+
   if(new_comand && randomSpawnDynObj){
     new_comand = false;
     
