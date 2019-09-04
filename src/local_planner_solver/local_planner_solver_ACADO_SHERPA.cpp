@@ -133,17 +133,46 @@ int main( )
                         xObst4 + yObst4 + xObst5 + yObst5 + xObst6 + yObst6 +
                         xObst7 + yObst7;
 
-      IntermediateState obstDist1 = ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1 ) * ( p_y - yObst1 );
-      IntermediateState obstDist2 = ( p_x - xObst2 ) * ( p_x - xObst2 ) + ( p_y - yObst2 ) * ( p_y - yObst2 );
-      IntermediateState obstDist3 = ( p_x - xObst3 ) * ( p_x - xObst3 ) + ( p_y - yObst3 ) * ( p_y - yObst3 );
-      IntermediateState obstDist4 = ( p_x - xObst4 ) * ( p_x - xObst4 ) + ( p_y - yObst4 ) * ( p_y - yObst4 );
-      IntermediateState obstDist5 = ( p_x - xObst5 ) * ( p_x - xObst5 ) + ( p_y - yObst5 ) * ( p_y - yObst5 );
-      IntermediateState obstDist6 = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6 ) * ( p_y - yObst6 );
+      IntermediateState obstDist1s = ( p_x - xObst1-.25 ) * ( p_x - xObst1-.25 ) + ( p_y - yObst1 ) * ( p_y - yObst1 );
+      IntermediateState obstDist1d = ( p_x - xObst1+.25 ) * ( p_x - xObst1+.25 ) + ( p_y - yObst1 ) * ( p_y - yObst1 );
+      IntermediateState obstDist1u = ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1-.25 ) * ( p_y - yObst1-.25 );
+      IntermediateState obstDist1dw = ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1+.25 ) * ( p_y - yObst1+.25 );
+
+      IntermediateState obstDist2s = ( p_x - xObst2-.25 ) * ( p_x - xObst2-.25 ) + ( p_y - yObst2 ) * ( p_y - yObst2 );
+      IntermediateState obstDist2d = ( p_x - xObst2+.25 ) * ( p_x - xObst2+.25 ) + ( p_y - yObst2 ) * ( p_y - yObst2 );
+      IntermediateState obstDist2u = ( p_x - xObst2 ) * ( p_x - xObst2 ) + ( p_y - yObst2-.25 ) * ( p_y - yObst2-.25 );
+      IntermediateState obstDist2dw = ( p_x - xObst2 ) * ( p_x - xObst2 ) + ( p_y - yObst2+.25 ) * ( p_y - yObst2+.25 );
+
+      IntermediateState obstDist3s = ( p_x - xObst3-.25 ) * ( p_x - xObst3-.25 ) + ( p_y - yObst3 ) * ( p_y - yObst3 );
+      IntermediateState obstDist3d = ( p_x - xObst3+.25 ) * ( p_x - xObst3+.25 ) + ( p_y - yObst3 ) * ( p_y - yObst3 );
+      IntermediateState obstDist3u = ( p_x - xObst3 ) * ( p_x - xObst3 ) + ( p_y - yObst3-.25 ) * ( p_y - yObst3-.25 );
+      IntermediateState obstDist3dw = ( p_x - xObst3 ) * ( p_x - xObst3 ) + ( p_y - yObst3+.25 ) * ( p_y - yObst3+.25 );
+
+      IntermediateState obstDist4s = ( p_x - xObst4-.25 ) * ( p_x - xObst4-.25 ) + ( p_y - yObst4 ) * ( p_y - yObst4 );
+      IntermediateState obstDist4d = ( p_x - xObst4+.25 ) * ( p_x - xObst4+.25 ) + ( p_y - yObst4 ) * ( p_y - yObst4 );
+      IntermediateState obstDist4u = ( p_x - xObst4 ) * ( p_x - xObst4 ) + ( p_y - yObst4-.25 ) * ( p_y - yObst4-.25 );
+      IntermediateState obstDist4dw = ( p_x - xObst4 ) * ( p_x - xObst4 ) + ( p_y - yObst4+.25 ) * ( p_y - yObst4+.25 );
+
+      IntermediateState obstDist5s = ( p_x - xObst5-.25 ) * ( p_x - xObst5-.25 ) + ( p_y - yObst5 ) * ( p_y - yObst5 );
+      IntermediateState obstDist5d = ( p_x - xObst5+.25 ) * ( p_x - xObst5+.25 ) + ( p_y - yObst5 ) * ( p_y - yObst5 );
+      IntermediateState obstDist5u = ( p_x - xObst5 ) * ( p_x - xObst5 ) + ( p_y - yObst5-.25 ) * ( p_y - yObst5-.25 );
+      IntermediateState obstDist5dw = ( p_x - xObst5 ) * ( p_x - xObst5 ) + ( p_y - yObst5+.25 ) * ( p_y - yObst5+.25 );
+
+      IntermediateState obstDist6s = ( p_x - xObst6-.25 ) * ( p_x - xObst6-.25 ) + ( p_y - yObst6 ) * ( p_y - yObst6 );
+      IntermediateState obstDist6d = ( p_x - xObst6+.25 ) * ( p_x - xObst6+.25 ) + ( p_y - yObst6 ) * ( p_y - yObst6 );
+      IntermediateState obstDist6u = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6-.25 ) * ( p_y - yObst6-.25 );
+      IntermediateState obstDist6dw = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6+.25 ) * ( p_y - yObst6+.25 );
+     
       IntermediateState obstDist7 = ( p_x - xObst7 ) * ( p_x - xObst7 ) + ( p_y - yObst7 ) * ( p_y - yObst7 );
 
-      h << p_x << p_y << theta << 1 / obstDist1 << 1 / obstDist2
-        << 1 / obstDist3 << 1 / obstDist4 << 1 / obstDist5 << 1 / obstDist6 
-        << 1 / obstDist7 << phi;
+      h << p_x << p_y << theta << 1 / (obstDist1s + obstDist1d + obstDist1u + obstDist1dw) 
+        << 1 / (obstDist2s + obstDist2d + obstDist2u + obstDist2dw)
+        << 1 / (obstDist3s + obstDist3d + obstDist3u + obstDist3dw) 
+        << 1 / (obstDist4s + obstDist4d + obstDist4u + obstDist4dw) 
+        << 1 / (obstDist5s + obstDist5d + obstDist5u + obstDist5dw) 
+        << 1 / (obstDist6s + obstDist6d + obstDist6u + obstDist6dw) 
+        << 1 / obstDist7 
+        << phi;
 
       // End cost vector consists of all states (no inputs at last state).
       hN << p_x << p_y << theta;

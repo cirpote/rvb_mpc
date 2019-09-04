@@ -4,14 +4,14 @@ vehicle_parameters:
 
 path_constraints:
 
-  q_p:                    [100, 100]
-  q_theta:                100
+  q_p:                    [50, 50]
+  q_theta:                50
   q_obst:                 2000
 
 terminal_constraints:
 
-  qf_p:                   [2000, 2000]
-  qf_theta:               2000
+  qf_p:                   [4000, 4000]
+  qf_theta:               4000
 
 boundary_constraints:
 

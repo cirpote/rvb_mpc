@@ -155,12 +155,12 @@ bool SherpaAckermannPlanner::InitializeController()
   std::cout << acadoVariables.ubValues[0] << " " << acadoVariables.ubValues[1] << " " << "\n" << "\n";
 
   for (int i = 0; i < ACADO_N + 1; i++) {
-    acado_online_data_.block(i, 0, 1, ACADO_NOD) << obst1_(0)-0.3, obst1_(1),     // 1st Obstacle x-y position
-                                                    obst2_(0)-0.3, obst2_(1),     // 2st Obstacle x-y position
-                                                    obst3_(0)-0.3, obst3_(1),     // 3st Obstacle x-y position
-                                                    obst1_(0)+0.3, obst1_(1),     // 4st Obstacle x-y position
-                                                    obst2_(0)+0.3, obst2_(1),     // 5st Obstacle x-y position
-                                                    obst3_(0)+0.3, obst3_(1),     // 6st Obstacle x-y position
+    acado_online_data_.block(i, 0, 1, ACADO_NOD) << obst1_(0), obst1_(1),     // 1st Obstacle x-y position
+                                                    obst2_(0), obst2_(1),     // 2st Obstacle x-y position
+                                                    obst3_(0), obst3_(1),     // 3st Obstacle x-y position
+                                                    obst4_(0), obst4_(1),     // 4st Obstacle x-y position
+                                                    obst5_(0), obst5_(1),     // 5st Obstacle x-y position
+                                                    obst6_(0), obst6_(1),     // 6st Obstacle x-y position
                                                     obst7_(0), obst7_(1),     // tst Obstacle x-y position
                                                     l_;                       // vehicle lenght
   }
