@@ -6,7 +6,7 @@ path_constraints:
 
   q_p:                    [100, 100]
   q_theta:                100
-  q_obst:                 1000
+  q_obst:                 2000
 
 terminal_constraints:
 
@@ -28,7 +28,7 @@ ros_parameters:
 
 general_params:
 
-  verbosity:              2 # Verbosity_Level : 0,1,2
+  verbosity:              1 # Verbosity_Level : 0,1,2
 
 obstacles:
   

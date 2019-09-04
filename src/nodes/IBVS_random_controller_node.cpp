@@ -21,11 +21,33 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   trajectory_pts_.points.push_back(pt);
   trajectory_pts_.joint_names.push_back("sherpa_base_link");
 
+  int iter = 0;
+  while(true){
+    if (exists( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
+        iter++;
+    } else {
+      logFileStream.open( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
+      break;
+    }
+  }
+
 }
 
 IBVSRandomNode::~IBVSRandomNode(){
   logFileStream.close();
 }
+
+void IBVSRandomNode::writeLogData(){
+
+  logFileStream << ros::Time::now().toSec() << " " << SHERPA_planner_.odometry.position_W.x() << " " << SHERPA_planner_.odometry.position_W.y() << " " << 
+                   SHERPA_planner_.odometry.getYaw() << " " << SHERPA_planner_.solve_time << "\n"; //  orientation_W_B.w() << " " << stnl_controller.odometry.orientation_W_B.x() << " " << stnl_controller.odometry.orientation_W_B.y() << " " << stnl_controller.odometry.orientation_W_B.z() << " " <<
+                   /*trajectory_point.position_W.x() << " " << trajectory_point.position_W.y() << " " << trajectory_point.position_W.z() << " " << trajectory_point.getYaw() << " " <<
+                   _target_pos3f[0] << " " << _target_pos3f[1] << " " << _target_pos3f[2] << " " << _target_vel3f[0] << " " << _target_vel3f[1] << " " << _target_vel3f[2] << " " << *_t_delay << " " <<
+                   _vert_obst1_[0] << " " << _vert_obst1_[1] << " " << _vert_obst2_[0] << " " << _vert_obst2_[1] << " " << _horiz_obst_[0] << " " << _horiz_obst_[1] << " " <<
+                   stnl_controller.pT_W_.x() << " " << stnl_controller.pT_W_.y() << " " << stnl_controller.pT_W_.z() << " " << stnl_controller.camera_instrinsics_.x() << " " << stnl_controller.camera_instrinsics_.y() <<  " " <<
+                   stnl_controller.iter << " " << stnl_controller.solve_time << "\n";*/
+
+} 
 
 void IBVSRandomNode::resetSolver(){
   SHERPA_planner_.InitializeController();
@@ -45,10 +67,9 @@ void IBVSRandomNode::CommandPoseCallback(const nav_msgs::OdometryConstPtr& cmd_p
   ROS_INFO_ONCE("Optimal IBVS controller got first command message.");
   SHERPA_planner_.setCommandPose(*cmd_pose_msg);
   
-  if(first_trajectory_cmd_){
-    to_plan_ = true;
+  if(first_trajectory_cmd_)
     return;
-  }
+  
 
   first_trajectory_cmd_ = true;  
 
@@ -69,14 +90,11 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   if(!first_trajectory_cmd_)
     return;
 
-  //if(!to_plan_)
-  //  return;
-
   SHERPA_planner_.calculateRollPitchYawRateThrustCommands(trajectory_pts_);
   trajectory_pts_.header.stamp. ros::Time::now();
   trajectory_pts_pub_.publish(trajectory_pts_);
 
-  to_plan_ = false;
+  writeLogData();
   return;
 }
 

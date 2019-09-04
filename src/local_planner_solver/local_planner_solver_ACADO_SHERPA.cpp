@@ -157,7 +157,7 @@ int main( )
       ocp.subjectTo( f );
 
       // Add constraints
-      ocp.subjectTo(-1.1 <=    phi    <= 1.1);
+      ocp.subjectTo(-.6 <=    phi    <= .6);
       ocp.subjectTo(-0.5 <=     v     <= 0.5);
 
       ocp.setNOD(15);

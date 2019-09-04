@@ -10,9 +10,9 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _des_pos_vec3f_w[1] = 0.f;
   _des_orientationf_w = 0.f;
 
-  _K_values[0] = 0.5;
+  _K_values[0] = 1.f;
   _K_values[1] = 4.f;
-  _K_values[2] = 2.f;
+  _K_values[2] = 3.f;
 
   _dyn_obst_vec2f[0] = 0.f;
   _dyn_obst_vec2f[1] = 0.f;
