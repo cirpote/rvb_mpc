@@ -234,6 +234,7 @@ void MavGUI::showGUI(bool *p_open) {
   }
    
   // Turn the RGB pixel data into an OpenGL texture:
+  glDeleteTextures(1, &my_opengl_texture);
   glGenTextures(1, &my_opengl_texture);
   glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
   glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
