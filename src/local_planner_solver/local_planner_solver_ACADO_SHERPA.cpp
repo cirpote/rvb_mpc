@@ -216,6 +216,7 @@ int main( )
       // Add constraints
       ocp.subjectTo(-.6 <=    phi    <= .6);
       ocp.subjectTo(-0.5 <=     v     <= 0.5);
+      ocp.subjectTo(1 <= obstDist7 <= 10000);
 
       ocp.setNOD(15);
       OCPexport mpc(ocp);
