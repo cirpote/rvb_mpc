@@ -10,8 +10,8 @@ path_constraints:
 
 terminal_constraints:
 
-  qf_p:                   [1000, 1000]
-  qf_theta:               1000
+  qf_p:                   [2000, 2000]
+  qf_theta:               2000
 
 boundary_constraints:
 
