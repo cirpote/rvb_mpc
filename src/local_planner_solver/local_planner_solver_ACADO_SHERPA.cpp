@@ -126,14 +126,14 @@ int main( )
       const int N = round(t_end/dt);  // Number of nodes
 
       // System Dynamics
-      f << dot(p_x) ==  v * cos(theta);
-      f << dot(p_y) ==  v * sin(theta);
+      f << dot(p_x)   ==  v * cos(theta);
+      f << dot(p_y)   ==  v * sin(theta);
       f << dot(theta) ==  (v / l) * tan(phi);
-      f << dot(dump) == xObst1 + yObst1 + xObst2 + yObst2 + xObst3 + yObst3 +
+      f << dot(dump)  == xObst1 + yObst1 + xObst2 + yObst2 + xObst3 + yObst3 +
                         xObst4 + yObst4 + xObst5 + yObst5 + xObst6 + yObst6 +
                         xObst7 + yObst7;
 
-      IntermediateState obstDist1s = ( p_x - xObst1-.25 ) * ( p_x - xObst1-.25 ) + ( p_y - yObst1 ) * ( p_y - yObst1 );
+      /*IntermediateState obstDist1s = ( p_x - xObst1-.25 ) * ( p_x - xObst1-.25 ) + ( p_y - yObst1 ) * ( p_y - yObst1 );
       IntermediateState obstDist1d = ( p_x - xObst1+.25 ) * ( p_x - xObst1+.25 ) + ( p_y - yObst1 ) * ( p_y - yObst1 );
       IntermediateState obstDist1u = ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1-.25 ) * ( p_y - yObst1-.25 );
       IntermediateState obstDist1dw = ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1+.25 ) * ( p_y - yObst1+.25 );
@@ -161,18 +161,40 @@ int main( )
       IntermediateState obstDist6s = ( p_x - xObst6-.25 ) * ( p_x - xObst6-.25 ) + ( p_y - yObst6 ) * ( p_y - yObst6 );
       IntermediateState obstDist6d = ( p_x - xObst6+.25 ) * ( p_x - xObst6+.25 ) + ( p_y - yObst6 ) * ( p_y - yObst6 );
       IntermediateState obstDist6u = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6-.25 ) * ( p_y - yObst6-.25 );
-      IntermediateState obstDist6dw = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6+.25 ) * ( p_y - yObst6+.25 );
+      IntermediateState obstDist6dw = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6+.25 ) * ( p_y - yObst6+.25 );*/
      
-      IntermediateState obstDist7 = ( p_x - xObst7 ) * ( p_x - xObst7 ) + ( p_y - yObst7 ) * ( p_y - yObst7 );
+      IntermediateState obstDist1 = sqrt( ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1 ) * ( p_y - yObst1 ) );
+      IntermediateState obstDist2 = sqrt( ( p_x - xObst2 ) * ( p_x - xObst2 ) + ( p_y - yObst2 ) * ( p_y - yObst2 ) );
+      IntermediateState obstDist3 = sqrt( ( p_x - xObst3 ) * ( p_x - xObst3 ) + ( p_y - yObst3 ) * ( p_y - yObst3 ) );
+      IntermediateState obstDist4 = sqrt( ( p_x - xObst4 ) * ( p_x - xObst4 ) + ( p_y - yObst4 ) * ( p_y - yObst4 ) );
+      IntermediateState obstDist5 = sqrt( ( p_x - xObst5 ) * ( p_x - xObst5 ) + ( p_y - yObst5 ) * ( p_y - yObst5 ) );
+      IntermediateState obstDist6 = sqrt( ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6 ) * ( p_y - yObst6 ) );
+      IntermediateState obstDist7 = sqrt( ( p_x - xObst7 ) * ( p_x - xObst7 ) + ( p_y - yObst7 ) * ( p_y - yObst7 ) );
 
-      h << p_x << p_y << theta << 1 / (obstDist1s + obstDist1d + obstDist1u + obstDist1dw) 
+      h << p_x 
+        << p_y 
+        << theta 
+        << 1 / obstDist1 
+        << 1 / obstDist2
+        << 1 / obstDist3 
+        << 1 / obstDist4 
+        << 1 / obstDist5
+        << 1 / obstDist6 
+        << 1 / obstDist7 
+        << phi 
+        << v;
+
+
+
+
+        /*1 / (obstDist1s + obstDist1d + obstDist1u + obstDist1dw) 
         << 1 / (obstDist2s + obstDist2d + obstDist2u + obstDist2dw)
         << 1 / (obstDist3s + obstDist3d + obstDist3u + obstDist3dw) 
         << 1 / (obstDist4s + obstDist4d + obstDist4u + obstDist4dw) 
         << 1 / (obstDist5s + obstDist5d + obstDist5u + obstDist5dw) 
         << 1 / (obstDist6s + obstDist6d + obstDist6u + obstDist6dw) 
         << 1 / obstDist7 
-        << phi;
+        << phi << v;*/
 
       // End cost vector consists of all states (no inputs at last state).
       hN << p_x << p_y << theta;
@@ -183,6 +205,12 @@ int main( )
       OCP ocp(0, 15, 30);
       ocp.minimizeLSQ( W, h); 
       ocp.minimizeLSQEndTerm( WN, hN);
+      /*ocp.maximizeLagrangeTerm(obstDist2);
+      ocp.maximizeLagrangeTerm(obstDist3);
+      ocp.maximizeLagrangeTerm(obstDist4);
+      ocp.maximizeLagrangeTerm(obstDist5);
+      ocp.maximizeLagrangeTerm(obstDist6);
+      ocp.maximizeLagrangeTerm(obstDist7);*/
       ocp.subjectTo( f );
 
       // Add constraints
@@ -196,13 +224,13 @@ int main( )
       mpc.set( DISCRETIZATION_TYPE, MULTIPLE_SHOOTING);
       mpc.set( LINEAR_ALGEBRA_SOLVER, GAUSS_LU);
       mpc.set( LEVENBERG_MARQUARDT, 1e-8);
-      mpc.set( INTEGRATOR_TYPE, INT_RK78);
       mpc.set( QP_SOLVER, QP_QPOASES);
       mpc.set( CG_HARDCODE_CONSTRAINT_VALUES, NO);
       mpc.set( HOTSTART_QP, NO);
       mpc.set( FIX_INITIAL_STATE, BT_TRUE);
-      mpc.set( ABSOLUTE_TOLERANCE, 1e-2 ); 
-      mpc.set( INTEGRATOR_TOLERANCE, 1e-2 );
+      mpc.set( INTEGRATOR_TYPE, INT_RK78);
+      mpc.set( ABSOLUTE_TOLERANCE, 1e-3 ); 
+      mpc.set( INTEGRATOR_TOLERANCE, 1e-3 );
 
       mpc.printOptionsList();
 

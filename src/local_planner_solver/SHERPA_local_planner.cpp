@@ -34,7 +34,7 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_
                                            trajectory_point.position_W(1), 
                                            utils::yawFromQuaternion(trajectory_point.orientation_W_B),
                                            0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f,
-                                           0.f;
+                                           0.f, 0.f;
   }    
 
   referenceN_ << trajectory_point.position_W(0), trajectory_point.position_W(1), utils::yawFromQuaternion(trajectory_point.orientation_W_B);
@@ -124,8 +124,9 @@ bool SherpaAckermannPlanner::InitializeController()
   W_(6,6) = q_obst_;
   W_(7,7) = q_obst_;
   W_(8,8) = q_obst_;
-  W_(9,9) = q_obst_/2;
-  W_(10,10) = 1000;
+  W_(9,9) = q_obst_;
+  W_(10,10) = 200;
+  W_(11,11) = 200;
 
   WN_(0,0) = qf_p_(0);
   WN_(1,1) = qf_p_(1);
