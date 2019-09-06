@@ -33,6 +33,8 @@
 #include <rm3_ackermann_controller/SetKvalues.h>
 #include <rm3_ackermann_controller/ActivateController.h>
 #include <gazebo_msgs/SetModelState.h>
+#include <visualization_msgs/Marker.h>
+#include <nav_msgs/Path.h>
 
 class MavGUI: public BaseGUI{
 public:
@@ -55,7 +57,7 @@ protected:
     ros::Subscriber _img_sub;
     
     // ROS publisher
-    ros::Publisher _cmd_pub, _waypoint_pub;
+    ros::Publisher _cmd_pub, _waypoint_pub, _vis_pub, _path_pub;
 
     void updateDesiredState();
     void sendWaypoint();
@@ -66,6 +68,7 @@ protected:
     virtual void setDynamicObstacle() = 0;
     virtual void resetSolver() = 0;
     void changeControlLawGains();
+    void drawMarkerRViz(const Eigen::Vector3f&, const std::string&);
 
     // Gui utils
     float _des_pos_vec3f_t[2], _des_pos_vec3f_w[2];

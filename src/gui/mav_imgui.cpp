@@ -23,9 +23,39 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _set_control_gains = _base_nh.serviceClient<rm3_ackermann_controller::SetKvalues>("/set_k");
   _activate_controller = _base_nh.serviceClient<rm3_ackermann_controller::ActivateController>("/activate_controller");
   _set_model_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
+  _vis_pub = _base_nh.advertise<visualization_msgs::Marker>( "/visualization_marker", 1 );
+  _path_pub = _base_nh.advertise<nav_msgs::Path>( "/path", 1);
 
   camera = std::make_shared<Camera>( glm::vec3(15.f, 20.f, -65.0f), glm::vec3(0.0f, 1.0f, 0.0f), 100.f );
   std::cout << FGRN("Camera Correctly Initialized\n\n");
+}
+
+void MavGUI::drawMarkerRViz(const Eigen::Vector3f& p, const std::string& ns){
+
+  visualization_msgs::Marker marker;
+  marker.header.stamp = ros::Time();
+  marker.header.frame_id = "/odom";
+  marker.ns = ns;
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::CUBE;
+  marker.action = visualization_msgs::Marker::ADD;
+  marker.lifetime = ros::Duration();
+  marker.pose.position.x = p(0);
+  marker.pose.position.y = p(1);
+  marker.pose.position.z = p(2);
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
+  marker.scale.x = 0.15;
+  marker.scale.y = 0.15;
+  marker.scale.z = 4.f;
+  marker.color.a = 1.0; 
+  marker.color.r = 0.0;
+  marker.color.g = 1.0;
+  marker.color.b = 0.0;
+  _vis_pub.publish( marker );
+
 }
 
 void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
@@ -272,6 +302,14 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::DragFloat2(" x y ", _dyn_obst_vec2f, 0.01f, -20.0f, 20.0f);
   if (ImGui::Button("set Dyn. Obstacle"))
     setDynamicObstacle();  
+
+  drawMarkerRViz(Eigen::Vector3f(4,-2,2),"hazelnut_tree_1"); 
+  drawMarkerRViz(Eigen::Vector3f(7,-2,2),"hazelnut_tree_2");
+  drawMarkerRViz(Eigen::Vector3f(10,-2,2),"hazelnut_tree_3");
+  drawMarkerRViz(Eigen::Vector3f(4,-6.5,2),"hazelnut_tree_4");
+  drawMarkerRViz(Eigen::Vector3f(7,-6.5,2),"hazelnut_tree_5");
+  drawMarkerRViz(Eigen::Vector3f(10,-6.5,2),"hazelnut_tree_6");
+
 }
 
 

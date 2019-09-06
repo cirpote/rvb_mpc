@@ -143,7 +143,7 @@ bool SherpaAckermannPlanner::InitializeController()
   for (size_t i = 0; i < ACADO_N; ++i) {
 
     acadoVariables.lbAValues[ACADO_NPAC * i] = 1;                   // min obst1 dist
-    acadoVariables.ubAValues[ACADO_NPAC * i] = 10000;
+    acadoVariables.ubAValues[ACADO_NPAC * i] = 100000;
 
     acadoVariables.lbValues[ACADO_NU * i] = vel_bnds_(0);        // min vel_x
     acadoVariables.lbValues[ACADO_NU * i + 1] = vel_bnds_(0);    // min vel_y

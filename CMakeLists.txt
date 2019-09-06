@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
   tf
   rm3_ackermann_controller
+  visualization_msgs
 )
 
 find_package(yaml-cpp REQUIRED)
