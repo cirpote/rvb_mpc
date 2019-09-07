@@ -66,9 +66,13 @@ protected:
     void activateController();
     void disactivateController();
     virtual void setDynamicObstacle() = 0;
+    virtual void getStaticObstacle() = 0;
     virtual void resetSolver() = 0;
     void changeControlLawGains();
     void drawMarkerRViz(const Eigen::Vector3f&, const std::string&);
+
+    // Obstcles Position for RViz drawings
+    Eigen::Vector3f Obst1_, Obst2_, Obst3_, Obst4_, Obst5_, Obst6_;
 
     // Gui utils
     float _des_pos_vec3f_t[2], _des_pos_vec3f_w[2];

@@ -98,6 +98,17 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   return;
 }
 
+void IBVSRandomNode::getStaticObstacle(){
+  
+  Obst1_ = Eigen::Vector3f(4, -2, 2);
+  Obst2_ = Eigen::Vector3f(7, -2, 2);
+  Obst3_ = Eigen::Vector3f(10, -2, 2);
+  Obst4_ = Eigen::Vector3f(4, -6.5, 2);
+  Obst5_ = Eigen::Vector3f(7, -6.5, 2);
+  Obst6_ = Eigen::Vector3f(10, -6.5, 2);
+
+}
+
 void IBVSRandomNode::setDynamicObstacle(){
 
   gazebo_msgs::SetModelState setmodelstate;
@@ -119,31 +130,13 @@ static void error_callback(int error, const char* description)
 int main(int argc, char** argv)
 {
 
-  if(argc < 5) {
-        std::cerr << FRED("Other Params Expected!") << " node_name <params_short_term_file> <gui_params> <waypoint_generation> <dyn_obst_spawn>" << "\n";
+  if(argc < 3) {
+        std::cerr << FRED("Other Params Expected!") << " node_name <params_short_term_file> <gui_params>" << "\n";
         std::exit(1);
   }
 
   std::string yaml_short_filename = argv[1];
   std::string gui_filename = argv[2];
-  std::string waypoint_generation = argv[3];
-  std::string dynamic_obstacle_spawning = argv[4];
-
-  if(!strcmp(waypoint_generation.c_str(), "true") ){
-    randomWaypointGeneration = true;
-    std::cout << FGRN(" Random Waypoint Generation ON ") << "\n";
-  } else {
-    randomWaypointGeneration = false;
-    std::cout << FGRN(" Random Waypoint Generation OFF ") << "\n";
-  }
-
-    if(!strcmp(dynamic_obstacle_spawning.c_str(), "true") ){
-    randomSpawnDynObj = true;
-    std::cout << FGRN(" Random Dynamic Object Spawning ON ") << "\n";
-  } else {
-    randomSpawnDynObj = false;
-    std::cout << FGRN(" Random Dynamic Object Spawning OFF ") << "\n";
-  }
 
   // Setup window
   glfwSetErrorCallback(error_callback);

@@ -70,6 +70,7 @@ class IBVSRandomNode: public MavGUI
       void LyapunovCallback(const std_msgs::Float32ConstPtr&);
       void resetSolver();
       void setDynamicObstacle();
+      void getStaticObstacle(); 
       void writeLogData();
 
       //commands

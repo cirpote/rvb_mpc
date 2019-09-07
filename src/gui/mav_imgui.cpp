@@ -1,6 +1,8 @@
 #include "mav_imgui.h"
 
-MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
+MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh), Obst1_(0,0,2) ,
+                                                                   Obst2_(0,0,2), Obst3_(0,0,2) ,
+                                                                   Obst4_(0,0,2) , Obst5_(0,0,2) , Obst6_(0,0,2) {
 
   _des_pos_vec3f_t[0] = 0.f;
   _des_pos_vec3f_t[1] = 0.f;
@@ -303,12 +305,17 @@ void MavGUI::showGUI(bool *p_open) {
   if (ImGui::Button("set Dyn. Obstacle"))
     setDynamicObstacle();  
 
-  drawMarkerRViz(Eigen::Vector3f(4,-2,2),"hazelnut_tree_1"); 
-  drawMarkerRViz(Eigen::Vector3f(7,-2,2),"hazelnut_tree_2");
-  drawMarkerRViz(Eigen::Vector3f(10,-2,2),"hazelnut_tree_3");
-  drawMarkerRViz(Eigen::Vector3f(4,-6.5,2),"hazelnut_tree_4");
-  drawMarkerRViz(Eigen::Vector3f(7,-6.5,2),"hazelnut_tree_5");
-  drawMarkerRViz(Eigen::Vector3f(10,-6.5,2),"hazelnut_tree_6");
+  ImGui::Spacing();
+  ImGui::Text("Read Static Obstacles");
+  if (ImGui::Button("get Static Obstacle"))
+    getStaticObstacle();  
+
+  drawMarkerRViz(Obst1_,"hazelnut_tree_1"); 
+  drawMarkerRViz(Obst2_,"hazelnut_tree_2");
+  drawMarkerRViz(Obst3_,"hazelnut_tree_3");
+  drawMarkerRViz(Obst4_,"hazelnut_tree_4");
+  drawMarkerRViz(Obst5_,"hazelnut_tree_5");
+  drawMarkerRViz(Obst6_,"hazelnut_tree_6");
 
 }
 
