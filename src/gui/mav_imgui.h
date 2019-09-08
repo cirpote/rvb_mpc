@@ -31,6 +31,7 @@
 #include "../assimp_loader/model.h"
 
 #include <rm3_ackermann_controller/SetKvalues.h>
+#include <rm3_ackermann_controller/GetTree.h>
 #include <rm3_ackermann_controller/ActivateController.h>
 #include <gazebo_msgs/SetModelState.h>
 #include <visualization_msgs/Marker.h>
@@ -50,7 +51,7 @@ public:
 protected:
 
     // ROS service call
-    ros::ServiceClient _set_control_gains, _activate_controller, _set_model_state;
+    ros::ServiceClient _set_control_gains, _activate_controller, _set_model_state, _get_trees;
     ros::Time _gui_ros_time;
 
     // ROS subscriber

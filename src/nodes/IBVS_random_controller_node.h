@@ -15,7 +15,7 @@
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float32.h>
-
+#include <tf/transform_broadcaster.h>
 
 //MavGuilocal_planner_solver_lib
 #include <stdio.h>
@@ -24,6 +24,7 @@
 #include "../gui/imgui/gl3w.h"
 #include <GLFW/glfw3.h>
 #include "../gui/mav_imgui.h"
+#include <std_msgs/Int32MultiArray.h>
 
 bool randomWaypointGeneration = false;
 bool randomSpawnDynObj = false;
@@ -75,5 +76,11 @@ class IBVSRandomNode: public MavGUI
 
       //commands
       Eigen::Matrix<double,3,1>& ang_vel_ref;
+
+     std::vector<Eigen::Vector2d> trees_array;
+     bool trees_received = false;
+     tf::TransformBroadcaster br;
+
+     void computeClosestTrees();
 
 };

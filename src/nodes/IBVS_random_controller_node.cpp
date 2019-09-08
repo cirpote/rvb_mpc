@@ -4,12 +4,13 @@ using namespace std;
 
 IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_short_file, const std::string& gui_file)
   : MavGUI(nh, gui_file), nh_(nh), first_trajectory_cmd_(false), SHERPA_planner_(yaml_short_file), 
-    ang_vel_ref(SHERPA_planner_.odometry.angular_velocity_B)
+    ang_vel_ref(SHERPA_planner_.odometry.angular_velocity_B), trees_array(21, Eigen::Vector2d(0,0))
+
 {
 
-  odom_sub_ = nh_.subscribe( "/odom", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
+  odom_sub_ = nh_.subscribe( "/base/odom", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
   cmd_pose_sub_ = nh_.subscribe("/command/pose", 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
-  ackrmann_cms_sub_ = nh_.subscribe("/sherpa/akrm_cmd", 1, &IBVSRandomNode::AkrmCommandsCallback, this, ros::TransportHints().tcpNoDelay() );
+  ackrmann_cms_sub_ = nh_.subscribe("/base/base_pad/cmd_vel", 1, &IBVSRandomNode::AkrmCommandsCallback, this, ros::TransportHints().tcpNoDelay() );
   trajectory_pts_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/sherpa/trajectory_pts", 1);
   lyapunov_sub_ = nh.subscribe("/lyapunov", 1, &IBVSRandomNode::LyapunovCallback, this, ros::TransportHints().tcpNoDelay() );
 
@@ -70,14 +71,12 @@ void IBVSRandomNode::CommandPoseCallback(const nav_msgs::OdometryConstPtr& cmd_p
   if(first_trajectory_cmd_)
     return;
   
-
   first_trajectory_cmd_ = true;  
 
   return;
 }
 
-void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg)
-{
+void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg) {
   
   ROS_INFO_ONCE("Optimal IBVS controller got first odometry message.");
 
@@ -86,10 +85,20 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   _current_yaw_orientation = utils::yawFromQuaternion(_current_orientation);
   _current_odom_position = utils::vector3FromPointMsg(odom_msg->pose.pose.position);  
 
+  tf::Transform transform;
+  transform.setOrigin( tf::Vector3(_current_odom_position(0), _current_odom_position(1), 0) );
+  tf::Quaternion q;
+  q.setRPY(0, 0, _current_yaw_orientation);
+  transform.setRotation(q);
+  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "map_gps"));
+
+  if( trees_received )
+    computeClosestTrees();
+
   // Check Is the first trajectory msg has been received
   if(!first_trajectory_cmd_)
     return;
-
+  
   SHERPA_planner_.calculateRollPitchYawRateThrustCommands(trajectory_pts_);
   trajectory_pts_.header.stamp. ros::Time::now();
   trajectory_pts_pub_.publish(trajectory_pts_);
@@ -98,14 +107,61 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   return;
 }
 
+void IBVSRandomNode::computeClosestTrees(){
+
+  std::map<float, Eigen::Vector3d> treesMap;
+  for(unsigned int iter = 0; iter < trees_array.size(); ++iter)
+    treesMap.insert(std::make_pair<float, Eigen::Vector3d>( (trees_array[iter]-_current_odom_position.head(2)).norm(),
+                                                             Eigen::Vector3d(trees_array[iter](0),trees_array[iter](1),iter) ));
+  
+
+  std::map<float, Eigen::Vector3d>::iterator it = treesMap.begin();
+  Obst1_ = Eigen::Vector3f(trees_array[it->second(2)](0), trees_array[it->second(2)](1),2);
+
+  // Obst1 tf broadcaster
+  /*tf::Transform transform;
+  transform.setOrigin( tf::Vector3(trees_array[it->second(2)](0),trees_array[it->second(2)](1), 0) );
+  tf::Quaternion q;
+  q.setRPY(0, 0, 0);
+  transform.setRotation(q);
+  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "Obst1"));*/
+
+
+  ++it;    
+  Obst2_ = Eigen::Vector3f(trees_array[it->second(2)](0), trees_array[it->second(2)](1),2);
+  ++it;    
+  Obst3_ = Eigen::Vector3f(trees_array[it->second(2)](0), trees_array[it->second(2)](1),2);
+  ++it;    
+  Obst4_ = Eigen::Vector3f(trees_array[it->second(2)](0), trees_array[it->second(2)](1),2);
+  ++it;    
+  Obst5_ = Eigen::Vector3f(trees_array[it->second(2)](0), trees_array[it->second(2)](1),2);
+  ++it;    
+  Obst6_ = Eigen::Vector3f(trees_array[it->second(2)](0), trees_array[it->second(2)](1),2);
+
+  std::cout << FRED("obstacles: \n");
+  std::cout << std::setprecision(15) << Obst1_.transpose() << "\n";
+  std::cout << std::setprecision(15) << Obst2_.transpose() << "\n";
+  std::cout << std::setprecision(15) << Obst3_.transpose() << "\n";
+  std::cout << std::setprecision(15) << Obst4_.transpose() << "\n";
+  std::cout << std::setprecision(15) << Obst5_.transpose() << "\n";
+  std::cout << std::setprecision(15) << Obst6_.transpose() << "\n";
+
+
+
+
+}
+
 void IBVSRandomNode::getStaticObstacle(){
   
-  Obst1_ = Eigen::Vector3f(4, -2, 2);
-  Obst2_ = Eigen::Vector3f(7, -2, 2);
-  Obst3_ = Eigen::Vector3f(10, -2, 2);
-  Obst4_ = Eigen::Vector3f(4, -6.5, 2);
-  Obst5_ = Eigen::Vector3f(7, -6.5, 2);
-  Obst6_ = Eigen::Vector3f(10, -6.5, 2);
+  rm3_ackermann_controller::GetTree trees;
+  if(_get_trees.call(trees)){
+
+    for(unsigned int iter = 0; iter < 21; ++iter)
+      trees_array[iter] = Eigen::Vector2d( trees.response.trees.data[iter*2], trees.response.trees.data[iter*2 +1]);
+  }
+
+  trees_received = true;
+  std::cout << FGRN("Obstacles Set\n"); 
 
 }
 
@@ -122,13 +178,11 @@ void IBVSRandomNode::setDynamicObstacle(){
   std::cout << FGRN("vertical_obst_7 succesfully set to: ") << dyn_obst_position.transpose() << "\n";
 }
 
-static void error_callback(int error, const char* description)
-{
+static void error_callback(int error, const char* description) {
   fprintf(stderr, "Error %d: %s\n", error, description);
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 
   if(argc < 3) {
         std::cerr << FRED("Other Params Expected!") << " node_name <params_short_term_file> <gui_params>" << "\n";
@@ -199,6 +253,7 @@ int main(int argc, char** argv)
     ImGui::Render();
     glfwSwapBuffers(window);
 
+    usleep(50000);
     ros::spinOnce();
   }
 

@@ -25,6 +25,7 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh), 
   _set_control_gains = _base_nh.serviceClient<rm3_ackermann_controller::SetKvalues>("/set_k");
   _activate_controller = _base_nh.serviceClient<rm3_ackermann_controller::ActivateController>("/activate_controller");
   _set_model_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
+  _get_trees = _base_nh.serviceClient<rm3_ackermann_controller::GetTree>("/tree_manager_node/get_tree");
   _vis_pub = _base_nh.advertise<visualization_msgs::Marker>( "/visualization_marker", 1 );
   _path_pub = _base_nh.advertise<nav_msgs::Path>( "/path", 1);
 
@@ -36,7 +37,7 @@ void MavGUI::drawMarkerRViz(const Eigen::Vector3f& p, const std::string& ns){
 
   visualization_msgs::Marker marker;
   marker.header.stamp = ros::Time();
-  marker.header.frame_id = "/odom";
+  marker.header.frame_id = "/map";
   marker.ns = ns;
   marker.id = 0;
   marker.type = visualization_msgs::Marker::CUBE;
@@ -266,14 +267,14 @@ void MavGUI::showGUI(bool *p_open) {
   }
    
   // Turn the RGB pixel data into an OpenGL texture:
-  glDeleteTextures(1, &my_opengl_texture);
+  /*glDeleteTextures(1, &my_opengl_texture);
   glGenTextures(1, &my_opengl_texture);
   glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
   glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S , GL_REPEAT );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);*/
 
   ImGui::Columns(2, "Current Image and UAV Avatar");
   ImGui::Text("Augmented Current Image");
@@ -309,6 +310,8 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Text("Read Static Obstacles");
   if (ImGui::Button("get Static Obstacle"))
     getStaticObstacle();  
+
+  
 
   drawMarkerRViz(Obst1_,"hazelnut_tree_1"); 
   drawMarkerRViz(Obst2_,"hazelnut_tree_2");
