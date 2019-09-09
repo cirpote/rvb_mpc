@@ -8,7 +8,7 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
 
 {
 
-  odom_sub_ = nh_.subscribe( "/base/odom", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
+  odom_sub_ = nh_.subscribe( "/odom", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
   cmd_pose_sub_ = nh_.subscribe("/command/pose", 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
   ackrmann_cms_sub_ = nh_.subscribe("/base/base_pad/cmd_vel", 1, &IBVSRandomNode::AkrmCommandsCallback, this, ros::TransportHints().tcpNoDelay() );
   trajectory_pts_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/sherpa/trajectory_pts", 1);
@@ -253,7 +253,6 @@ int main(int argc, char** argv) {
     ImGui::Render();
     glfwSwapBuffers(window);
 
-    usleep(50000);
     ros::spinOnce();
   }
 

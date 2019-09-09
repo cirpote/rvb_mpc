@@ -267,14 +267,14 @@ void MavGUI::showGUI(bool *p_open) {
   }
    
   // Turn the RGB pixel data into an OpenGL texture:
-  /*glDeleteTextures(1, &my_opengl_texture);
+  glDeleteTextures(1, &my_opengl_texture);
   glGenTextures(1, &my_opengl_texture);
   glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
   glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S , GL_REPEAT );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);*/
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
   ImGui::Columns(2, "Current Image and UAV Avatar");
   ImGui::Text("Augmented Current Image");
