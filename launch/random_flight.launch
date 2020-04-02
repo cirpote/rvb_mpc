@@ -32,6 +32,16 @@
         </include>
     </group>
 
+    <!-- Gui Parameter -->
+    <!--node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> 
+    <rosparam file="$(find rvb_mpc)/launch/uav_controllers.yaml" command="load" /-->
+
+    <!-- load the controllers -->
+    <!--node name="controller_spawner" pkg="controller_manager"
+      type="spawner" respawn="false"
+      output="screen" ns="/gimbal" 
+      args="gimbal_roll_angle_controller"/-->
+
     <include file="$(find rvb_mpc)/launch/spawn_scene.launch">
     <arg name="horizontal_obst_1" value="horizontal_obst_1"/>
     <arg name="horizontal_obst_2" value="horizontal_obst_2"/>
