@@ -25,11 +25,11 @@ sudo apt-get install libyaml-cpp-dev libglfw3-dev python-catkin-tools ros-melodi
 ## Creating the workspace 
 mkdir -p ~/rvb_mpc_ws/src
 cd ~/rvb_mpc_ws/
-catkin_init_workspace
+catkin init
 cd src/ 
 git clone https://github.com/cirpote/rvb_mpc && cd rvb_mpc
 sh clone_dependencies.sh
-catkin_build
+catkin build
 ```
 
 ## Usage ##
