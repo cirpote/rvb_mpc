@@ -181,16 +181,16 @@ using namespace std;
       acadoVariables.ubValues[ACADO_NU * i + 2] = thrust_bnds_(1);      // max thrust
       acadoVariables.ubValues[ACADO_NU * i + 3] = yaw_rate_bnds_(1);     // max yaw rate
 
-      acadoVariables.lbAValues[ACADO_NPAC * i] = .3;                   // min obst1 dist
+      /*acadoVariables.lbAValues[ACADO_NPAC * i] = .3;                   // min obst1 dist
       acadoVariables.lbAValues[ACADO_NPAC * i + 1] = .3;               // min obst2 dist
       acadoVariables.lbAValues[ACADO_NPAC * i + 2] = .3;               // min obst3 dist
       acadoVariables.lbAValues[ACADO_NPAC * i + 3] = .3;               // min obst3 dist
-      acadoVariables.lbAValues[ACADO_NPAC * i + 4] = .3;
-      acadoVariables.ubAValues[ACADO_NPAC * i] = 1000;                 // max obst1 dist
+      acadoVariables.lbAValues[ACADO_NPAC * i + 4] = .3;*/
+      /*acadoVariables.ubAValues[ACADO_NPAC * i] = 1000;                 // max obst1 dist
       acadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000;             // max obst2 dist
       acadoVariables.ubAValues[ACADO_NPAC * i + 2] = 1000;             // max obst3 dist
       acadoVariables.ubAValues[ACADO_NPAC * i + 3] = 1000;             // max obst3 dist
-      acadoVariables.ubAValues[ACADO_NPAC * i + 4] = 1000;             // max obst3 dist
+      acadoVariables.ubAValues[ACADO_NPAC * i + 4] = 1000;             // max obst3 dist*/
     }
 
     std::cout << FBLU("Short Term controller Upper Bound Limits: ") << "\n"; 

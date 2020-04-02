@@ -94,11 +94,11 @@ int main( )
     IntermediateState Xt_b_y = ((cos(roll)*sin(yaw) - cos(yaw)*sin(pitch)*sin(roll))*(cos(roll_c)*cos(yaw_c) + sin(pitch_c)*sin(roll_c)*sin(yaw_c)) + cos(pitch)*cos(yaw)*(cos(roll_c)*sin(yaw_c) - cos(yaw_c)*sin(pitch_c)*sin(roll_c)) - cos(pitch_c)*sin(roll_c)*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)))*(px - tx - ty_c*(cos(roll)*sin(yaw) - cos(yaw)*sin(pitch)*sin(roll)) + tz_c*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)) + tx_c*cos(pitch)*cos(yaw)) - (sin(pitch)*(cos(roll_c)*sin(yaw_c) - cos(yaw_c)*sin(pitch_c)*sin(roll_c)) + cos(pitch)*sin(roll)*(cos(roll_c)*cos(yaw_c) + sin(pitch_c)*sin(roll_c)*sin(yaw_c)) + cos(pitch)*cos(pitch_c)*cos(roll)*sin(roll_c))*(pz - tz - tx_c*sin(pitch) + tz_c*cos(pitch)*cos(roll) + ty_c*cos(pitch)*sin(roll)) + (cos(pitch_c)*sin(roll_c)*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)) - (cos(roll)*cos(yaw) + sin(pitch)*sin(roll)*sin(yaw))*(cos(roll_c)*cos(yaw_c) + sin(pitch_c)*sin(roll_c)*sin(yaw_c)) + cos(pitch)*sin(yaw)*(cos(roll_c)*sin(yaw_c) - cos(yaw_c)*sin(pitch_c)*sin(roll_c)))*(py - ty + ty_c*(cos(roll)*cos(yaw) + sin(pitch)*sin(roll)*sin(yaw)) - tz_c*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)) + tx_c*cos(pitch)*sin(yaw));
     IntermediateState Xt_b_z = (sin(pitch)*(sin(roll_c)*sin(yaw_c) + cos(roll_c)*cos(yaw_c)*sin(pitch_c)) + cos(pitch)*sin(roll)*(cos(yaw_c)*sin(roll_c) - cos(roll_c)*sin(pitch_c)*sin(yaw_c)) - cos(pitch)*cos(pitch_c)*cos(roll)*cos(roll_c))*(pz - tz - tx_c*sin(pitch) + tz_c*cos(pitch)*cos(roll) + ty_c*cos(pitch)*sin(roll)) - ((cos(roll)*sin(yaw) - cos(yaw)*sin(pitch)*sin(roll))*(cos(yaw_c)*sin(roll_c) - cos(roll_c)*sin(pitch_c)*sin(yaw_c)) + cos(pitch_c)*cos(roll_c)*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)) + cos(pitch)*cos(yaw)*(sin(roll_c)*sin(yaw_c) + cos(roll_c)*cos(yaw_c)*sin(pitch_c)))*(px - tx - ty_c*(cos(roll)*sin(yaw) - cos(yaw)*sin(pitch)*sin(roll)) + tz_c*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)) + tx_c*cos(pitch)*cos(yaw)) + ((cos(roll)*cos(yaw) + sin(pitch)*sin(roll)*sin(yaw))*(cos(yaw_c)*sin(roll_c) - cos(roll_c)*sin(pitch_c)*sin(yaw_c)) + cos(pitch_c)*cos(roll_c)*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)) - cos(pitch)*sin(yaw)*(sin(roll_c)*sin(yaw_c) + cos(roll_c)*cos(yaw_c)*sin(pitch_c)))*(py - ty + ty_c*(cos(roll)*cos(yaw) + sin(pitch)*sin(roll)*sin(yaw)) - tz_c*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)) + tx_c*cos(pitch)*sin(yaw));
 
-    IntermediateState ObstDist = Obstwx*(px - xObst)*(px - xObst) + Obstwy*(py - yObst)*(py - yObst);
-    IntermediateState ObstDist1 = Obst1wx*(px - xObst1)*(px - xObst1) + Obst1wy*(py - yObst1)*(py - yObst1);
-    IntermediateState ObstDist2 = Obst2wx*(px - xObst2)*(px - xObst2) + Obst2wz*(pz - zObst2)*(pz - zObst2);
-    IntermediateState ObstDist3 = Obst3wx*(px - xObst3)*(px - xObst3) + Obst3wz*(pz - zObst3)*(pz - zObst3);
-    IntermediateState DynObstDist1 = DynObstwx*(px - xDynObst1)*(px - xDynObst1) + DynObstwy*(py - yDynObst1)*(py - yDynObst1) + DynObstwz*(pz - zDynObst1)*(pz - zDynObst1);
+    IntermediateState ObstDist = sqrt(Obstwx*(px - xObst)*(px - xObst) + Obstwy*(py - yObst)*(py - yObst));
+    IntermediateState ObstDist1 = sqrt(Obst1wx*(px - xObst1)*(px - xObst1) + Obst1wy*(py - yObst1)*(py - yObst1));
+    IntermediateState ObstDist2 = sqrt(Obst2wx*(px - xObst2)*(px - xObst2) + Obst2wz*(pz - zObst2)*(pz - zObst2));
+    IntermediateState ObstDist3 = sqrt(Obst3wx*(px - xObst3)*(px - xObst3) + Obst3wz*(pz - zObst3)*(pz - zObst3));
+    IntermediateState DynObstDist1 = sqrt(DynObstwx*(px - xDynObst1)*(px - xDynObst1) + DynObstwy*(py - yDynObst1)*(py - yDynObst1) + DynObstwz*(pz - zDynObst1)*(pz - zDynObst1));
 
     Function h, hN;
     
@@ -106,8 +106,13 @@ int main( )
          vx << vy << vz << 
          roll << pitch << yaw << 
          roll_ref << pitch_ref << yaw_rate << 
-         - Xt_b_y / Xt_b_x << - Xt_b_z / Xt_b_x <<
-         1 / ObstDist << 1 / ObstDist1 << 1 / ObstDist2 << 1 / DynObstDist1 << 1 / ObstDist3;
+         - Xt_b_y / Xt_b_x << - Xt_b_z / Xt_b_x 
+         << exp( 6 - 10 * ObstDist) 
+         << exp( 6 - 10 * ObstDist1) 
+         << exp( 6 - 10 * ObstDist2) 
+         << exp( 6 - 10 * DynObstDist1) 
+         << exp( 6 - 10 * ObstDist3);
+
     hN << px << py << pz << 
           vx << vy << vz << 
           roll << pitch << yaw << 
@@ -128,11 +133,11 @@ int main( )
 
     //ocp.subjectTo( -40 <= - fx * Xt_b_y / Xt_b_x <= 40);
     //ocp.subjectTo( -40 <= - fy * Xt_b_z / Xt_b_x <= 40);
-    ocp.subjectTo( 1.25 <= ObstDist <= 100000);
-    ocp.subjectTo( 1.25 <= ObstDist1 <= 100000);
-    ocp.subjectTo( 1.25 <= ObstDist2 <= 100000);
-    ocp.subjectTo( 1.25 <= DynObstDist1 <= 100000);
-    ocp.subjectTo( 1.25 <= ObstDist3 <= 100000);
+    //ocp.subjectTo( 1.25 <= ObstDist <= 100000);
+    //ocp.subjectTo( 1.25 <= ObstDist1 <= 100000);
+    //ocp.subjectTo( 1.25 <= ObstDist2 <= 100000);
+    //ocp.subjectTo( 1.25 <= DynObstDist1 <= 100000);
+    //ocp.subjectTo( 1.25 <= ObstDist3 <= 100000);
 
     ocp.setModel(f);
     OCPexport mpc(ocp);

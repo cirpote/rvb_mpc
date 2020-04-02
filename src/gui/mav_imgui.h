@@ -74,6 +74,7 @@ protected:
     void computeRelativeTargetPose( vector<AprilTags::TagDetection>& detections, Eigen::Matrix4d& T);
     void initializeFromYaml(const std::string& yaml_file);
     void checkAndChangeDynObstacle();
+    void publishVizMarkers();
 
     // Gui utils
     float _des_pos_vec3f[3];
@@ -90,7 +91,7 @@ protected:
     float _yaw_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _yaw_min = 0;
     float _yaw_max = 0;
-    
+
 
     // Target Variables
     float _target_att3f[3];
@@ -109,6 +110,7 @@ protected:
     Eigen::Matrix3d R_body__cam;
     Eigen::Vector3d pCam_B_;
     Eigen::Matrix3d RCam_B__Cam_;
+    std_msgs::ColorRGBA yellow_, green_, blue_, cyan_, red_, orange_;
 
     // Tag Detection Variables
     AprilTags::TagDetector* m_tagDetector;

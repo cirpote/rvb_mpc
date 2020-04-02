@@ -66,7 +66,7 @@ extern "C"
 /** Number of online data values. */
 #define ACADO_NOD 37
 /** Number of path constraints. */
-#define ACADO_NPAC 5
+#define ACADO_NPAC 0
 /** Number of control variables. */
 #define ACADO_NU 4
 /** Number of differential variables. */
@@ -158,18 +158,6 @@ real_t lbValues[ 40 ];
  */
 real_t ubValues[ 40 ];
 
-/** Column vector of size: 50
- * 
- *  Lower bounds values for affine constraints.
- */
-real_t lbAValues[ 50 ];
-
-/** Column vector of size: 50
- * 
- *  Upper bounds values for affine constraints.
- */
-real_t ubAValues[ 50 ];
-
 
 } ACADOvariables;
 
@@ -210,14 +198,14 @@ real_t evGx[ 1000 ];
 /** Matrix of size: 100 x 4 (row major format) */
 real_t evGu[ 400 ];
 
-/** Column vector of size: 492 */
-real_t objAuxVar[ 492 ];
+/** Column vector of size: 572 */
+real_t objAuxVar[ 572 ];
 
 /** Row vector of size: 51 */
 real_t objValueIn[ 51 ];
 
-/** Row vector of size: 209 */
-real_t objValueOut[ 209 ];
+/** Row vector of size: 285 */
+real_t objValueOut[ 285 ];
 
 /** Matrix of size: 100 x 10 (row major format) */
 real_t Q1[ 1000 ];
@@ -237,35 +225,11 @@ real_t QN1[ 100 ];
 /** Matrix of size: 10 x 11 (row major format) */
 real_t QN2[ 110 ];
 
-/** Column vector of size: 108 */
-real_t conAuxVar[ 108 ];
-
-/** Row vector of size: 51 */
-real_t conValueIn[ 51 ];
-
-/** Row vector of size: 75 */
-real_t conValueOut[ 75 ];
-
-/** Column vector of size: 50 */
-real_t evH[ 50 ];
-
-/** Matrix of size: 50 x 10 (row major format) */
-real_t evHx[ 500 ];
-
-/** Matrix of size: 50 x 4 (row major format) */
-real_t evHu[ 200 ];
-
-/** Column vector of size: 5 */
-real_t evHxd[ 5 ];
-
 /** Column vector of size: 110 */
 real_t sbar[ 110 ];
 
 /** Column vector of size: 10 */
 real_t Dx0[ 10 ];
-
-/** Matrix of size: 100 x 10 (row major format) */
-real_t C[ 1000 ];
 
 /** Matrix of size: 10 x 4 (row major format) */
 real_t W1[ 40 ];
@@ -288,9 +252,6 @@ real_t w2[ 10 ];
 /** Matrix of size: 40 x 40 (row major format) */
 real_t H[ 1600 ];
 
-/** Matrix of size: 50 x 40 (row major format) */
-real_t A[ 2000 ];
-
 /** Column vector of size: 40 */
 real_t g[ 40 ];
 
@@ -300,17 +261,11 @@ real_t lb[ 40 ];
 /** Column vector of size: 40 */
 real_t ub[ 40 ];
 
-/** Column vector of size: 50 */
-real_t lbA[ 50 ];
-
-/** Column vector of size: 50 */
-real_t ubA[ 50 ];
-
 /** Column vector of size: 40 */
 real_t x[ 40 ];
 
-/** Column vector of size: 90 */
-real_t y[ 90 ];
+/** Column vector of size: 40 */
+real_t y[ 40 ];
 
 
 } ACADOworkspace;

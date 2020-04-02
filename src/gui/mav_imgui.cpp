@@ -43,6 +43,13 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
 
   _gui_ros_time = ros::Time::now();
 
+  yellow_.a = 0.8; yellow_.r = 1.0; yellow_.g = 1.0; yellow_.b = 0.0;
+  green_.a = 0.8; green_.r = 0.0; green_.g = 1.0; green_.b = 0.0;
+  red_.a = 0.8; red_.r = 1.0; red_.g = 0.0; red_.b = 0.0;
+  blue_.a = 0.8; blue_.r = 0.0; blue_.g = 0.0; blue_.b = 1.0;
+  cyan_.a = 0.8; cyan_.r = 0.0; cyan_.g = 1.0; cyan_.b = 1.0;
+  orange_.a = 0.8; orange_.r = 1.0; orange_.g = 0.55; orange_.b = 0.f;
+
   _img_sub = _base_nh.subscribe("/firefly/vi_sensor/right/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
   _set_mode_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
   _vis_pub = _base_nh.advertise<visualization_msgs::Marker>( "/visualization_marker", 1 );
@@ -421,14 +428,20 @@ void MavGUI::showGUI(bool *p_open) {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, avatarImg_res.cols, avatarImg_res.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, avatarImg_res.data);
   ImGui::Image((void*)(intptr_t)my_avatar_texture, ImVec2(avatarImg_res.cols, avatarImg_res.rows));
 
+  publishVizMarkers();
+}
+
+void MavGUI::publishVizMarkers(){
+  
+  
   visualization_msgs::Marker marker;
   marker.header.frame_id = "world";
-  marker.header.stamp = ros::Time();
+  marker.header.stamp = ros::Time::now();
   marker.ns = "horizontal_obst_1";
   marker.id = 0;
   marker.type = visualization_msgs::Marker::CUBE;
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.lifetime = ros::Duration();
+  marker.action = visualization_msgs::Marker::MODIFY;
+  //marker.lifetime = ros::Duration();
   marker.pose.position.x = 1.5;
   marker.pose.position.y = 0.f;
   marker.pose.position.z = 2.6;
@@ -449,8 +462,8 @@ void MavGUI::showGUI(bool *p_open) {
   marker.ns = "horizontal_obst_2";
   marker.id = 0;
   marker.type = visualization_msgs::Marker::CUBE;
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.lifetime = ros::Duration();
+  marker.action = visualization_msgs::Marker::MODIFY;
+  //marker.lifetime = ros::Duration();
   marker.pose.position.x = 1.5;
   marker.pose.position.y = 0.f;
   marker.pose.position.z = 3.7;
@@ -471,8 +484,8 @@ void MavGUI::showGUI(bool *p_open) {
   marker.ns = "vertical_obst_1";
   marker.id = 0;
   marker.type = visualization_msgs::Marker::CUBE;
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.lifetime = ros::Duration();
+  marker.action = visualization_msgs::Marker::MODIFY;
+  //marker.lifetime = ros::Duration();
   marker.pose.position.x = 1.f;
   marker.pose.position.y = 0.45;
   marker.pose.position.z = 2.f;
@@ -493,8 +506,8 @@ void MavGUI::showGUI(bool *p_open) {
   marker.ns = "vertical_obst_2";
   marker.id = 0;
   marker.type = visualization_msgs::Marker::CUBE;
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.lifetime = ros::Duration();
+  marker.action = visualization_msgs::Marker::MODIFY;
+  //marker.lifetime = ros::Duration();
   marker.pose.position.x = 2.f;
   marker.pose.position.y = -.45;
   marker.pose.position.z = 2.f;
@@ -515,8 +528,8 @@ void MavGUI::showGUI(bool *p_open) {
   marker.ns = "dynamic_obstacle";
   marker.id = 0;
   marker.type = visualization_msgs::Marker::CUBE;
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.lifetime = ros::Duration();
+  marker.action = visualization_msgs::Marker::MODIFY;
+  //marker.lifetime = ros::Duration();
   marker.pose.position.x = dynObst_->getPose()(0);
   marker.pose.position.y = dynObst_->getPose()(1);
   marker.pose.position.z = dynObst_->getPose()(2);
@@ -532,7 +545,6 @@ void MavGUI::showGUI(bool *p_open) {
   marker.color.g = 0.0;
   marker.color.b = 1.0;
   _vis_pub.publish( marker );
-
 }
 
 void MavGUI::changeGazeboFixedObstacleposition(){
@@ -569,8 +581,6 @@ void MavGUI::changeGazeboFixedObstacleposition(){
 }
 
 void MavGUI::checkAndChangeDynObstacle(){
-
-
 
     if(trigger_dyn_obst_1_request && command_sent){
 

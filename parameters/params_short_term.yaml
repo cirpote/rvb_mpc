@@ -65,7 +65,7 @@ obstacle:
 
 general_params:
 
-  verbosity:              0  # Verbosity_Level : 0,1,2
+  verbosity:              1  # Verbosity_Level : 0,1,2
 
 log_params:
 
