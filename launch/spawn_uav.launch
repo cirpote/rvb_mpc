@@ -15,16 +15,14 @@
   <arg name="enable_mavlink_interface" default="false"/>
 
   <!-- send the robot XML to param server -->
-  <param name="robot_description" command="
-    $(find xacro)/xacro.py '$(arg model)'
-    enable_logging:=$(arg enable_logging)
-    enable_ground_truth:=$(arg enable_ground_truth)
-    enable_mavlink_interface:=$(arg enable_mavlink_interface)
-    log_file:=$(arg log_file)
-    wait_to_record_bag:=$(arg wait_to_record_bag)
-    mav_name:=$(arg mav_name)
-    namespace:=$(arg namespace)"
-  />
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(arg model)'
+                                            enable_logging:=$(arg enable_logging)
+                                            enable_ground_truth:=$(arg enable_ground_truth)
+                                            enable_mavlink_interface:=$(arg enable_mavlink_interface)
+                                            log_file:=$(arg log_file)
+                                            wait_to_record_bag:=$(arg wait_to_record_bag)
+                                            mav_name:=$(arg mav_name)
+                                            namespace:=$(arg namespace)"/> -->
   <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
@@ -37,4 +35,6 @@
          -model $(arg namespace)"
    respawn="false" output="screen">
   </node>
+
+
 </launch>

@@ -1,14 +1,15 @@
 # Publish the joint states to joint_states.
+
 joint_state_controller:
   type: joint_state_controller/JointStateController
-  publish_rate: 100
+  publish_rate: 30
 
-gimbal_roll_angle_controller:
-  joint: gimbal_r_joint
+gimbal_yaw_angle_controller:
+  joint: gimbal_y_joint_
   type: effort_controllers/JointPositionController
-  pid: {p: 100.0, i: 0.01, d: 40.0}
+  pid: {p: 10.0, i: 0.1, d: 4.0}
 
-  # right_steering_controller:
-#   joint: right_steer
+# gimbal_pitch_angle_controller:
+#   joint: gimbal_p_joint_
 #   type: effort_controllers/JointPositionController
 #   pid: {p: 100.0, i: 0.01, d: 40.0}
