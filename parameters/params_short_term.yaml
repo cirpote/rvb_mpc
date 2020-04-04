@@ -33,7 +33,7 @@ ros_parameters:
 
   command_topic:          /command/pose      
   odometry_topic:         /firefly/ground_truth/odometry 
-  image_topic:            /firefly/vi_sensor/left/image_raw
+  image_topic:            /firefly/downward_cam/camera/image
   rpyrt_topic:            /command/roll_pitch_yawrate_thrust
 
 integral_action:

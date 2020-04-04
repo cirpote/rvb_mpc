@@ -7,9 +7,9 @@ joint_state_controller:
 gimbal_yaw_angle_controller:
   joint: gimbal_y_joint_
   type: effort_controllers/JointPositionController
-  pid: {p: 10.0, i: 0.1, d: 4.0}
+  pid: {p: 0.05, i: 0.0, d: 0.02}
 
-# gimbal_pitch_angle_controller:
-#   joint: gimbal_p_joint_
-#   type: effort_controllers/JointPositionController
-#   pid: {p: 100.0, i: 0.01, d: 40.0}
+gimbal_pitch_angle_controller:
+  joint: gimbal_p_joint_
+  type: effort_controllers/JointPositionController
+  pid: {p: 0.05, i: 0.0, d: 0.01}

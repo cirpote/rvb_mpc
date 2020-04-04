@@ -50,7 +50,7 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   cyan_.a = 0.8; cyan_.r = 0.0; cyan_.g = 1.0; cyan_.b = 1.0;
   orange_.a = 0.8; orange_.r = 1.0; orange_.g = 0.55; orange_.b = 0.f;
 
-  _img_sub = _base_nh.subscribe("/firefly/vi_sensor/right/image_raw", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
+  _img_sub = _base_nh.subscribe("/firefly/downward_cam/camera/image", 1, &MavGUI::imageCb, this, ros::TransportHints().tcpNoDelay());
   _set_mode_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
   _vis_pub = _base_nh.advertise<visualization_msgs::Marker>( "/visualization_marker", 1 );
   _path_pub = _base_nh.advertise<nav_msgs::Path>( "/path", 1);
@@ -213,10 +213,12 @@ void MavGUI::imageCb(const sensor_msgs::ImageConstPtr& img_msg){
 
 
   cv_bridge::CvImagePtr cv_ptr;
-  cv_ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::MONO8);
+  cv_ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::RGB8);
 
-  currImg_ = cv_ptr->image.clone();
-  cv::cvtColor(currImg_, draw_image_, cv::COLOR_GRAY2BGR);
+  draw_image_ = cv_ptr->image.clone();
+
+  //currImg_ = cv_ptr->image.clone();
+  //cv::cvtColor(currImg_, draw_image_, cv::COLOR_GRAY2BGR);
 
   vector<AprilTags::TagDetection> detections = m_tagDetector->extractTags(currImg_);
   

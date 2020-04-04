@@ -6,7 +6,7 @@
     <arg name="enable_ground_truth" default="true"/>
     <arg name="log_file" default="$(arg mav_name)"/>
     <arg name="debug" default="false"/>
-    <arg name="gui" default="true"/>
+    <arg name="gui" default="false"/>
     <arg name="paused" default="false"/>
     <arg name="verbose" default="false"/>
     <arg name="random_spawn_dyn_obj" default="false"/>
@@ -33,17 +33,18 @@
     </group>
 
     <!-- Gui Parameter -->
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> 
-    <rosparam file="$(find rvb_mpc)/launch/uav_controllers.yaml" command="load" />
-
+    <!-- <param name="robot_description" command= "$(find xacro)/xacro.py $(find rotors_description)/urdf/multirotor_base.xacro" /> -->
+    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>  -->
+   
+    <rosparam file="$(find rvb_mpc)/launch/uav_controllers.yaml" command="load" /> 
     <!-- load the controllers -->
     <node name="controller_spawner" pkg="controller_manager"
       type="spawner" respawn="true"
       output="screen" ns="/firefly" args="$(find rvb_mpc)/launch/uav_controllers.yaml"/>
 
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/> -->
 
-    <!-- <include file="$(find rvb_mpc)/launch/spawn_scene.launch">
+    <include file="$(find rvb_mpc)/launch/spawn_scene.launch">
     <arg name="horizontal_obst_1" value="horizontal_obst_1"/>
     <arg name="horizontal_obst_2" value="horizontal_obst_2"/>
     <arg name="vertical_obst_1" value="vertical_obst_1"/>
@@ -51,7 +52,7 @@
     <arg name="dynamic_obst_1" value="dynamic_obst_1"/>
     <arg name="dynamic_obst_2" value="dynamic_obst_2"/>
     <arg name="marker" value="apriltag_marker"/>
-    </include> -->
+    </include>
 
 
 
