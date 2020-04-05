@@ -11,6 +11,7 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   odom_sub_ = nh_.subscribe( "/firefly/ground_truth/odometry", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
   cmd_pose_sub_ = nh_.subscribe("/command/pose", 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
   command_roll_pitch_yawrate_thrust_pub_ = nh_.advertise<mav_msgs::RollPitchYawrateThrust>("/command/roll_pitch_yawrate_thrust", 1);
+  
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   stnl_controller.InitializeController();

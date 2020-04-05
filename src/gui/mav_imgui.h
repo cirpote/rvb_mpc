@@ -37,6 +37,7 @@
 #include "../assimp_loader/camera.h"
 #include "../assimp_loader/model.h"
 #include <visualization_msgs/Marker.h>
+#include <std_msgs/Float64.h>
 #include <nav_msgs/Path.h>
 
 class MavGUI: public BaseGUI{
@@ -63,6 +64,7 @@ protected:
 
     //ROS publisher
     ros::Publisher _cmd_pub, _vis_pub, _path_pub;
+    ros::Publisher command_gimbal_pitch_axis_, command_gimbal_yaw_axis_;
 
     void updateFinalState();
     void imageCb(const sensor_msgs::ImageConstPtr&);
@@ -79,6 +81,7 @@ protected:
     // Gui utils
     float _des_pos_vec3f[3];
     float _des_orientationf;
+    float _des_gimbal_pitch_axis_, _des_gimbal_yaw_axis_;
     float _x_values[PLOT_LINE_ARRAY_SIZE] = {0};
     float _x_min = 0;
     float _x_max = 0;

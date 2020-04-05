@@ -54,6 +54,8 @@ MavGUI::MavGUI(ros::NodeHandle nh, const std::string& yaml_file) : BaseGUI(nh) {
   _set_mode_state = _base_nh.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
   _vis_pub = _base_nh.advertise<visualization_msgs::Marker>( "/visualization_marker", 1 );
   _path_pub = _base_nh.advertise<nav_msgs::Path>( "/path", 1);
+  command_gimbal_pitch_axis_ = _base_nh.advertise<std_msgs::Float64>("/firefly/gimbal_pitch_angle_controller/command/",1);
+  command_gimbal_yaw_axis_ = _base_nh.advertise<std_msgs::Float64>("/firefly/gimbal_yaw_angle_controller/command/",1);
 
   m_tagDetector = NULL;
   m_tagCodes = new AprilTags::TagCodes(AprilTags::tagCodes36h11);
@@ -379,10 +381,17 @@ void MavGUI::showGUI(bool *p_open) {
                     "x", _yaw_gimbal_axis_min, _yaw_gimbal_axis_max, ImVec2(0,40)); ImGui::NextColumn();
   ImGui::PlotLines("",_pitch_gimbal_axis_values, IM_ARRAYSIZE(_pitch_gimbal_axis_values), 0,
                     "y", _pitch_gimbal_axis_min, _pitch_gimbal_axis_max, ImVec2(0,40)); ImGui::NextColumn();
-  ImGui::Text(" "); ImGui::NextColumn();
+  ImGui::DragFloat("yaw axis command [rad]", &_des_gimbal_yaw_axis_, 0.01f, -M_PI/2, M_PI/2);
+  ImGui::DragFloat("pitch axis command [rad]", &_des_gimbal_pitch_axis_, 0.01f, -M_PI/2, M_PI/2);
+  if (ImGui::Button("send commands")) {
+    std_msgs::Float64 pitch_cmd, yaw_cmd;
+    yaw_cmd.data = _des_gimbal_yaw_axis_;
+    pitch_cmd.data = _des_gimbal_pitch_axis_;
+    command_gimbal_yaw_axis_.publish(yaw_cmd);
+    command_gimbal_pitch_axis_.publish(pitch_cmd);
+  } ImGui::NextColumn();
   ImGui::Columns(1);
   
-
 
   ImGui::Spacing();
   ImGui::Separator();

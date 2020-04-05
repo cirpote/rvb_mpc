@@ -102,16 +102,19 @@ int main( )
 
     Function h, hN;
     
+    float alpha = 6;
+    float beta = 8;
+
     h << px << py << pz << 
          vx << vy << vz << 
          roll << pitch << yaw << 
          roll_ref << pitch_ref << yaw_rate << 
          - Xt_b_y / Xt_b_x << - Xt_b_z / Xt_b_x 
-         << exp( 6 - 10 * ObstDist) 
-         << exp( 6 - 10 * ObstDist1) 
-         << exp( 6 - 10 * ObstDist2) 
-         << exp( 6 - 10 * DynObstDist1) 
-         << exp( 6 - 10 * ObstDist3);
+         << exp( alpha - beta * ObstDist) 
+         << exp( alpha - beta * ObstDist1) 
+         << exp( alpha - beta * ObstDist2) 
+         << exp( alpha - beta * DynObstDist1) 
+         << exp( alpha - beta * ObstDist3);
 
     hN << px << py << pz << 
           vx << vy << vz << 
