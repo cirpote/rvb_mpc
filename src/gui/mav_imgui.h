@@ -92,6 +92,15 @@ protected:
     float _yaw_min = 0;
     float _yaw_max = 0;
 
+    float _yaw_gimbal_axis_values[PLOT_LINE_ARRAY_SIZE] = {0};
+    float _yaw_gimbal_axis_min = 0;
+    float _yaw_gimbal_axis_max = 0;
+    float _pitch_gimbal_axis_values[PLOT_LINE_ARRAY_SIZE] = {0};
+    float _pitch_gimbal_axis_min = 0;
+    float _pitch_gimbal_axis_max = 0;
+
+    float yaw_joint_value_, pitch_joint_value_;
+
 
     // Target Variables
     float _target_att3f[3];

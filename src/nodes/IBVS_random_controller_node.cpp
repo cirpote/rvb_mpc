@@ -7,6 +7,7 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
     command_roll_pitch_yaw_thrust_lt_(0,0,0,0), stnl_controller(yaml_short_file)
 {
 
+  joint_states_sub_ = nh_.subscribe("/firefly/joint_states", 1, &IBVSRandomNode::JointStateCallback, this, ros::TransportHints().tcpNoDelay() );
   odom_sub_ = nh_.subscribe( "/firefly/ground_truth/odometry", 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
   cmd_pose_sub_ = nh_.subscribe("/command/pose", 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
   command_roll_pitch_yawrate_thrust_pub_ = nh_.advertise<mav_msgs::RollPitchYawrateThrust>("/command/roll_pitch_yawrate_thrust", 1);
@@ -29,6 +30,19 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
 
 IBVSRandomNode::~IBVSRandomNode(){
   logFileStream.close();
+}
+
+void IBVSRandomNode::JointStateCallback(const sensor_msgs::JointState & joint_state_msg){
+
+  for(unsigned int iter = 0; iter < joint_state_msg.name.size(); ++iter){
+    
+    if( !strcmp( joint_state_msg.name[iter].c_str(), "gimbal_p_joint_" ) )
+      pitch_joint_value_ = joint_state_msg.position[iter];
+
+    if( !strcmp( joint_state_msg.name[iter].c_str(), "gimbal_y_joint_" ) )
+      yaw_joint_value_ = joint_state_msg.position[iter];
+  }
+
 }
 
 void IBVSRandomNode::changeFixedObstaclePosition(){

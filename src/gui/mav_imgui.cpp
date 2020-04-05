@@ -364,6 +364,29 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Separator();
   ImGui::Spacing();
 
+
+  addDataPlot(_yaw_gimbal_axis_values, _yaw_gimbal_axis_min, _yaw_gimbal_axis_max, yaw_joint_value_);
+  addDataPlot(_pitch_gimbal_axis_values, _pitch_gimbal_axis_min, _pitch_gimbal_axis_max, pitch_joint_value_);
+
+  ImGui::Text("Current State:");
+  ImGui::Columns(3, "mycolumns"); // 4-ways, with border
+  ImGui::Separator();
+  ImGui::Text("yaw_axis [rad] %f", yaw_joint_value_); ImGui::NextColumn();
+  ImGui::Text("pitch_axis [rad] %f ", pitch_joint_value_); ImGui::NextColumn();
+  ImGui::Text(" gimbal axes commands "); ImGui::NextColumn();
+  ImGui::Separator();
+  ImGui::PlotLines("",_yaw_gimbal_axis_values, IM_ARRAYSIZE(_yaw_gimbal_axis_values), 0,
+                    "x", _yaw_gimbal_axis_min, _yaw_gimbal_axis_max, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::PlotLines("",_pitch_gimbal_axis_values, IM_ARRAYSIZE(_pitch_gimbal_axis_values), 0,
+                    "y", _pitch_gimbal_axis_min, _pitch_gimbal_axis_max, ImVec2(0,40)); ImGui::NextColumn();
+  ImGui::Text(" "); ImGui::NextColumn();
+  ImGui::Columns(1);
+  
+
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
   
   ImGui::Columns(2, "target_state");
   ImGui::Text("Desired Terget State");

@@ -15,6 +15,7 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/JointState.h>
 #include <geometry_msgs/PointStamped.h>
 
 //MavGui
@@ -24,6 +25,7 @@
 #include "../gui/imgui/gl3w.h"
 #include <GLFW/glfw3.h>
 #include "../gui/mav_imgui.h"
+
 
 bool randomWaypointGeneration = false;
 bool randomSpawnDynObj = false;
@@ -56,6 +58,7 @@ class IBVSRandomNode: public MavGUI
       ros::Publisher command_roll_pitch_yawrate_thrust_pub_;
       ros::Subscriber odom_sub_;
       ros::Subscriber cmd_pose_sub_;
+      ros::Subscriber joint_states_sub_;
       
       //state variables
       mav_msgs::EigenOdometry trajectory_point;
@@ -64,6 +67,7 @@ class IBVSRandomNode: public MavGUI
       void initializeAcadoSolver();
       
       //Callbacks
+      void JointStateCallback(const sensor_msgs::JointState &);
       void OdometryCallback(const nav_msgs::OdometryConstPtr&);
       void CommandPoseCallback(const nav_msgs::OdometryConstPtr&);
       void ImageCallback(const sensor_msgs::ImageConstPtr&);
