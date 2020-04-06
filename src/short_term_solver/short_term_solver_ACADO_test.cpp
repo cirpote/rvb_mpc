@@ -13,8 +13,8 @@ int main( )
       const bool CODE_GEN = true;
 
       // System variables
-      DifferentialState     px, py, pz, vx, vy, vz, roll, pitch, yaw, trash;//, phi, d;
-      Control               roll_ref, pitch_ref, thrust, yaw_rate;//phi_dot;
+      DifferentialState     px, py, pz, vx, vy, vz, roll, pitch, yaw, pitch_c, yaw_c, trash;//, phi, d;
+      Control               roll_ref, pitch_ref, thrust, yaw_rate, p_ref, y_ref;//phi_dot;
       DifferentialEquation  f;
       Function              h, hN;
 
@@ -23,9 +23,13 @@ int main( )
       const double roll_gain = 1.1;
       const double pitch_tau = 0.15;
       const double pitch_gain = 1.1;
+
+      const double p_tau = 0.3;
+      const double p_gain = 1.f;
+      const double y_tau = 0.45;
+      const double y_gain = 1.f;
+
       const double roll_c = 0;
-      const double pitch_c = 0.21;
-      const double yaw_c = 0;
       const double tx_c = 0.1;
       const double ty_c = 0;
       const double tz_c = -0.06;
@@ -79,6 +83,8 @@ int main( )
       f << dot(roll) == (1/roll_tau)*(roll_gain*roll_ref - roll); 
       f << dot(pitch) == (1/pitch_tau)*(pitch_gain*pitch_ref - pitch); 
       f << dot(yaw) == yaw_rate; 
+      f << dot(pitch_c) == (1/p_tau)*(p_gain*p_ref - pitch_c);
+      f << dot(yaw_c) == (1/y_tau)*(y_gain*y_ref - yaw_c); 
       f << dot(trash) == Obst1wx + Obst1wy + xObst1 + yObst1 + Obst2wx + Obst2wy + xObst2 + yObst2 +
                          Obst3wx + Obst3wz + xObst3 + zObst3 + Obst4wx + Obst4wz + xObst4 + zObst4 +
                          roll_c + pitch_c + yaw_c + tx_c + ty_c + tz_c + tx + ty + tz + roll_tau +
@@ -122,7 +128,7 @@ int main( )
       Q(6,6) = 100; Q(7,7) = 100; Q(8,8) = 100;   //roll, pitch, yaw
       Q(9,9) = 100; Q(10,10) = 100; Q(11,11) = 100;   // roll_ref, pitch_ref, yaw_rate
       Q(12,12) = 100; Q(13,13) = 100; // u, v
-      Q(14,14) = 5; Q(15,15) = 5; Q(16,16) = 5; Q(17,17) = 50; Q(18,18) = 5; // obst1, obst2, obst3, dyn obst, obst4
+      Q(14,14) = 1; Q(15,15) = 1; Q(16,16) = 1; Q(17,17) = 1; Q(18,18) = 1; // obst1, obst2, obst3, dyn obst, obst4
 
       // End cost weight matrix
       DMatrix QN(hN.getDim(), hN.getDim());
@@ -167,17 +173,21 @@ int main( )
       ocp.subjectTo(-35*PI/180 <= pitch_ref <= 35*PI/180);
       ocp.subjectTo(g/2.0 <= thrust <= g*1.5);
       ocp.subjectTo(-1 <= yaw_rate <= 1);
+      ocp.subjectTo(-1 <= p_ref <= 1);
+      ocp.subjectTo(-1 <= y_ref <= 1);
 
       // Set initial state
       ocp.subjectTo( AT_START, px ==  0.0 );
       ocp.subjectTo( AT_START, py ==  0.0 );
-      ocp.subjectTo( AT_START, pz ==  0.0 );
+      ocp.subjectTo( AT_START, pz ==  2.0 );
       ocp.subjectTo( AT_START, vx ==  0.0 );
       ocp.subjectTo( AT_START, vy ==  0.0 );
       ocp.subjectTo( AT_START, vz ==  0.0 );
       ocp.subjectTo( AT_START, roll ==  0.0 );
       ocp.subjectTo( AT_START, pitch ==  0.0 );
       ocp.subjectTo( AT_START, yaw ==  0.0 );
+      ocp.subjectTo( AT_START, pitch_c ==  0.21 );
+      ocp.subjectTo( AT_START, yaw_c ==  0.0 );
 
       // Setup some visualization
       GnuplotWindow window( PLOT_AT_EACH_ITERATION );
@@ -185,6 +195,10 @@ int main( )
       window.addSubplot( py, "py" );
       window.addSubplot( pz, "pz" );
       window.addSubplot( yaw, "yaw" );
+      window.addSubplot( - Xt_b_y / Xt_b_x * fx + 320, "u error" );
+      window.addSubplot( - Xt_b_z / Xt_b_x * fx + 240, "v error" );
+      window.addSubplot( pitch_c, "pitch_c" );
+      window.addSubplot( yaw_c, "yaw_c" );
 
       //window.addSubplot( v,"velocity");
       //window.addSubplot( phi,"steering angle");
@@ -197,14 +211,16 @@ int main( )
 
       // Define an algorithm to solve it.
       OptimizationAlgorithm algorithm(ocp);
-      algorithm.set( KKT_TOLERANCE, 1e-8 );
-      algorithm.set( MAX_NUM_ITERATIONS, 30);
+      algorithm.set( KKT_TOLERANCE, 1e-4 );
+      algorithm.set( MAX_NUM_ITERATIONS, 10);
       algorithm.set( LINEAR_ALGEBRA_SOLVER, GAUSS_LU);
       algorithm.set( LEVENBERG_MARQUARDT, 1e-8);
       algorithm.set( DISCRETIZATION_TYPE, MULTIPLE_SHOOTING);
       algorithm.set( INTEGRATOR_TYPE, INT_RK78);
       algorithm.set( ABSOLUTE_TOLERANCE, 1e-3 ); 
       algorithm.set( INTEGRATOR_TOLERANCE, 1e-3 );
+
+      
 
       algorithm << window;
       algorithm.solve();
