@@ -326,9 +326,8 @@ void MavGUI::showGUI(bool *p_open) {
   if(ImGui::Button("Activate Perception Boundaries")) std::cout << FRED("set UV bounds not available anymore!!\n");
   
   ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
+  ImGui::Columns(1);
+  
   //add new data for plot and update min_max
   addDataPlot(_x_values, _x_min, _x_max, _current_odom_position(0));
   addDataPlot(_y_values, _y_min, _y_max, _current_odom_position(1));
@@ -337,7 +336,11 @@ void MavGUI::showGUI(bool *p_open) {
 
   ImGui::Spacing();
   ImGui::Separator();
-  ImGui::Text("Current State:");
+
+  ImGui::NextColumn();
+  std::string text = "Current State:";
+  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(text.c_str()).x );
+  ImGui::Text(text.c_str());
   ImGui::Columns(4, "mycolumns"); // 4-ways, with border
   ImGui::Separator();
   ImGui::Text("x[m]"); ImGui::NextColumn();
@@ -358,10 +361,8 @@ void MavGUI::showGUI(bool *p_open) {
                     "z", _z_min, _z_max, ImVec2(0,40)); ImGui::NextColumn();
   ImGui::PlotLines("",_yaw_values, IM_ARRAYSIZE(_yaw_values), 0,
                     "yaw", _yaw_min, _yaw_max, ImVec2(0,40));
-  ImGui::Columns(1);
   
-
-
+  ImGui::Columns(1);
   ImGui::Spacing();
   ImGui::Separator();
   ImGui::Spacing();
@@ -370,7 +371,10 @@ void MavGUI::showGUI(bool *p_open) {
   addDataPlot(_yaw_gimbal_axis_values, _yaw_gimbal_axis_min, _yaw_gimbal_axis_max, yaw_joint_value_);
   addDataPlot(_pitch_gimbal_axis_values, _pitch_gimbal_axis_min, _pitch_gimbal_axis_max, pitch_joint_value_);
 
-  ImGui::Text("Current State:");
+  ImGui::NextColumn();
+  text = "Current State:";
+  ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 2*ImGui::GetColumnWidth() - ImGui::CalcTextSize(text.c_str()).x );
+  ImGui::Text(text.c_str());
   ImGui::Columns(3, "mycolumns"); // 4-ways, with border
   ImGui::Separator();
   ImGui::Text("yaw_axis [rad] %f", yaw_joint_value_); ImGui::NextColumn();
@@ -381,8 +385,8 @@ void MavGUI::showGUI(bool *p_open) {
                     "x", _yaw_gimbal_axis_min, _yaw_gimbal_axis_max, ImVec2(0,40)); ImGui::NextColumn();
   ImGui::PlotLines("",_pitch_gimbal_axis_values, IM_ARRAYSIZE(_pitch_gimbal_axis_values), 0,
                     "y", _pitch_gimbal_axis_min, _pitch_gimbal_axis_max, ImVec2(0,40)); ImGui::NextColumn();
-  ImGui::DragFloat("yaw axis command [rad]", &_des_gimbal_yaw_axis_, 0.01f, -M_PI/2, M_PI/2);
-  ImGui::DragFloat("pitch axis command [rad]", &_des_gimbal_pitch_axis_, 0.01f, -M_PI/2, M_PI/2);
+  ImGui::DragFloat("yaw command [rad]", &_des_gimbal_yaw_axis_, 0.01f, -M_PI/2, M_PI/2);
+  ImGui::DragFloat("pitch command [rad]", &_des_gimbal_pitch_axis_, 0.01f, -M_PI/2, M_PI/2);
   if (ImGui::Button("send commands")) {
     std_msgs::Float64 pitch_cmd, yaw_cmd;
     yaw_cmd.data = _des_gimbal_yaw_axis_;

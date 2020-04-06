@@ -38,7 +38,7 @@ using namespace std;
   void stivsController::computeDesiredState(){
 
     Eigen::Vector3d Xr = pT_W_ - ( pCam_B_ + trajectory_point.position_W );
-    trajectory_point.position_W(2) = Xr(0) * ( 1 / ( cos(0.21) ) ) * sin(0.21) + pT_W_(2);
+    trajectory_point.position_W(2) = Xr(0) * ( 1 / ( cos(qCam_B_Cam_(1)) ) ) * sin(qCam_B_Cam_(1)) + pT_W_(2);
 
     float yaw = 0.f;
     if( fabs(Xr(1)) > 1e-3 )

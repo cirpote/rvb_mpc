@@ -12,7 +12,7 @@ path_constraints:
   q_v:                    [100, 100, 100]
   q_attitude:             [100, 100, 100]
   q_control:              [100, 100, 100, 100]
-  q_target:               [2000, 2000]
+  q_target:               [4000, 4000]
 
 terminal_constraints:
 
@@ -46,8 +46,8 @@ integral_action:
 target:
 
   pT_W:                   [10, 0, 1]
-  pCam_B:                 [0.1, 0.055, -0.05]
-  qCam_B__Cam:            [0, 0.21, 0]
+  pCam_B:                 [0.1, 0, -0.06] # [0.1, 0.055, -0.05]
+  qCam_B__Cam:            [0, 0, 0] # [0, 0.21, 0]
   camera_instrinsics:     [448.1, 448.1]
 
 obstacle:
