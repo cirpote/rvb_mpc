@@ -4,7 +4,7 @@ vehicle_parameters:
   roll_gain:              1.1
   roll_tau:               0.15
   pitch_gain:             1.1
-  pitch_tau:	  	  0.15 
+  pitch_tau:	  	        0.15 
 
 path_constraints:
 
@@ -58,10 +58,10 @@ obstacle:
   p_vert2_WMat:           [1, 1]
   p_horiz_W:              [1.5, 2.6]
   p_horiz_WMat:           [1, 1]
-  p_horiz2_W:              [1.5, 3.7]
-  p_horiz2_WMat:           [1, 1]
+  p_horiz2_W:             [1.5, 3.7]
+  p_horiz2_WMat:          [1, 1]
   p_dyn_W:                [-4, -4, -4]
-  p_dyn_WMat:	          [1, 1, 1]
+  p_dyn_WMat:	            [1, 1, 1]
 
 general_params:
 

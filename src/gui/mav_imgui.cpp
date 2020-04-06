@@ -391,6 +391,10 @@ void MavGUI::showGUI(bool *p_open) {
     std_msgs::Float64 pitch_cmd, yaw_cmd;
     yaw_cmd.data = _des_gimbal_yaw_axis_;
     pitch_cmd.data = _des_gimbal_pitch_axis_;
+
+    sent_pitch_cmd = _des_gimbal_pitch_axis_;
+    sent_yaw_cmd = _des_gimbal_yaw_axis_;
+
     command_gimbal_yaw_axis_.publish(yaw_cmd);
     command_gimbal_pitch_axis_.publish(pitch_cmd);
   } ImGui::NextColumn();

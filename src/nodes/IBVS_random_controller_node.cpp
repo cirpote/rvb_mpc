@@ -17,7 +17,7 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   stnl_controller.InitializeController();
   this->init3DObjRendering( ros::package::getPath("rvb_mpc") );
 
-  /*int iter = 0;
+  int iter = 0;
   while(true){
     if (utils::exists( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
         iter++;
@@ -25,12 +25,12 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
       logFileStream.open( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
       break;
     }
-  }*/
+  }
 
 }
 
 IBVSRandomNode::~IBVSRandomNode(){
-  //logFileStream.close();
+  logFileStream.close();
 }
 
 void IBVSRandomNode::JointStateCallback(const sensor_msgs::JointState & joint_state_msg){
@@ -47,6 +47,7 @@ void IBVSRandomNode::JointStateCallback(const sensor_msgs::JointState & joint_st
   stnl_controller.qCam_B_Cam_(1) = pitch_joint_value_;
   stnl_controller.qCam_B_Cam_(2) = yaw_joint_value_;
   stnl_controller.fillOnlineData();
+  writeLogData();
 
 }
 
@@ -90,14 +91,18 @@ void IBVSRandomNode::changeDynObstaclePosition(){
 
 void IBVSRandomNode::writeLogData(){
 
-  logFileStream << ros::Time::now().toSec() << " " << stnl_controller.odometry.position_W.x() << " " << stnl_controller.odometry.position_W.y() << " " << stnl_controller.odometry.position_W.z() << " " <<
+  /*logFileStream << ros::Time::now().toSec() << " " << stnl_controller.odometry.position_W.x() << " " << stnl_controller.odometry.position_W.y() << " " << stnl_controller.odometry.position_W.z() << " " <<
                    stnl_controller.odometry.orientation_W_B.w() << " " << stnl_controller.odometry.orientation_W_B.x() << " " << stnl_controller.odometry.orientation_W_B.y() << " " << stnl_controller.odometry.orientation_W_B.z() << " " <<
                    command_roll_pitch_yawrate_thrust_msg.roll << " " << command_roll_pitch_yawrate_thrust_msg.pitch << " " << command_roll_pitch_yawrate_thrust_msg.yaw_rate << " " <<  command_roll_pitch_yawrate_thrust_msg.thrust.z << " " <<
                    trajectory_point.position_W.x() << " " << trajectory_point.position_W.y() << " " << trajectory_point.position_W.z() << " " << trajectory_point.getYaw() << " " <<
                    _target_pos3f[0] << " " << _target_pos3f[1] << " " << _target_pos3f[2] << " " << _target_vel3f[0] << " " << _target_vel3f[1] << " " << _target_vel3f[2] << " " << *_t_delay << " " <<
                    _vert_obst1_[0] << " " << _vert_obst1_[1] << " " << _vert_obst2_[0] << " " << _vert_obst2_[1] << " " << _horiz_obst_[0] << " " << _horiz_obst_[1] << " " <<
                    stnl_controller.pT_W_.x() << " " << stnl_controller.pT_W_.y() << " " << stnl_controller.pT_W_.z() << " " << stnl_controller.camera_instrinsics_.x() << " " << stnl_controller.camera_instrinsics_.y() <<  " " <<
-                   stnl_controller.iter << " " << stnl_controller.solve_time << "\n";
+                   stnl_controller.iter << " " << stnl_controller.solve_time << "\n";*/
+
+  logFileStream << pitch_joint_value_ << " " << yaw_joint_value_ << " " 
+                << sent_pitch_cmd << " " << sent_yaw_cmd << " "
+                << ros::Time::now().toSec() << "\n";
 }
 
 void IBVSRandomNode::CommandPoseCallback(const nav_msgs::OdometryConstPtr& cmd_pose_msg)
@@ -204,7 +209,7 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
     std::cout << FGRN("Generating new trajectory comand: ") << GenerationNum << " " << ros::Time::now().toSec() << "\n";
   }
 
-  //writeLogData();
+  // writeLogData();
   return;
 }
 

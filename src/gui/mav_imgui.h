@@ -66,6 +66,8 @@ protected:
     ros::Publisher _cmd_pub, _vis_pub, _path_pub;
     ros::Publisher command_gimbal_pitch_axis_, command_gimbal_yaw_axis_;
 
+    float sent_pitch_cmd, sent_yaw_cmd;
+
     void updateFinalState();
     void imageCb(const sensor_msgs::ImageConstPtr&);
     void activatePublisher(const std::string &cmd_publisher_name);

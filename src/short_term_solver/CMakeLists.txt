@@ -43,3 +43,6 @@ if(GENERATE_ACADO_CPP)
     add_dependencies(short_term_solver_lib short_term_solver_ACADO_run)
 endif(GENERATE_ACADO)
 
+add_executable(ACADO_test short_term_solver_ACADO_test.cpp)
+target_link_libraries(ACADO_test ${ACADO_SHARED_LIBRARIES})
+set_target_properties(ACADO_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/src/short_term_solver/")

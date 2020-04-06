@@ -2,7 +2,7 @@
 
 joint_state_controller:
   type: joint_state_controller/JointStateController
-  publish_rate: 30
+  publish_rate: 100
 
 gimbal_yaw_angle_controller:
   joint: gimbal_y_joint_
@@ -12,4 +12,4 @@ gimbal_yaw_angle_controller:
 gimbal_pitch_angle_controller:
   joint: gimbal_p_joint_
   type: effort_controllers/JointPositionController
-  pid: {p: 0.05, i: 0.0, d: 0.01}
+  pid: {p: 0.025, i: 0.0, d: 0.01}
