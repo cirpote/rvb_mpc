@@ -199,28 +199,11 @@ using namespace std;
     std::cout << FBLU("Short Term controller Lower Bound Limits: ") << "\n"; 
     std::cout << acadoVariables.ubValues[0] << " " << acadoVariables.ubValues[1] << " " << acadoVariables.ubValues[2] << " " << acadoVariables.ubValues[3] << " " << "\n" << "\n";
 
-    for (int i = 0; i < ACADO_N + 1; i++) {
-      acado_online_data_.block(i, 0, 1, ACADO_NOD) << roll_time_constant_, roll_gain_, pitch_time_constant_, pitch_gain_,  // Horizontal motion model
-                                                      qCam_B_Cam_(0), qCam_B_Cam_(1), qCam_B_Cam_(2),                      // Relative orientation of Cam frame wrt B frame
-                                                      pCam_B_(0), pCam_B_(1), pCam_B_(2),                                  // Relative translation between Cam frame wrt B frame in B frame
-                                                      pT_W_(0), pT_W_(1), pT_W_(2),                                        // Target position in W frame
-                                                      camera_instrinsics_(0), camera_instrinsics_(1),                      // Camera Intrinsic Params
-                                                      pObst_vert1(0), pObst_vert1(1),
-                                                      pObst_vert1_WMat(0), pObst_vert1_WMat(1),
-                                                      pObst_vert2(0), pObst_vert2(1),
-                                                      pObst_vert2_WMat(0), pObst_vert2_WMat(1),
-                                                      pObst_horiz(0), pObst_horiz(1),
-                                                      pObst_horiz_WMat(0), pObst_horiz_WMat(1),
-                                                      pDyn_Obst(0), pDyn_Obst(1), pDyn_Obst(2),
-                                                      pDyn_Obst_WMat(0), pDyn_Obst_WMat(1), pDyn_Obst_WMat(2),
-                                                      pObst_horiz2(0), pObst_horiz2(1),
-                                                      pObst_horiz2_WMat(0), pObst_horiz2_WMat(1);
-    }
+    fillOnlineData();    
 
     std::cout << FBLU("Short Term controller Online Data matrix: ") << "\n"; 
     std::cout << acado_online_data_.row(0) << "\n" << "\n";
 
-    Eigen::Map<Eigen::Matrix<double, ACADO_NOD, ACADO_N + 1>>(const_cast<double*>(acadoVariables.od)) = acado_online_data_.transpose(); 
     restartSolver();   
   }
 
@@ -245,6 +228,30 @@ using namespace std;
                  FBLU(" N: ") << ACADO_N << 
                  FBLU(" NOD: ") << ACADO_NOD << "\n" << "\n";
 
+  }
+
+  void stivsController::fillOnlineData(){
+
+    for (int i = 0; i < ACADO_N + 1; i++) {
+      acado_online_data_.block(i, 0, 1, ACADO_NOD) << roll_time_constant_, roll_gain_, pitch_time_constant_, pitch_gain_,  // Horizontal motion model
+                                                      qCam_B_Cam_(0), qCam_B_Cam_(1), qCam_B_Cam_(2),                      // Relative orientation of Cam frame wrt B frame
+                                                      pCam_B_(0), pCam_B_(1), pCam_B_(2),                                  // Relative translation between Cam frame wrt B frame in B frame
+                                                      pT_W_(0), pT_W_(1), pT_W_(2),                                        // Target position in W frame
+                                                      camera_instrinsics_(0), camera_instrinsics_(1),                      // Camera Intrinsic Params
+                                                      pObst_vert1(0), pObst_vert1(1),
+                                                      pObst_vert1_WMat(0), pObst_vert1_WMat(1),
+                                                      pObst_vert2(0), pObst_vert2(1),
+                                                      pObst_vert2_WMat(0), pObst_vert2_WMat(1),
+                                                      pObst_horiz(0), pObst_horiz(1),
+                                                      pObst_horiz_WMat(0), pObst_horiz_WMat(1),
+                                                      pDyn_Obst(0), pDyn_Obst(1), pDyn_Obst(2),
+                                                      pDyn_Obst_WMat(0), pDyn_Obst_WMat(1), pDyn_Obst_WMat(2),
+                                                      pObst_horiz2(0), pObst_horiz2(1),
+                                                      pObst_horiz2_WMat(0), pObst_horiz2_WMat(1);
+    }
+
+    Eigen::Map<Eigen::Matrix<double, ACADO_NOD, ACADO_N + 1>>(const_cast<double*>(acadoVariables.od)) = acado_online_data_.transpose(); 
+    
   }
 
 

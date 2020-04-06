@@ -28,6 +28,7 @@
             void computeDesiredState();
             void printDifferentialVariables();
             void printControlVariables();
+            void fillOnlineData();
 
             const int NUM_STEPS = 5; /* Number of real-time iterations. */
             const float KKT_THRESHOLD = 1e-5; /* Threshold as termination criterion. */

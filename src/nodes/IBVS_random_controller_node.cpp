@@ -17,7 +17,7 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   stnl_controller.InitializeController();
   this->init3DObjRendering( ros::package::getPath("rvb_mpc") );
 
-  int iter = 0;
+  /*int iter = 0;
   while(true){
     if (utils::exists( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
         iter++;
@@ -25,12 +25,12 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
       logFileStream.open( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
       break;
     }
-  }
+  }*/
 
 }
 
 IBVSRandomNode::~IBVSRandomNode(){
-  logFileStream.close();
+  //logFileStream.close();
 }
 
 void IBVSRandomNode::JointStateCallback(const sensor_msgs::JointState & joint_state_msg){
@@ -44,7 +44,12 @@ void IBVSRandomNode::JointStateCallback(const sensor_msgs::JointState & joint_st
       yaw_joint_value_ = joint_state_msg.position[iter];
   }
 
+  stnl_controller.qCam_B_Cam_(1) = pitch_joint_value_;
+  stnl_controller.qCam_B_Cam_(2) = yaw_joint_value_;
+  stnl_controller.fillOnlineData();
+
 }
+
 
 void IBVSRandomNode::changeFixedObstaclePosition(){
 
@@ -199,7 +204,7 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
     std::cout << FGRN("Generating new trajectory comand: ") << GenerationNum << " " << ros::Time::now().toSec() << "\n";
   }
 
-  writeLogData();
+  //writeLogData();
   return;
 }
 
