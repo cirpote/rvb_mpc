@@ -19,26 +19,20 @@ int main( )
     DifferentialState roll;
     DifferentialState pitch;
     DifferentialState yaw;
-    DifferentialState pitch_c;
-    DifferentialState yaw_c;
     DifferentialState trash;
 
     Control roll_ref;
     Control pitch_ref;
     Control thrust;
     Control yaw_rate;
-    Control gimbal_pitch_ref;
-    Control gimbal_yaw_ref;
 
-    OnlineData pitch_c_tau;
-    OnlineData pitch_c_gain;
-    OnlineData yaw_c_tau;
-    OnlineData yaw_c_gain;
     OnlineData roll_tau;
     OnlineData roll_gain;
     OnlineData pitch_tau;
     OnlineData pitch_gain;
     OnlineData roll_c;
+    OnlineData pitch_c;
+    OnlineData yaw_c;
     OnlineData tx_c;
     OnlineData ty_c;
     OnlineData tz_c;
@@ -90,10 +84,8 @@ int main( )
     f << dot(roll) == (1/roll_tau)*(roll_gain*roll_ref - roll); 
     f << dot(pitch) == (1/pitch_tau)*(pitch_gain*pitch_ref - pitch); 
     f << dot(yaw) == yaw_rate; 
-    f << dot(pitch_c) == (1/pitch_c_tau)*(pitch_c_gain*gimbal_pitch_ref - pitch_c); 
-    f << dot(yaw_c) == (1/yaw_c_tau)*(yaw_c_gain*gimbal_yaw_ref - yaw_c); 
     f << dot(trash) == xObst2 + zObst2 + xDynObst1 + yDynObst1 + zDynObst1 + roll_c +
-                       tx_c + ty_c + tz_c + tx + ty + tz + roll_tau +
+                       pitch_c + yaw_c + tx_c + ty_c + tz_c + tx + ty + tz + roll_tau +
                        roll_gain + pitch_tau + pitch_gain + fx + fy + xObst + yObst + xObst1 +
                        yObst1 + Obstwx + Obstwy + Obst1wx + Obst1wy + Obst2wx + Obst2wz +
                        DynObstwx + DynObstwy + DynObstwz + xObst3 + zObst3 + Obst3wx + Obst3wz;
@@ -141,8 +133,6 @@ int main( )
     ocp.subjectTo(-35*PI/180 <= pitch_ref <= 35*PI/180);
     ocp.subjectTo(g/2.0 <= thrust <= g*1.5);
     ocp.subjectTo(-1 <= yaw_rate <= 1);
-    ocp.subjectTo(-1 <= gimbal_pitch_ref <= 1);
-    ocp.subjectTo(-1 <= gimbal_yaw_ref <= 1);
 
     //ocp.subjectTo( -40 <= - fx * Xt_b_y / Xt_b_x <= 40);
     //ocp.subjectTo( -40 <= - fy * Xt_b_z / Xt_b_x <= 40);

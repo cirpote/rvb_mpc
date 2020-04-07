@@ -25,7 +25,7 @@ class BaseibvsController
       ~BaseibvsController();
 
       virtual bool InitializeController() = 0;
-      virtual void calculateRollPitchYawRateThrustCommands(Eigen::Vector4d&) = 0;
+      virtual void calculateRollPitchYawRateThrustCommands(Eigen::Vector4d&, Eigen::Vector2f&) = 0;
       void setOdometry(const nav_msgs::OdometryConstPtr&);
       virtual bool setCommandPose(const nav_msgs::Odometry) = 0;
       float inline getMass(){return mass_;}

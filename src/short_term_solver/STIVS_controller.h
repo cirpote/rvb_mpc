@@ -17,9 +17,11 @@
             ~stivsController();
 
             bool InitializeController();
-            void calculateRollPitchYawRateThrustCommands(Eigen::Vector4d&);
+            void calculateRollPitchYawRateThrustCommands(Eigen::Vector4d&, Eigen::Vector2f&);
             bool setCommandPose(const nav_msgs::Odometry);
             void restartSolver();
+            // void inline setGimbalAxes(const float& gimbal_pitch_axis, const float& gimbal_yaw_axis)
+            // { gimbal_pitch_axis_ = gimbal_pitch_axis; gimbal_yaw_axis_ = gimbal_yaw_axis; };
 
             EIGEN_MAKE_ALIGNED_OPERATOR_NEW
             //private:
@@ -45,6 +47,7 @@
             //debug info
             double solve_time_average_;
             int solve_time, iter;
+            // float gimbal_pitch_axis_, gimbal_yaw_axis_;
 
       };
 //};

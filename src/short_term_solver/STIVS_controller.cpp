@@ -49,7 +49,8 @@ using namespace std;
   }
 
 
-  void stivsController::calculateRollPitchYawRateThrustCommands(Eigen::Vector4d& command_roll_pitch_yawrate_thrust_)
+  void stivsController::calculateRollPitchYawRateThrustCommands(Eigen::Vector4d& command_roll_pitch_yawrate_thrust_, 
+                                                                Eigen::Vector2f& command_gimbal_)
   {
       
     Eigen::Vector3d euler_angles;
@@ -69,7 +70,7 @@ using namespace std;
     referenceN_ << trajectory_point.position_W.transpose(), 0, 0, 0, 0, 0, trajectory_point.getYaw(), 0, 0;
 
     Eigen::Matrix<double, ACADO_NX, 1> x_0;
-    x_0 << odometry.position_W, odometry.getVelocityWorld(), euler_angles, 0;
+    x_0 << odometry.position_W, odometry.getVelocityWorld(), euler_angles, qCam_B_Cam_(1), qCam_B_Cam_(2), 0;
 
     Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(acadoVariables.x0)) = x_0;
     Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(acadoVariables.y)) = reference_.transpose();
@@ -114,7 +115,9 @@ using namespace std;
     command_roll_pitch_yawrate_thrust_(1) = acadoVariables.u[1]; // + integral_action_(1) * integral_action_weights_(1);
     command_roll_pitch_yawrate_thrust_(2) = 2*acadoVariables.u[3] - yaw_rate_damping*odometry.getYawRate() + integral_action_(3) * integral_action_weights_(3);
     command_roll_pitch_yawrate_thrust_(3) = acadoVariables.u[2] + integral_action_(2) * integral_action_weights_(2);
-                                          
+
+    command_gimbal_(0) = acadoVariables.u[4];
+    command_gimbal_(1) = acadoVariables.u[5];                                     
   }
 
   void stivsController::printDifferentialVariables(){
@@ -179,18 +182,13 @@ using namespace std;
       acadoVariables.ubValues[ACADO_NU * i] = roll_ref_bnds_(1);        // max roll
       acadoVariables.ubValues[ACADO_NU * i + 1] = pitch_ref_bnds_(1);   // max pitch
       acadoVariables.ubValues[ACADO_NU * i + 2] = thrust_bnds_(1);      // max thrust
-      acadoVariables.ubValues[ACADO_NU * i + 3] = yaw_rate_bnds_(1);     // max yaw rate
+      acadoVariables.ubValues[ACADO_NU * i + 3] = yaw_rate_bnds_(1);    // max yaw rate
 
-      /*acadoVariables.lbAValues[ACADO_NPAC * i] = .3;                   // min obst1 dist
-      acadoVariables.lbAValues[ACADO_NPAC * i + 1] = .3;               // min obst2 dist
-      acadoVariables.lbAValues[ACADO_NPAC * i + 2] = .3;               // min obst3 dist
-      acadoVariables.lbAValues[ACADO_NPAC * i + 3] = .3;               // min obst3 dist
-      acadoVariables.lbAValues[ACADO_NPAC * i + 4] = .3;*/
-      /*acadoVariables.ubAValues[ACADO_NPAC * i] = 1000;                 // max obst1 dist
-      acadoVariables.ubAValues[ACADO_NPAC * i + 1] = 1000;             // max obst2 dist
-      acadoVariables.ubAValues[ACADO_NPAC * i + 2] = 1000;             // max obst3 dist
-      acadoVariables.ubAValues[ACADO_NPAC * i + 3] = 1000;             // max obst3 dist
-      acadoVariables.ubAValues[ACADO_NPAC * i + 4] = 1000;             // max obst3 dist*/
+      acadoVariables.lbValues[ACADO_NU * i + 4] = -0.5;                 // min yaw rate
+      acadoVariables.lbValues[ACADO_NU * i + 5] = -0.5;                 // min yaw rate
+      acadoVariables.ubValues[ACADO_NU * i + 4] = 0.5;                  // min yaw rate
+      acadoVariables.ubValues[ACADO_NU * i + 5] = 0.5;                  // min yaw rate
+
     }
 
     std::cout << FBLU("Short Term controller Upper Bound Limits: ") << "\n"; 
@@ -233,9 +231,10 @@ using namespace std;
   void stivsController::fillOnlineData(){
 
     for (int i = 0; i < ACADO_N + 1; i++) {
-      acado_online_data_.block(i, 0, 1, ACADO_NOD) << roll_time_constant_, roll_gain_, pitch_time_constant_, pitch_gain_,  // Horizontal motion model
+      acado_online_data_.block(i, 0, 1, ACADO_NOD) << 0.3, 1.f, 0.45, 1.f,
+                                                      roll_time_constant_, roll_gain_, pitch_time_constant_, pitch_gain_,  // Horizontal motion model
                                                       qCam_B_Cam_(0), qCam_B_Cam_(1), qCam_B_Cam_(2),                      // Relative orientation of Cam frame wrt B frame
-                                                      pCam_B_(0), pCam_B_(1), pCam_B_(2),                                  // Relative translation between Cam frame wrt B frame in B frame
+                                                      pCam_B_(0), //pCam_B_(1), pCam_B_(2),                                  // Relative translation between Cam frame wrt B frame in B frame
                                                       pT_W_(0), pT_W_(1), pT_W_(2),                                        // Target position in W frame
                                                       camera_instrinsics_(0), camera_instrinsics_(1),                      // Camera Intrinsic Params
                                                       pObst_vert1(0), pObst_vert1(1),

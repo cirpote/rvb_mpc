@@ -52,6 +52,7 @@ public:
     void showGUI(bool* p_open);
     void processAvatar();
     void init3DObjRendering(std::string&& package_path_str);
+    void pubGimbalCommands(const float&, const float&);
 
 protected:
 

@@ -387,17 +387,10 @@ void MavGUI::showGUI(bool *p_open) {
                     "y", _pitch_gimbal_axis_min, _pitch_gimbal_axis_max, ImVec2(0,40)); ImGui::NextColumn();
   ImGui::DragFloat("yaw command [rad]", &_des_gimbal_yaw_axis_, 0.01f, -M_PI/2, M_PI/2);
   ImGui::DragFloat("pitch command [rad]", &_des_gimbal_pitch_axis_, 0.01f, -M_PI/2, M_PI/2);
-  if (ImGui::Button("send commands")) {
-    std_msgs::Float64 pitch_cmd, yaw_cmd;
-    yaw_cmd.data = _des_gimbal_yaw_axis_;
-    pitch_cmd.data = _des_gimbal_pitch_axis_;
-
-    sent_pitch_cmd = _des_gimbal_pitch_axis_;
-    sent_yaw_cmd = _des_gimbal_yaw_axis_;
-
-    command_gimbal_yaw_axis_.publish(yaw_cmd);
-    command_gimbal_pitch_axis_.publish(pitch_cmd);
-  } ImGui::NextColumn();
+  if (ImGui::Button("send commands")) 
+    pubGimbalCommands(_des_gimbal_pitch_axis_, _des_gimbal_yaw_axis_);
+  
+  ImGui::NextColumn();
   ImGui::Columns(1);
   
 
@@ -471,6 +464,20 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Image((void*)(intptr_t)my_avatar_texture, ImVec2(avatarImg_res.cols, avatarImg_res.rows));
 
   publishVizMarkers();
+}
+
+void MavGUI::pubGimbalCommands(const float& p_cmd, const float& y_cmd){
+
+    std_msgs::Float64 pitch_cmd, yaw_cmd;
+    yaw_cmd.data = y_cmd;
+    pitch_cmd.data = p_cmd;
+
+    sent_pitch_cmd = p_cmd;
+    sent_yaw_cmd = y_cmd;
+
+    command_gimbal_yaw_axis_.publish(yaw_cmd);
+    command_gimbal_pitch_axis_.publish(pitch_cmd);
+
 }
 
 void MavGUI::publishVizMarkers(){

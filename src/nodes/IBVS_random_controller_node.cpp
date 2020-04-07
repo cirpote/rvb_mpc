@@ -136,7 +136,9 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   _current_yaw_orientation = mav_utils::yawFromQuaternion(_current_orientation);
   _current_odom_position = mav_utils::vector3FromPointMsg(odom_msg->pose.pose.position);   
 
-  stnl_controller.calculateRollPitchYawRateThrustCommands(command_roll_pitch_yaw_thrust_st_);
+  Eigen::Vector2f gimbal_cmds;
+  stnl_controller.calculateRollPitchYawRateThrustCommands(command_roll_pitch_yaw_thrust_st_, gimbal_cmds);
+  pubGimbalCommands(gimbal_cmds(0), gimbal_cmds(1));
 
   nav_msgs::Path path;
   path.header.frame_id = "/world";
